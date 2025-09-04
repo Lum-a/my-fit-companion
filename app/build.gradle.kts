@@ -2,6 +2,9 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt.android)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -59,4 +62,16 @@ dependencies {
     implementation(libs.moshi.core)
     implementation(libs.moshi.kotlin)
     implementation(libs.moshi.adapters)
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.lottie.compose)
+    implementation(libs.coil.compose)
+
+    //dagger-hilt
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
+    implementation(libs.androidx.hilt.navigation.compose)
+
+    //kotlinx
+    implementation(libs.kotlin.serialization)
+
 }
