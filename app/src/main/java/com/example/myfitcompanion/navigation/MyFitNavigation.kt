@@ -1,7 +1,6 @@
 package com.example.myfitcompanion.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -16,7 +15,11 @@ import com.example.myfitcompanion.screen.signup.SignUpScreen
 fun MyFitNavigation() {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = Screens.Splash) {
-        composable<Screens.Splash> { SplashScreen() }
+        composable<Screens.Splash> {
+            SplashScreen(
+                onFinished = { navController.navigate(Screens.Login) }
+            )
+        }
         composable<Screens.Login> { LoginScreen() }
         composable<Screens.SignUp> { SignUpScreen() }
         composable<Screens.Profile> { ProfileScreen() }
