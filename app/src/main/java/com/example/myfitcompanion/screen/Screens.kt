@@ -10,7 +10,7 @@ sealed class Screens {
     data object Login: Screens()
 
     @Serializable
-    data object SignUp: Screens()
+    data object Register: Screens()
 
     @Serializable
     data object Home: Screens()

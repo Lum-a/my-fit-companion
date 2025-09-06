@@ -9,7 +9,7 @@ import com.example.myfitcompanion.screen.splash.SplashScreen
 import com.example.myfitcompanion.screen.home.HomeScreen
 import com.example.myfitcompanion.screen.login.LoginScreen
 import com.example.myfitcompanion.screen.profile.ProfileScreen
-import com.example.myfitcompanion.screen.signup.SignUpScreen
+import com.example.myfitcompanion.screen.signup.RegisterScreen
 
 @Composable
 fun MyFitNavigation() {
@@ -17,11 +17,12 @@ fun MyFitNavigation() {
     NavHost(navController = navController, startDestination = Screens.Splash) {
         composable<Screens.Splash> {
             SplashScreen(
-                onFinished = { navController.navigate(Screens.Login) }
+                onNavigateToHome = { navController.navigate(Screens.Home) },
+                onNavigateToLogin = { navController.navigate(Screens.Login) }
             )
         }
         composable<Screens.Login> { LoginScreen() }
-        composable<Screens.SignUp> { SignUpScreen() }
+        composable<Screens.Register> { RegisterScreen() }
         composable<Screens.Profile> { ProfileScreen() }
         composable<Screens.Home> { HomeScreen() }
     }

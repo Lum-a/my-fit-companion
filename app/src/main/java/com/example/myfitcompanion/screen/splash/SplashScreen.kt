@@ -6,11 +6,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
@@ -20,8 +22,14 @@ import com.example.myfitcompanion.ui.theme.darkBackground
 
 @Composable
 @Preview
-fun SplashScreen(modifier: Modifier = Modifier, onFinished: () -> Unit = {}) {
+fun SplashScreen(
+    modifier: Modifier = Modifier,
+    viewModel: SplashViewModel = hiltViewModel(),
+    onNavigateToHome: () -> Unit = {},
+    onNavigateToLogin: () -> Unit = {}
+) {
 
+    val isLoggedIn by viewModel.isLoggedIn.collectAsState()
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.myfit_animation))
     val progress by animateLottieCompositionAsState(
         composition = composition,
@@ -31,7 +39,11 @@ fun SplashScreen(modifier: Modifier = Modifier, onFinished: () -> Unit = {}) {
     // Navigate after animation finishes
     LaunchedEffect(progress) {
         if (progress >= 1f) {
-            onFinished()
+            when (isLoggedIn) {
+                true -> onNavigateToHome()
+                false -> onNavigateToLogin()
+                null -> {}
+            }
         }
     }
 
