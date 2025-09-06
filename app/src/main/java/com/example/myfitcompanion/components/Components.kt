@@ -8,11 +8,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 
 @Composable
-fun VerticalSpace(height: Dp) {
-    Spacer(Modifier.height(height))
+fun VerticalSpace(modifier: Modifier = Modifier, height: Dp) {
+    Spacer(modifier.height(height))
 }
 
 @Composable
-fun HorizontalSpace(width: Dp) {
-    Spacer(Modifier.width(width))
+fun HorizontalSpace(modifier: Modifier = Modifier, width: Dp) {
+    Spacer(modifier.width(width))
 }

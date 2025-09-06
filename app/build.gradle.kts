@@ -19,6 +19,8 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "BASE_URL", "\"https://api.myfit.com/\"")
     }
 
     buildTypes {
@@ -39,6 +41,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
@@ -73,5 +76,23 @@ dependencies {
 
     //kotlinx
     implementation(libs.kotlin.serialization)
+
+    //room-db
+    implementation(libs.androidx.room.runtime)
+    ksp(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.ktx)
+
+    //datastore
+    implementation(libs.androidx.datastore.preferences)
+
+    //retrofit
+    implementation(libs.retrofit2.retrofit)
+    implementation(libs.retrofit2.converter.moshi)
+    ksp(libs.squareup.moshi.kotlin.codegen)
+
+    // OkHttp
+    implementation(libs.okhttp)
+    implementation(libs.logging.interceptor)
+
 
 }
