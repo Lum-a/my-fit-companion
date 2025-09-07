@@ -48,8 +48,9 @@ object AppModule {
     @Singleton
     fun provideUserRepository(
         apiService: ApiService,
-        userDao: UserDao
+        userDao: UserDao,
+        tokenManager: TokenManager
     ): UserRepository {
-        return UserRepositoryImpl(apiService, userDao)
+        return UserRepositoryImpl(apiService, userDao, tokenManager)
     }
 }

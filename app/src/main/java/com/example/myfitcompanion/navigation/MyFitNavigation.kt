@@ -16,7 +16,7 @@ import com.example.myfitcompanion.screen.trainer.TrainerScreen
 @Composable
 fun MyFitNavigation() {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = Screen.Splash) {
+    NavHost(navController = navController, startDestination = Screen.Home) {
         composable<Screen.Splash> {
             SplashScreen(
                 onNavigateToHome = { navController.navigate(Screen.Home) },
@@ -26,7 +26,17 @@ fun MyFitNavigation() {
         composable<Screen.Login> { LoginScreen() }
         composable<Screen.Register> { RegisterScreen() }
         composable<Screen.Profile> { ProfileScreen() }
-        composable<Screen.Home> { HomeScreen() }
+        composable<Screen.Home> {
+            HomeScreen(
+                onLogout = {
+                    navController.navigate(Screen.Login) {
+                        popUpTo(0) {
+                            inclusive = true
+                        }
+                    }
+                }
+            )
+        }
         composable<Screen.Classes> { ClassesScreen()}
         composable<Screen.Trainer> { TrainerScreen() }
     }

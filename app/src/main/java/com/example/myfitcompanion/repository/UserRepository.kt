@@ -16,5 +16,6 @@ interface UserRepository {
     suspend fun updateUser(request: UpdateProfileRequest): Response<UpdateProfileResponse>
     fun getUser(): Flow<User?>
     suspend fun getUserId(): Int?
-    suspend fun deleteUser(user: User)
+    suspend fun deleteUser()
+    suspend fun logout()
 }

@@ -3,6 +3,7 @@ package com.example.myfitcompanion.repository
 import com.example.myfitcompanion.api.ApiService
 import com.example.myfitcompanion.api.model.UpdateProfileRequest
 import com.example.myfitcompanion.api.model.UpdateProfileResponse
+import com.example.myfitcompanion.api.token.TokenManager
 import com.example.myfitcompanion.db.room.dao.UserDao
 import com.example.myfitcompanion.model.login.LoginRequest
 import com.example.myfitcompanion.model.login.LoginResponse
@@ -18,7 +19,8 @@ import javax.inject.Singleton
 @Singleton
 class UserRepositoryImpl @Inject constructor(
     private val apiService: ApiService,
-    private val userDao: UserDao
+    private val userDao: UserDao,
+    private val tokenManager: TokenManager
 ): UserRepository {
 
     override suspend fun login(email: String, password: String): Response<LoginResponse> {
@@ -45,8 +47,13 @@ class UserRepositoryImpl @Inject constructor(
         return apiService.updateProfile(getUserId(), request)
     }
 
-    override suspend fun deleteUser(user: User) {
-        userDao.deleteUser(user)
+    override suspend fun deleteUser() {
+        userDao.deleteUser()
+    }
+
+    override suspend fun logout() {
+        tokenManager.clearToken()
+        userDao.deleteUser()
     }
 
 }
