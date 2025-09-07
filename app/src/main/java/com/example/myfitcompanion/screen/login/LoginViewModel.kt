@@ -3,7 +3,7 @@ package com.example.myfitcompanion.screen.login
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myfitcompanion.api.token.TokenManager
-import com.example.myfitcompanion.model.User
+import com.example.myfitcompanion.model.entities.User
 import com.example.myfitcompanion.repository.UserRepository
 import com.example.myfitcompanion.utils.ResultWrapper
 import dagger.hilt.android.lifecycle.HiltViewModel

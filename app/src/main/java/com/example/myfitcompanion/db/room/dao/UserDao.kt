@@ -1,4 +1,4 @@
-package com.example.myfitcompanion.db.room
+package com.example.myfitcompanion.db.room.dao
 
 import androidx.room.Dao
 import androidx.room.Delete
@@ -6,7 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import com.example.myfitcompanion.model.User
+import com.example.myfitcompanion.model.entities.User
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -27,7 +27,7 @@ interface UserDao {
     @Update
     suspend fun updateUserDetails(user: User)
 
-    @Delete
-    suspend fun deleteUser(user: User)
+    @Query("DELETE FROM user")
+    suspend fun deleteUser()
 
 }

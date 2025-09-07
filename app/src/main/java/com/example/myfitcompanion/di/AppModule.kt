@@ -5,7 +5,11 @@ import com.example.myfitcompanion.api.ApiService
 import com.example.myfitcompanion.api.token.TokenManager
 import com.example.myfitcompanion.api.token.TokenProvider
 import com.example.myfitcompanion.db.room.MyFitDatabase
-import com.example.myfitcompanion.db.room.UserDao
+import com.example.myfitcompanion.db.room.dao.GymClassDao
+import com.example.myfitcompanion.db.room.dao.MembershipDao
+import com.example.myfitcompanion.db.room.dao.PlanDao
+import com.example.myfitcompanion.db.room.dao.TrainerDao
+import com.example.myfitcompanion.db.room.dao.UserDao
 import com.example.myfitcompanion.repository.UserRepository
 import com.example.myfitcompanion.repository.UserRepositoryImpl
 import dagger.Module
@@ -21,27 +25,32 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideTokenProvider(tokenManager: TokenManager): TokenProvider {
-        return tokenManager
-    }
-
-    @Provides
-    @Singleton
     fun provideAppDatabase(@ApplicationContext context: Context): MyFitDatabase {
         return MyFitDatabase.getInstance(context)
     }
 
     @Provides
-    fun provideUserDao(database: MyFitDatabase): UserDao {
-        return database.userDao()
-    }
+    fun provideUserDao(db: MyFitDatabase): UserDao = db.userDao()
+
+    @Provides
+    fun provideMembershipDao(db: MyFitDatabase): MembershipDao = db.membershipDao()
+
+    @Provides
+    fun provideTrainerDao(db: MyFitDatabase): TrainerDao = db.trainerDao()
+
+    @Provides
+    fun provideGymClassDao(db: MyFitDatabase): GymClassDao = db.gymClassDao()
+
+    @Provides
+    fun providePlanDao(db: MyFitDatabase): PlanDao = db.planDao()
 
     @Provides
     @Singleton
     fun provideUserRepository(
         apiService: ApiService,
-        userDao: UserDao
+        userDao: UserDao,
+        tokenManager: TokenManager
     ): UserRepository {
-        return UserRepositoryImpl(apiService, userDao)
+        return UserRepositoryImpl(apiService, userDao, tokenManager)
     }
 }
