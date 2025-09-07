@@ -23,4 +23,7 @@ sealed class Screen {
 
     @Serializable
     data object Trainer: Screen()
+
+    @Serializable
+    data object Plan: Screen()
 }

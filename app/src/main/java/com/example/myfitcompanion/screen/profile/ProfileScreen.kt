@@ -1,5 +1,6 @@
 package com.example.myfitcompanion.screen.profile
 
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -12,5 +13,5 @@ fun ProfileScreen(
     viewModel: ProfileViewModel = hiltViewModel()
 ) {
     val updateState by viewModel.updateState.collectAsStateWithLifecycle()
-
+    Text(text = "Profile screen")
 }
