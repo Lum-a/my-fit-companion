@@ -16,11 +16,7 @@ object Constants {
             icon = Icons.Filled.Home,
             route = Screen.Home
         ),
-        BottomNavItem(
-            label = "Profile",
-            icon = Icons.Filled.Person,
-            route = Screen.Profile
-        ),
+
         BottomNavItem(
             label = "Classes",
             icon = Icons.Filled.Menu,
@@ -31,5 +27,11 @@ object Constants {
             label = "Plans",
             icon = Icons.Filled.ShoppingCart,
             route = Screen.Plan
-    ))
+        ),
+        BottomNavItem(
+            label = "Profile",
+            icon = Icons.Filled.Person,
+            route = Screen.Profile
+        )
+    )
 }
