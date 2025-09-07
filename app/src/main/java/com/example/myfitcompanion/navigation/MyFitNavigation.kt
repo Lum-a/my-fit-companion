@@ -12,6 +12,7 @@ import com.example.myfitcompanion.screen.classes.ClassesScreen
 import com.example.myfitcompanion.screen.splash.SplashScreen
 import com.example.myfitcompanion.screen.home.HomeScreen
 import com.example.myfitcompanion.screen.login.LoginScreen
+import com.example.myfitcompanion.screen.plan.PlanScreen
 import com.example.myfitcompanion.screen.profile.ProfileScreen
 import com.example.myfitcompanion.screen.signup.RegisterScreen
 import com.example.myfitcompanion.screen.trainer.TrainerScreen
@@ -45,5 +46,6 @@ fun MyFitNavigation(navController: NavHostController, padding: PaddingValues) {
         }
         composable<Screen.Classes> { ClassesScreen()}
         composable<Screen.Trainer> { TrainerScreen() }
+        composable<Screen.Plan> { PlanScreen() }
     }
 }
