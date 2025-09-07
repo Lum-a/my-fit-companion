@@ -1,5 +1,7 @@
 package com.example.myfitcompanion.api
 
+import com.example.myfitcompanion.api.model.UpdateProfileRequest
+import com.example.myfitcompanion.api.model.UpdateProfileResponse
 import com.example.myfitcompanion.model.gym_class.ClassBookingRequest
 import com.example.myfitcompanion.model.gym_class.ClassBookingResponse
 import com.example.myfitcompanion.model.gym_class.ClassResponse
@@ -14,6 +16,7 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 
 interface ApiService {
@@ -41,4 +44,10 @@ interface ApiService {
         @Path("classId") classId: Long,
         @Body bookingRequest: ClassBookingRequest
     ): Response<ClassBookingResponse>
+
+    @PUT("users/{userId}")
+    suspend fun updateProfile(
+        @Path("userId") userId: Int?,
+        @Body request: UpdateProfileRequest
+    ): Response<UpdateProfileResponse>
 }
