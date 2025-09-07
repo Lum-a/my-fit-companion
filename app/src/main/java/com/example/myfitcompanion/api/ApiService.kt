@@ -2,16 +2,16 @@ package com.example.myfitcompanion.api
 
 import com.example.myfitcompanion.api.model.UpdateProfileRequest
 import com.example.myfitcompanion.api.model.UpdateProfileResponse
-import com.example.myfitcompanion.model.gym_class.ClassBookingRequest
-import com.example.myfitcompanion.model.gym_class.ClassBookingResponse
-import com.example.myfitcompanion.model.gym_class.ClassResponse
-import com.example.myfitcompanion.model.login.LoginRequest
-import com.example.myfitcompanion.model.login.LoginResponse
-import com.example.myfitcompanion.model.membership.MembershipResponse
-import com.example.myfitcompanion.model.plan.PlanResponse
-import com.example.myfitcompanion.model.register.RegisterRequest
-import com.example.myfitcompanion.model.register.RegisterResponse
-import com.example.myfitcompanion.model.trainer.TrainerResponse
+import com.example.myfitcompanion.api.model.ClassBookingRequest
+import com.example.myfitcompanion.api.model.ClassBookingResponse
+import com.example.myfitcompanion.api.model.ClassResponse
+import com.example.myfitcompanion.api.model.LoginRequest
+import com.example.myfitcompanion.api.model.LoginResponse
+import com.example.myfitcompanion.api.model.MembershipResponse
+import com.example.myfitcompanion.api.model.PlanResponse
+import com.example.myfitcompanion.api.model.RegisterRequest
+import com.example.myfitcompanion.api.model.RegisterResponse
+import com.example.myfitcompanion.api.model.TrainerResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET

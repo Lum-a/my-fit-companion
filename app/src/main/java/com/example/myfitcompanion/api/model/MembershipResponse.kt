@@ -1,4 +1,4 @@
-package com.example.myfitcompanion.model.membership
+package com.example.myfitcompanion.api.model
 
 data class MembershipResponse(
     val membershipId: Long,

@@ -5,12 +5,13 @@ import com.example.myfitcompanion.api.model.UpdateProfileRequest
 import com.example.myfitcompanion.api.model.UpdateProfileResponse
 import com.example.myfitcompanion.api.token.TokenManager
 import com.example.myfitcompanion.db.room.dao.UserDao
-import com.example.myfitcompanion.model.login.LoginRequest
-import com.example.myfitcompanion.model.login.LoginResponse
-import com.example.myfitcompanion.model.register.RegisterRequest
+import com.example.myfitcompanion.api.model.LoginRequest
+import com.example.myfitcompanion.api.model.LoginResponse
+import com.example.myfitcompanion.api.model.RegisterRequest
 import com.example.myfitcompanion.model.entities.User
-import com.example.myfitcompanion.model.register.RegisterResponse
+import com.example.myfitcompanion.api.model.RegisterResponse
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.firstOrNull
 import retrofit2.Response
 import javax.inject.Inject
@@ -55,5 +56,13 @@ class UserRepositoryImpl @Inject constructor(
         tokenManager.clearToken()
         userDao.deleteUser()
     }
+
+    override fun isLoggedIn(): Flow<Boolean> = combine(
+        userDao.getUser(),
+        tokenManager.authToken
+    ) { user, token ->
+        user != null && !token.isNullOrEmpty()
+    }
+
 
 }

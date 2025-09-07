@@ -1,4 +1,4 @@
-package com.example.myfitcompanion.model.trainer
+package com.example.myfitcompanion.api.model
 
 data class TrainerResponse(
     val trainerId: Long,

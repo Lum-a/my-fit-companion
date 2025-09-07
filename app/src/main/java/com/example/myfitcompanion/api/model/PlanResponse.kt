@@ -1,4 +1,4 @@
-package com.example.myfitcompanion.model.plan
+package com.example.myfitcompanion.api.model
 
 data class PlanResponse(
     val planId: Long,

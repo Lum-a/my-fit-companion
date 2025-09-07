@@ -1,10 +1,12 @@
 package com.example.myfitcompanion.screen.home
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,11 +25,13 @@ fun HomeScreen(
         modifier = modifier.fillMaxSize().padding(20.dp),
         horizontalAlignment = Alignment.End
     ) {
-        Button(onClick = {
+
+        Icon(modifier = modifier.clickable {
             viewModel.logout { onLogout() }
-        }) {
-            Text("Logout")
-        }
+        },
+            imageVector = Icons.AutoMirrored.Filled.ExitToApp,
+            contentDescription = "logout"
+        )
     }
 
 }

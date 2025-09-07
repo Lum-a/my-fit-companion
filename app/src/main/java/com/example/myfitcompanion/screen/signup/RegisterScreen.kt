@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.myfitcompanion.components.VerticalSpace
-import com.example.myfitcompanion.model.register.RegisterRequest
+import com.example.myfitcompanion.api.model.RegisterRequest
 import com.example.myfitcompanion.utils.ResultWrapper
 
 @Composable

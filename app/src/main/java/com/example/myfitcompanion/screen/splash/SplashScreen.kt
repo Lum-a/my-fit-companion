@@ -19,12 +19,13 @@ import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.myfitcompanion.R
 import com.example.myfitcompanion.ui.theme.darkBackground
+import com.example.myfitcompanion.utils.AuthViewModel
 
 @Composable
 @Preview
 fun SplashScreen(
     modifier: Modifier = Modifier,
-    viewModel: SplashViewModel = hiltViewModel(),
+    viewModel: AuthViewModel = hiltViewModel(),
     onNavigateToHome: () -> Unit = {},
     onNavigateToLogin: () -> Unit = {}
 ) {
@@ -42,7 +43,6 @@ fun SplashScreen(
             when (isLoggedIn) {
                 true -> onNavigateToHome()
                 false -> onNavigateToLogin()
-                null -> {}
             }
         }
     }

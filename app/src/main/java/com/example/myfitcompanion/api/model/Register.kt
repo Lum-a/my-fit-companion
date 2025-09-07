@@ -1,4 +1,4 @@
-package com.example.myfitcompanion.model.register
+package com.example.myfitcompanion.api.model
 
 import com.example.myfitcompanion.model.entities.User
 
