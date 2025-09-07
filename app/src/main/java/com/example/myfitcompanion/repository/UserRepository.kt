@@ -2,8 +2,8 @@ package com.example.myfitcompanion.repository
 
 import com.example.myfitcompanion.model.login.LoginResponse
 import com.example.myfitcompanion.model.register.RegisterRequest
+import com.example.myfitcompanion.model.entities.User
 import com.example.myfitcompanion.model.register.RegisterResponse
-import com.example.myfitcompanion.model.User
 import kotlinx.coroutines.flow.Flow
 import retrofit2.Response
 

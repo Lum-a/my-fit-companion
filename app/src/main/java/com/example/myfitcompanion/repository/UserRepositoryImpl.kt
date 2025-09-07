@@ -1,12 +1,12 @@
 package com.example.myfitcompanion.repository
 
 import com.example.myfitcompanion.api.ApiService
-import com.example.myfitcompanion.db.room.UserDao
+import com.example.myfitcompanion.db.room.dao.UserDao
 import com.example.myfitcompanion.model.login.LoginRequest
 import com.example.myfitcompanion.model.login.LoginResponse
 import com.example.myfitcompanion.model.register.RegisterRequest
+import com.example.myfitcompanion.model.entities.User
 import com.example.myfitcompanion.model.register.RegisterResponse
-import com.example.myfitcompanion.model.User
 import kotlinx.coroutines.flow.Flow
 import retrofit2.Response
 import javax.inject.Inject
