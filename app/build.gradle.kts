@@ -20,7 +20,7 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        buildConfigField("String", "BASE_URL", "\"https://api.myfit.com/\"")
+        buildConfigField("String", "BASE_URL", "\"https://my-fit-companion-production.up.railway.app/api/\"")
     }
 
     buildTypes {
