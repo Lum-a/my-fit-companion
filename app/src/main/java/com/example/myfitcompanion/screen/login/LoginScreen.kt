@@ -46,21 +46,35 @@ fun LoginScreen(
     viewModel: LoginViewModel = hiltViewModel()
 ) {
     val loginState by viewModel.loginState.collectAsStateWithLifecycle()
+    val email by viewModel.email.collectAsStateWithLifecycle()
+    val isEmailValid by viewModel.isEmailValid.collectAsStateWithLifecycle()
 
     Column(
         modifier = modifier.fillMaxSize().padding(16.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-
-        var email by remember { mutableStateOf("") }
         var password by remember { mutableStateOf("") }
 
-        TextField(
+        OutlinedTextField(
             value = email,
-            onValueChange = { email = it },
-            label = { Text("Email") }
+            onValueChange = { viewModel.onEmailChanged(it) },
+            label = { Text("Email") },
+            isError = !isEmailValid,
+            modifier = Modifier.fillMaxWidth(),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = if (!isEmailValid) Color.Red else MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = if (!isEmailValid) Color.Red else MaterialTheme.colorScheme.outline
+            )
         )
+        if (!isEmailValid && email.isNotEmpty()) {
+            Text(
+                text = "Email is invalid",
+                color = Color.Red,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.align(Alignment.Start).padding(start = 16.dp, top = 2.dp)
+            )
+        }
 
         VerticalSpace(modifier, 8.dp)
 
@@ -73,7 +87,10 @@ fun LoginScreen(
 
         VerticalSpace(modifier, 16.dp)
 
-        Button(onClick = { viewModel.login(email, password) }) {
+        Button(
+            onClick = { viewModel.login(password = password) },
+            enabled = isEmailValid && email.isNotEmpty() && password.isNotEmpty()
+        ) {
             Text("Login")
         }
 

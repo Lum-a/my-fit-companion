@@ -43,9 +43,13 @@ fun RegisterScreen(
 ) {
     val state by viewModel.registerState.collectAsStateWithLifecycle()
 
-    var name by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+    val name by viewModel.name.collectAsStateWithLifecycle()
+    val email by viewModel.email.collectAsStateWithLifecycle()
+    val password by viewModel.password.collectAsStateWithLifecycle()
+    val isEmailValid by viewModel.isEmailValid.collectAsStateWithLifecycle()
+    val isPasswordValid by viewModel.isPasswordValid.collectAsStateWithLifecycle()
+    val canRegister by viewModel.canRegister.collectAsStateWithLifecycle()
+
     var height by remember { mutableStateOf("") }
     var weight by remember { mutableStateOf("") }
     var bodyFat by remember { mutableStateOf("") }
@@ -62,26 +66,64 @@ fun RegisterScreen(
 
         OutlinedTextField(
             value = name,
-            onValueChange = { name = it },
+            onValueChange = { viewModel.onNameChanged(it) },
             label = { Text("Name") },
-            singleLine = true
+            singleLine = true,
+            isError = name.isBlank(),
+            modifier = Modifier.fillMaxWidth()
         )
+        if (name.isBlank()) {
+            Text(
+                text = "Name is required",
+                color = Color.Red,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.align(Alignment.Start).padding(start = 16.dp, top = 2.dp)
+            )
+        }
 
         OutlinedTextField(
             value = email,
-            onValueChange = { email = it },
+            onValueChange = { viewModel.onEmailChanged(it) },
             label = { Text("Email") },
             singleLine = true,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+            isError = !isEmailValid,
+            modifier = Modifier.fillMaxWidth(),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = if (!isEmailValid) Color.Red else MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = if (!isEmailValid) Color.Red else MaterialTheme.colorScheme.outline
+            )
         )
+        if (!isEmailValid && email.isNotEmpty()) {
+            Text(
+                text = "Email is invalid",
+                color = Color.Red,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.align(Alignment.Start).padding(start = 16.dp, top = 2.dp)
+            )
+        }
 
         OutlinedTextField(
             value = password,
-            onValueChange = { password = it },
+            onValueChange = { viewModel.onPasswordChanged(it) },
             label = { Text("Password") },
             singleLine = true,
-            visualTransformation = PasswordVisualTransformation()
+            visualTransformation = PasswordVisualTransformation(),
+            isError = !isPasswordValid,
+            modifier = Modifier.fillMaxWidth(),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = if (!isPasswordValid) Color.Red else MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = if (!isPasswordValid) Color.Red else MaterialTheme.colorScheme.outline
+            )
         )
+        if (!isPasswordValid && password.isNotEmpty()) {
+            Text(
+                text = "Password must be at least 8 characters, include uppercase, lowercase, and a number",
+                color = Color.Red,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.align(Alignment.Start).padding(start = 16.dp, top = 2.dp)
+            )
+        }
 
         OutlinedTextField(
             value = height,
@@ -127,24 +169,24 @@ fun RegisterScreen(
                     color = MaterialTheme.colorScheme.primary
                 )
             }
-
-
         }
 
         Button(
             onClick = {
                 viewModel.register(
                     RegisterRequest(
-                    name = name,
-                    email = email,
-                    password = password,
-                    height = height.toFloatOrNull(),
-                    weight = weight.toFloatOrNull(),
-                    bodyFat = bodyFat.toFloatOrNull(),
-                    goal = goal.ifBlank { null }
-                ))
+                        name = name,
+                        email = email,
+                        password = password,
+                        height = height.toFloatOrNull(),
+                        weight = weight.toFloatOrNull(),
+                        bodyFat = bodyFat.toFloatOrNull(),
+                        goal = goal.ifBlank { null }
+                    )
+                )
             },
-            modifier = modifier.fillMaxWidth()
+            modifier = modifier.fillMaxWidth(),
+            enabled = canRegister
         ) {
             Text("Register")
         }

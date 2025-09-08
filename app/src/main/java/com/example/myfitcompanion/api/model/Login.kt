@@ -1,14 +1,23 @@
 package com.example.myfitcompanion.api.model
 
 import com.example.myfitcompanion.model.entities.User
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 
+@JsonClass(generateAdapter = true)
 data class LoginRequest(
+    @Json(name = "email")
     val email: String,
+    @Json(name = "password")
     val password: String
 )
 
+@JsonClass(generateAdapter = true)
 data class LoginResponse(
+    @Json(name = "message")
     val message: String,
+    @Json(name = "token")
     val token: String,
+    @Json(name = "user")
     val user: User
 )

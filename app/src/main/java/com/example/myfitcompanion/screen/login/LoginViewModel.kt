@@ -6,6 +6,7 @@ import com.example.myfitcompanion.api.token.TokenManager
 import com.example.myfitcompanion.model.entities.User
 import com.example.myfitcompanion.repository.UserRepository
 import com.example.myfitcompanion.utils.ResultWrapper
+import com.example.myfitcompanion.utils.isValidEmail
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,7 +22,19 @@ class LoginViewModel @Inject constructor(
     private val _loginState = MutableStateFlow<ResultWrapper<User>>(ResultWrapper.Initial)
     val loginState: StateFlow<ResultWrapper<User>> = _loginState
 
-    fun login(email: String, password: String) {
+    private val _email = MutableStateFlow("")
+    val email: StateFlow<String> = _email
+
+    private val _isEmailValid = MutableStateFlow(true)
+    val isEmailValid: StateFlow<Boolean> = _isEmailValid
+
+    fun onEmailChanged(newEmail: String) {
+        _email.value = newEmail
+        _isEmailValid.value = isValidEmail(newEmail)
+    }
+
+    fun login(email: String = _email.value, password: String) {
+        if (!_isEmailValid.value) return
         viewModelScope.launch {
             _loginState.value = ResultWrapper.Loading
             try {
