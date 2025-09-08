@@ -27,7 +27,8 @@ fun MyFitNavigation(navController: NavHostController, padding: PaddingValues) {
         composable<Screen.Splash> {
             SplashScreen(
                 onNavigateToHome = { navController.navigate(Screen.Home) },
-                onNavigateToLogin = { navController.navigate(Screen.Login) }
+                onNavigateToLogin = { navController.navigate(Screen.Login) },
+                onNavigateToRegister = { navController.navigate(Screen.Register) }
             )
         }
         composable<Screen.Login> { LoginScreen() }

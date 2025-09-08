@@ -1,5 +1,6 @@
 package com.example.myfitcompanion.screen.login
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myfitcompanion.api.token.TokenManager
@@ -29,31 +30,43 @@ class LoginViewModel @Inject constructor(
     val isEmailValid: StateFlow<Boolean> = _isEmailValid
 
     fun onEmailChanged(newEmail: String) {
+        Log.d("LoginViewModel", "Email changed: $newEmail")
         _email.value = newEmail
-        _isEmailValid.value = isValidEmail(newEmail)
+        val valid = isValidEmail(newEmail)
+        _isEmailValid.value = valid
+        Log.d("LoginViewModel", "Email valid: $valid")
     }
 
     fun login(email: String = _email.value, password: String) {
-        if (!_isEmailValid.value) return
+        Log.d("LoginViewModel", "Login called with email: $email")
+        if (!_isEmailValid.value) {
+            Log.d("LoginViewModel", "Login aborted: email is invalid")
+            return
+        }
         viewModelScope.launch {
             _loginState.value = ResultWrapper.Loading
             try {
                 val response  = userRepository.login(email, password)
+                Log.d("LoginViewModel", "Login API response: $response")
                 if(response.isSuccessful) {
                     val loginData = response.body()
                     if(loginData != null) {
                         tokenManager.saveToken(loginData.token)
                         userRepository.insertUser(loginData.user)
                         _loginState.value = ResultWrapper.Success(loginData.user)
+                        Log.d("LoginViewModel", "Login success: ${loginData.user}")
                     } else {
                         _loginState.value = ResultWrapper.Error("Empty response body")
+                        Log.d("LoginViewModel", "Login error: Empty response body")
                     }
                 } else {
                     val errorMsg = response.errorBody()?.string() ?: "Login failed"
                     _loginState.value = ResultWrapper.Error(errorMsg)
+                    Log.d("LoginViewModel", "Login error: $errorMsg")
                 }
             } catch (e: Exception) {
                 _loginState.value = ResultWrapper.Error(e.message ?: "Unknown error")
+                Log.d("LoginViewModel", "Login exception: ${e.message}")
             }
         }
     }

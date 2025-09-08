@@ -1,5 +1,6 @@
 package com.example.myfitcompanion.screen.signup
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myfitcompanion.api.token.TokenManager
@@ -20,6 +21,7 @@ class RegisterViewModel @Inject constructor(
     private val tokenManager: TokenManager
 ): ViewModel() {
 
+    private val TAG = "RegisterViewModel"
     private val _registerState = MutableStateFlow<ResultWrapper<User>>(ResultWrapper.Initial)
     val registerState: StateFlow<ResultWrapper<User>> = _registerState
 
@@ -39,17 +41,24 @@ class RegisterViewModel @Inject constructor(
     val isPasswordValid: StateFlow<Boolean> = _isPasswordValid
 
     fun onNameChanged(newName: String) {
+        Log.d(TAG, "Name changed: $newName")
         _name.value = newName
     }
 
     fun onEmailChanged(newEmail: String) {
+        Log.d(TAG, "Email changed: $newEmail")
         _email.value = newEmail
-        _isEmailValid.value = isValidEmail(newEmail)
+        val valid = isValidEmail(newEmail)
+        _isEmailValid.value = valid
+        Log.d(TAG, "Email valid: $valid")
     }
 
     fun onPasswordChanged(newPassword: String) {
+        Log.d(TAG, "Password changed: $newPassword")
         _password.value = newPassword
-        _isPasswordValid.value = isValidPassword(newPassword)
+        val valid = isValidPassword(newPassword)
+        _isPasswordValid.value = valid
+        Log.d(TAG, "Password valid: $valid")
     }
 
     val canRegister: StateFlow<Boolean> = MutableStateFlow(false)
@@ -64,27 +73,31 @@ class RegisterViewModel @Inject constructor(
     }
 
     fun register(registerRequest: RegisterRequest) {
+        Log.d(TAG, "Register called with: $registerRequest")
         viewModelScope.launch {
             _registerState.value = ResultWrapper.Loading
             try {
-
                 val response = userRepository.register(registerRequest)
+                Log.d(TAG, "Register API response: $response")
                 if(response.isSuccessful) {
                     val body = response.body()
                     if(body != null) {
                         tokenManager.saveToken(body.token)
                         userRepository.insertUser(body.user)
                         _registerState.value = ResultWrapper.Success(body.user)
+                        Log.d(TAG, "Registration success: ${body.user}")
                     } else {
                         _registerState.value = ResultWrapper.Error("Empty response")
+                        Log.d(TAG, "Registration error: Empty response")
                     }
                 } else {
                     val errorMsg = response.errorBody()?.string() ?: "Registration failed"
                     _registerState.value = ResultWrapper.Error(errorMsg)
+                    Log.d(TAG, "Registration error: $errorMsg")
                 }
-
             } catch (e: Exception) {
                 _registerState.value = ResultWrapper.Error(e.message ?: "Unknown error")
+                Log.d(TAG, "Registration exception: ${e.message}")
             }
         }
     }
