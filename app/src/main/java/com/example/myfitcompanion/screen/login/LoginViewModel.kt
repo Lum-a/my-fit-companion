@@ -1,11 +1,13 @@
 package com.example.myfitcompanion.screen.login
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myfitcompanion.api.token.TokenManager
 import com.example.myfitcompanion.model.entities.User
 import com.example.myfitcompanion.repository.UserRepository
 import com.example.myfitcompanion.utils.ResultWrapper
+import com.example.myfitcompanion.utils.isValidEmail
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,26 +23,50 @@ class LoginViewModel @Inject constructor(
     private val _loginState = MutableStateFlow<ResultWrapper<User>>(ResultWrapper.Initial)
     val loginState: StateFlow<ResultWrapper<User>> = _loginState
 
-    fun login(email: String, password: String) {
+    private val _email = MutableStateFlow("")
+    val email: StateFlow<String> = _email
+
+    private val _isEmailValid = MutableStateFlow(true)
+    val isEmailValid: StateFlow<Boolean> = _isEmailValid
+
+    fun onEmailChanged(newEmail: String) {
+        Log.d("LoginViewModel", "Email changed: $newEmail")
+        _email.value = newEmail
+        val valid = isValidEmail(newEmail)
+        _isEmailValid.value = valid
+        Log.d("LoginViewModel", "Email valid: $valid")
+    }
+
+    fun login(email: String = _email.value, password: String) {
+        Log.d("LoginViewModel", "Login called with email: $email")
+        if (!_isEmailValid.value) {
+            Log.d("LoginViewModel", "Login aborted: email is invalid")
+            return
+        }
         viewModelScope.launch {
             _loginState.value = ResultWrapper.Loading
             try {
                 val response  = userRepository.login(email, password)
+                Log.d("LoginViewModel", "Login API response: $response")
                 if(response.isSuccessful) {
                     val loginData = response.body()
                     if(loginData != null) {
                         tokenManager.saveToken(loginData.token)
                         userRepository.insertUser(loginData.user)
                         _loginState.value = ResultWrapper.Success(loginData.user)
+                        Log.d("LoginViewModel", "Login success: ${loginData.user}")
                     } else {
                         _loginState.value = ResultWrapper.Error("Empty response body")
+                        Log.d("LoginViewModel", "Login error: Empty response body")
                     }
                 } else {
                     val errorMsg = response.errorBody()?.string() ?: "Login failed"
                     _loginState.value = ResultWrapper.Error(errorMsg)
+                    Log.d("LoginViewModel", "Login error: $errorMsg")
                 }
             } catch (e: Exception) {
                 _loginState.value = ResultWrapper.Error(e.message ?: "Unknown error")
+                Log.d("LoginViewModel", "Login exception: ${e.message}")
             }
         }
     }

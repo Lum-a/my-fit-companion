@@ -10,13 +10,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,6 +36,10 @@ import com.example.myfitcompanion.api.model.RegisterRequest
 import com.example.myfitcompanion.components.GradientButton
 import com.example.myfitcompanion.utils.ResultWrapper
 
+// Define gold and black colors
+private val Gold = Color(0xFFFFD700)
+private val DarkBackground = Color(0xFF121212)
+
 @Composable
 fun RegisterScreen(
     modifier: Modifier = Modifier,
@@ -43,9 +47,13 @@ fun RegisterScreen(
 ) {
     val state by viewModel.registerState.collectAsStateWithLifecycle()
 
-    var name by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+    val name by viewModel.name.collectAsStateWithLifecycle()
+    val email by viewModel.email.collectAsStateWithLifecycle()
+    val password by viewModel.password.collectAsStateWithLifecycle()
+    val isEmailValid by viewModel.isEmailValid.collectAsStateWithLifecycle()
+    val isPasswordValid by viewModel.isPasswordValid.collectAsStateWithLifecycle()
+    val canRegister by viewModel.canRegister.collectAsStateWithLifecycle()
+
     var height by remember { mutableStateOf("") }
     var weight by remember { mutableStateOf("") }
     var bodyFat by remember { mutableStateOf("") }
@@ -54,97 +62,195 @@ fun RegisterScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
+            .background(DarkBackground)
             .padding(16.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Register", style = MaterialTheme.typography.headlineMedium)
+        Text("Register", style = MaterialTheme.typography.headlineMedium.copy(color = Gold))
 
         OutlinedTextField(
             value = name,
-            onValueChange = { name = it },
-            label = { Text("Name") },
-            singleLine = true
+            onValueChange = { viewModel.onNameChanged(it) },
+            label = { Text("Name", color = Color.Gray) },
+            singleLine = true,
+            isError = name.isBlank(),
+            modifier = Modifier.fillMaxWidth(),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = Gold,
+                unfocusedBorderColor = Color.Gray,
+                cursorColor = Gold,
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.White
+            )
         )
+        if (name.isBlank()) {
+            Text(
+                text = "Name is required",
+                color = Color.Red,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.align(Alignment.Start).padding(start = 16.dp, top = 2.dp)
+            )
+        }
 
         OutlinedTextField(
             value = email,
-            onValueChange = { email = it },
-            label = { Text("Email") },
+            onValueChange = { viewModel.onEmailChanged(it) },
+            label = { Text("Email", color = Color.Gray) },
             singleLine = true,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+            isError = !isEmailValid,
+            modifier = Modifier.fillMaxWidth(),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = if (isEmailValid) Gold else Color.Red,
+                unfocusedBorderColor = if (isEmailValid) Color.Gray else Color.Red,
+                cursorColor = Gold,
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.White,
+                errorTextColor = Color.White,
+                disabledTextColor = Color.White,
+                focusedPlaceholderColor = Color.White,
+                unfocusedPlaceholderColor = Color.White
+            )
         )
+        if (!isEmailValid) {
+            Text(
+                text = "Invalid email address",
+                color = Color.Red,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.align(Alignment.Start).padding(start = 16.dp, top = 2.dp)
+            )
+        }
 
         OutlinedTextField(
             value = password,
-            onValueChange = { password = it },
-            label = { Text("Password") },
+            onValueChange = { viewModel.onPasswordChanged(it) },
+            label = { Text("Password", color = Color.Gray) },
             singleLine = true,
-            visualTransformation = PasswordVisualTransformation()
+            visualTransformation = PasswordVisualTransformation(),
+            isError = !isPasswordValid,
+            modifier = Modifier.fillMaxWidth(),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = if (!isPasswordValid) Color.Red else Gold,
+                unfocusedBorderColor = if (!isPasswordValid) Color.Red else Color.Gray,
+                cursorColor = Gold,
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.White,
+                errorTextColor = Color.White,
+                disabledTextColor = Color.White,
+                focusedPlaceholderColor = Color.White,
+                unfocusedPlaceholderColor = Color.White
+            )
         )
+        if (!isPasswordValid && password.isNotEmpty()) {
+            Text(
+                text = "Password must be at least 8 characters, include uppercase, lowercase, and a number",
+                color = Color.Red,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.align(Alignment.Start).padding(start = 16.dp, top = 2.dp)
+            )
+        }
 
         OutlinedTextField(
             value = height,
             onValueChange = { height = it },
-            label = { Text("Height (cm)") },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+            label = { Text("Height (cm)", color = Color.Gray) },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = Gold,
+                unfocusedBorderColor = Color.Gray,
+                cursorColor = Gold,
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.White
+            ),
+            modifier = Modifier.fillMaxWidth()
         )
 
         OutlinedTextField(
             value = weight,
             onValueChange = { weight = it },
-            label = { Text("Weight (kg)") },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+            label = { Text("Weight (kg)", color = Color.Gray) },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = Gold,
+                unfocusedBorderColor = Color.Gray,
+                cursorColor = Gold,
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.White
+            ),
+            modifier = Modifier.fillMaxWidth()
         )
 
         OutlinedTextField(
             value = bodyFat,
             onValueChange = { bodyFat = it },
-            label = { Text("Body Fat (%)") },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+            label = { Text("Body Fat (%)", color = Color.Gray) },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = Gold,
+                unfocusedBorderColor = Color.Gray,
+                cursorColor = Gold,
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.White
+            ),
+            modifier = Modifier.fillMaxWidth()
         )
 
         OutlinedTextField(
             value = goal,
             onValueChange = { goal = it },
-            label = { Text("Goal") }
+            label = { Text("Goal", color = Color.Gray) },
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = Gold,
+                unfocusedBorderColor = Color.Gray,
+                cursorColor = Gold,
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.White
+            ),
+            modifier = Modifier.fillMaxWidth()
         )
 
         VerticalSpace(modifier, 16.dp)
 
         when (state) {
             is ResultWrapper.Initial -> {}
-            is ResultWrapper.Loading -> CircularProgressIndicator()
+            is ResultWrapper.Loading -> CircularProgressIndicator(color = Gold)
             is ResultWrapper.Error -> {
                 Text(
                     text = "Error: ${(state as ResultWrapper.Error).message}",
-                    color = MaterialTheme.colorScheme.error
+                    color = Color.Red
                 )
             }
             is ResultWrapper.Success -> {
                 Text(
                     text = "Registration Successful!",
-                    color = MaterialTheme.colorScheme.primary
+                    color = Gold
                 )
             }
-
-
         }
 
         Button(
             onClick = {
                 viewModel.register(
                     RegisterRequest(
-                    name = name,
-                    email = email,
-                    password = password,
-                    height = height.toFloatOrNull(),
-                    weight = weight.toFloatOrNull(),
-                    bodyFat = bodyFat.toFloatOrNull(),
-                    goal = goal.ifBlank { null }
-                ))
+                        name = name,
+                        email = email,
+                        password = password,
+                        height = height.toFloatOrNull(),
+                        weight = weight.toFloatOrNull(),
+                        bodyFat = bodyFat.toFloatOrNull(),
+                        goal = goal.ifBlank { null }
+                    )
+                )
             },
-            modifier = modifier.fillMaxWidth()
+            modifier = modifier.fillMaxWidth(),
+            enabled = canRegister,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Gold,
+                contentColor = Color.Black,
+                disabledContainerColor = Color.Gray,
+                disabledContentColor = Color.White
+            )
         ) {
             Text("Register")
         }
@@ -164,14 +270,14 @@ fun RegisterScreenTest(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFF121212))
+            .background(DarkBackground)
             .padding(24.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
             text = "Create Account ✨",
-            style = MaterialTheme.typography.headlineSmall.copy(color = Color.White),
+            style = MaterialTheme.typography.headlineSmall.copy(color = Gold),
             modifier = Modifier.padding(bottom = 32.dp)
         )
 
@@ -181,10 +287,11 @@ fun RegisterScreenTest(
             label = { Text("Full Name", color = Color.Gray) },
             singleLine = true,
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = Color(0xFFFFA726),
+                focusedBorderColor = Gold,
                 unfocusedBorderColor = Color.Gray,
-                cursorColor = Color(0xFFFFA726),
-                focusedTextColor = Color.White
+                cursorColor = Gold,
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.White
             ),
             modifier = Modifier.fillMaxWidth()
         )
@@ -197,10 +304,11 @@ fun RegisterScreenTest(
             label = { Text("Email", color = Color.Gray) },
             singleLine = true,
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = Color(0xFFFFA726),
+                focusedBorderColor = Gold,
                 unfocusedBorderColor = Color.Gray,
-                cursorColor = Color(0xFFFFA726),
-                focusedTextColor = Color.White
+                cursorColor = Gold,
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.White
             ),
             modifier = Modifier.fillMaxWidth()
         )
@@ -214,27 +322,36 @@ fun RegisterScreenTest(
             singleLine = true,
             visualTransformation = PasswordVisualTransformation(),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = Color(0xFFFFA726),
+                focusedBorderColor = Gold,
                 unfocusedBorderColor = Color.Gray,
-                cursorColor = Color(0xFFFFA726),
-                focusedTextColor = Color.White
+                cursorColor = Gold,
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.White
             ),
             modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        GradientButton(
-            text = "Register",
-            onClick = { onRegisterClick(name, email, password) }
-        )
+        Button(
+            onClick = { onRegisterClick(name, email, password) },
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Gold,
+                contentColor = Color.Black,
+                disabledContainerColor = Color.Gray,
+                disabledContentColor = Color.White
+            )
+        ) {
+            Text("Register")
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 
         TextButton(onClick = onNavigateToLogin) {
             Text(
                 text = "Already have an account? Login",
-                color = Color(0xFFFFCC80)
+                color = Gold
             )
         }
     }
