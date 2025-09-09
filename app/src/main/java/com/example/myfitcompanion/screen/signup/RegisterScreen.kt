@@ -107,8 +107,10 @@ fun RegisterScreen(
                 cursorColor = Gold,
                 focusedTextColor = Color.White,
                 unfocusedTextColor = Color.White,
-                focusedPlaceholderColor = Color.White, // Ensure placeholder text is white when focused
-                unfocusedPlaceholderColor = Color.White // Ensure placeholder text is white when unfocused
+                errorTextColor = Color.White,
+                disabledTextColor = Color.White,
+                focusedPlaceholderColor = Color.White,
+                unfocusedPlaceholderColor = Color.White
             )
         )
         if (!isEmailValid) {
@@ -134,8 +136,10 @@ fun RegisterScreen(
                 cursorColor = Gold,
                 focusedTextColor = Color.White,
                 unfocusedTextColor = Color.White,
-                focusedPlaceholderColor = Color.White, // Ensure placeholder text is white when focused
-                unfocusedPlaceholderColor = Color.White // Ensure placeholder text is white when unfocused
+                errorTextColor = Color.White,
+                disabledTextColor = Color.White,
+                focusedPlaceholderColor = Color.White,
+                unfocusedPlaceholderColor = Color.White
             )
         )
         if (!isPasswordValid && password.isNotEmpty()) {
