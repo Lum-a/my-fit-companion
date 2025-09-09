@@ -20,7 +20,6 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -29,7 +28,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
@@ -39,6 +37,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.myfitcompanion.components.GradientButton
 import com.example.myfitcompanion.components.VerticalSpace
 import com.example.myfitcompanion.utils.ResultWrapper
+
+// Define gold and black colors
+private val Gold = Color(0xFFFFD700)
+private val DarkBackground = Color(0xFF121212)
 
 @Composable
 fun LoginScreen(
@@ -50,7 +52,7 @@ fun LoginScreen(
     val isEmailValid by viewModel.isEmailValid.collectAsStateWithLifecycle()
 
     Column(
-        modifier = modifier.fillMaxSize().padding(16.dp),
+        modifier = modifier.fillMaxSize().background(DarkBackground).padding(16.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -59,12 +61,15 @@ fun LoginScreen(
         OutlinedTextField(
             value = email,
             onValueChange = { viewModel.onEmailChanged(it) },
-            label = { Text("Email") },
+            label = { Text("Email", color = Color.Gray) },
             isError = !isEmailValid,
             modifier = Modifier.fillMaxWidth(),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = if (!isEmailValid) Color.Red else MaterialTheme.colorScheme.primary,
-                unfocusedBorderColor = if (!isEmailValid) Color.Red else MaterialTheme.colorScheme.outline
+                focusedBorderColor = if (!isEmailValid) Color.Red else Gold,
+                unfocusedBorderColor = if (!isEmailValid) Color.Red else Color.Gray,
+                cursorColor = Gold,
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.White
             )
         )
         if (!isEmailValid && email.isNotEmpty()) {
@@ -78,18 +83,34 @@ fun LoginScreen(
 
         VerticalSpace(modifier, 8.dp)
 
-        TextField(
+        OutlinedTextField(
             value = password,
             onValueChange = { password = it },
-            label = { Text("Password") },
-            visualTransformation = PasswordVisualTransformation()
+            label = { Text("Password", color = Color.Gray) },
+            singleLine = true,
+            visualTransformation = PasswordVisualTransformation(),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = Gold,
+                unfocusedBorderColor = Color.Gray,
+                cursorColor = Gold,
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.White
+            ),
+            modifier = Modifier.fillMaxWidth()
         )
 
         VerticalSpace(modifier, 16.dp)
 
         Button(
             onClick = { viewModel.login(password = password) },
-            enabled = isEmailValid && email.isNotEmpty() && password.isNotEmpty()
+            enabled = isEmailValid && email.isNotEmpty() && password.isNotEmpty(),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Gold,
+                contentColor = Color.Black,
+                disabledContainerColor = Color.Gray,
+                disabledContentColor = Color.White
+            ),
+            modifier = Modifier.fillMaxWidth()
         ) {
             Text("Login")
         }
@@ -98,9 +119,9 @@ fun LoginScreen(
 
         when (loginState) {
             is ResultWrapper.Initial -> {}
-            is ResultWrapper.Loading -> CircularProgressIndicator()
-            is ResultWrapper.Success -> Text("Login Successful!")
-            is ResultWrapper.Error -> Text("Error: ${(loginState as ResultWrapper.Error).message}")
+            is ResultWrapper.Loading -> CircularProgressIndicator(color = Gold)
+            is ResultWrapper.Success -> Text("Login Successful!", color = Gold)
+            is ResultWrapper.Error -> Text("Error: ${(loginState as ResultWrapper.Error).message}", color = Color.Red)
         }
     }
 }
@@ -117,14 +138,14 @@ fun LoginScreenTest(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFF121212))
+            .background(DarkBackground)
             .padding(24.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
             text = "Welcome Back 👋",
-            style = MaterialTheme.typography.headlineSmall.copy(color = Color.White),
+            style = MaterialTheme.typography.headlineSmall.copy(color = Gold),
             modifier = Modifier.padding(bottom = 32.dp)
         )
 
@@ -135,9 +156,9 @@ fun LoginScreenTest(
             label = { Text("Email", color = Color.Gray) },
             singleLine = true,
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = Color(0xFFFFA726),
+                focusedBorderColor = Gold,
                 unfocusedBorderColor = Color.Gray,
-                cursorColor = Color(0xFFFFA726),
+                cursorColor = Gold,
                 focusedTextColor = Color.White,
                 unfocusedTextColor = Color.White
             ),
@@ -154,28 +175,36 @@ fun LoginScreenTest(
             singleLine = true,
             visualTransformation = PasswordVisualTransformation(),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = Color(0xFFFFA726),
+                focusedBorderColor = Gold,
                 unfocusedBorderColor = Color.Gray,
-                cursorColor = Color(0xFFFFA726),
-                focusedTextColor = Color.White
+                cursorColor = Gold,
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.White
             ),
             modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Gradient Login button
-        GradientButton(
-            text = "Login",
-            onClick = { onLoginClick(email, password) }
-        )
+        Button(
+            onClick = { onLoginClick(email, password) },
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Gold,
+                contentColor = Color.Black,
+                disabledContainerColor = Color.Gray,
+                disabledContentColor = Color.White
+            )
+        ) {
+            Text("Login")
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 
         TextButton(onClick = onNavigateToRegister) {
             Text(
                 text = "Don’t have an account? Register",
-                color = Color(0xFFFFCC80)
+                color = Gold
             )
         }
     }

@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.myfitcompanion.api.token.TokenManager
 import com.example.myfitcompanion.model.entities.User
 import com.example.myfitcompanion.api.model.RegisterRequest
+import com.example.myfitcompanion.api.model.UserResponse
 import com.example.myfitcompanion.repository.UserRepository
 import com.example.myfitcompanion.utils.ResultWrapper
 import com.example.myfitcompanion.utils.isValidEmail
@@ -83,8 +84,9 @@ class RegisterViewModel @Inject constructor(
                     val body = response.body()
                     if(body != null) {
                         tokenManager.saveToken(body.token)
-                        userRepository.insertUser(body.user)
-                        _registerState.value = ResultWrapper.Success(body.user)
+                        val user:User = parseUser(body.user)
+                        userRepository.insertUser(user)
+                        _registerState.value = ResultWrapper.Success(user)
                         Log.d(TAG, "Registration success: ${body.user}")
                     } else {
                         _registerState.value = ResultWrapper.Error("Empty response")
@@ -100,6 +102,20 @@ class RegisterViewModel @Inject constructor(
                 Log.d(TAG, "Registration exception: ${e.message}")
             }
         }
+    }
+
+    private fun parseUser(userResponse: UserResponse): User {
+        return User(
+            id = userResponse.id,
+            name = userResponse.name,
+            email = userResponse.email,
+            height = userResponse.height,
+            weight = userResponse.weight,
+            bodyFat = userResponse.bodyFat,
+            goal = userResponse.goal,
+            role = userResponse.role,
+            createdAt = userResponse.createdAt
+        )
     }
 
 }

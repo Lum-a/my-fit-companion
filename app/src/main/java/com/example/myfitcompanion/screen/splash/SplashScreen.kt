@@ -3,10 +3,12 @@ package com.example.myfitcompanion.screen.splash
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -56,14 +58,30 @@ fun SplashScreen(
             progress = progress
         )
         if (showButtons) {
+            // Define gold color
+            val Gold = Color(0xFFFFD700)
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 64.dp)
             ) {
-                Button(onClick = onNavigateToLogin, modifier = Modifier.fillMaxWidth(0.7f)) {
+                Button(
+                    onClick = onNavigateToLogin,
+                    modifier = Modifier.fillMaxWidth(0.7f),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Gold,
+                        contentColor = Color.Black
+                    )
+                ) {
                     Text("Log In")
                 }
-                Button(onClick = onNavigateToRegister, modifier = Modifier.fillMaxWidth(0.7f).padding(top = 16.dp)) {
+                Button(
+                    onClick = onNavigateToRegister,
+                    modifier = Modifier.fillMaxWidth(0.7f).padding(top = 16.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Gold,
+                        contentColor = Color.Black
+                    )
+                ) {
                     Text("Register")
                 }
             }
