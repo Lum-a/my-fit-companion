@@ -18,6 +18,7 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,8 +34,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.myfitcompanion.components.VerticalSpace
 import com.example.myfitcompanion.api.model.RegisterRequest
-import com.example.myfitcompanion.components.GradientButton
 import com.example.myfitcompanion.utils.ResultWrapper
+import kotlinx.coroutines.delay
 
 // Define gold and black colors
 private val Gold = Color(0xFFFFD700)
@@ -43,7 +44,8 @@ private val DarkBackground = Color(0xFF121212)
 @Composable
 fun RegisterScreen(
     modifier: Modifier = Modifier,
-    viewModel: RegisterViewModel = hiltViewModel()
+    viewModel: RegisterViewModel = hiltViewModel(),
+    onRegisterSucceed: () -> Unit = {}
 ) {
     val state by viewModel.registerState.collectAsStateWithLifecycle()
 
@@ -212,12 +214,12 @@ fun RegisterScreen(
 
         VerticalSpace(modifier, 16.dp)
 
-        when (state) {
+        when (val currentState = state) {
             is ResultWrapper.Initial -> {}
             is ResultWrapper.Loading -> CircularProgressIndicator(color = Gold)
             is ResultWrapper.Error -> {
                 Text(
-                    text = "Error: ${(state as ResultWrapper.Error).message}",
+                    text = "Error: ${currentState.message}",
                     color = Color.Red
                 )
             }
@@ -226,6 +228,11 @@ fun RegisterScreen(
                     text = "Registration Successful!",
                     color = Gold
                 )
+                CircularProgressIndicator()
+                LaunchedEffect(currentState) {
+                    delay(1000)
+                    onRegisterSucceed()
+                }
             }
         }
 

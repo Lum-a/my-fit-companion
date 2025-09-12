@@ -38,7 +38,7 @@ fun SplashScreen(
     // Navigate after animation finishes if logged in, else show buttons
     LaunchedEffect(progress, isLoggedIn) {
         if (progress >= 1f) {
-            if (isLoggedIn == true) {
+            if (isLoggedIn) {
                 onNavigateToHome()
             } else {
                 showButtons = true

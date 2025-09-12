@@ -19,6 +19,10 @@ import com.example.myfitcompanion.screen.trainer.TrainerScreen
 
 @Composable
 fun MyFitNavigation(navController: NavHostController, padding: PaddingValues) {
+
+    fun navigate(route: Any) {
+        return navController.navigate(route)
+    }
     NavHost(
         navController = navController,
         startDestination = Screen.Splash,
@@ -26,13 +30,21 @@ fun MyFitNavigation(navController: NavHostController, padding: PaddingValues) {
     ) {
         composable<Screen.Splash> {
             SplashScreen(
-                onNavigateToHome = { navController.navigate(Screen.Home) },
-                onNavigateToLogin = { navController.navigate(Screen.Login) },
-                onNavigateToRegister = { navController.navigate(Screen.Register) }
+                onNavigateToHome = { navigate(Screen.Home) },
+                onNavigateToLogin = { navigate(Screen.Login) },
+                onNavigateToRegister = { navigate(Screen.Register) }
             )
         }
-        composable<Screen.Login> { LoginScreen() }
-        composable<Screen.Register> { RegisterScreen() }
+        composable<Screen.Login> {
+            LoginScreen(
+                onLoginSucceed = { navigate(Screen.Home) }
+            )
+        }
+        composable<Screen.Register> {
+            RegisterScreen(
+                onRegisterSucceed = { navigate(Screen.Home) }
+            )
+        }
         composable<Screen.Profile> { ProfileScreen() }
         composable<Screen.Home> {
             HomeScreen(

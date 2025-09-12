@@ -44,7 +44,7 @@ class ProfileViewModel @Inject constructor(
                         if (mergedUser != null) {
                             userDao.updateUserDetails(mergedUser)
                         }
-                        _updateState.value = ResultWrapper.Success(response.body())
+                        _updateState.value = ResultWrapper.Success(updatedUser)
                     }
 
                 } else {

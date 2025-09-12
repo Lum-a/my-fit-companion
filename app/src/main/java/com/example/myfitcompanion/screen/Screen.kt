@@ -2,6 +2,7 @@ package com.example.myfitcompanion.screen
 
 import kotlinx.serialization.Serializable
 
+@Serializable
 sealed class Screen {
     @Serializable
     data object Splash: Screen()
