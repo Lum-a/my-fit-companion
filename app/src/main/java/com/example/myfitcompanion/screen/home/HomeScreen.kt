@@ -26,6 +26,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -35,15 +36,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.myfitcompanion.api.model.UserResponse
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel(),
-    userResponse: UserResponse,
     onLogout: () -> Unit = {}
 ) {
+    val userData by viewModel.user.collectAsStateWithLifecycle()
+
     Column(
         modifier = modifier.fillMaxWidth().padding(20.dp),
         horizontalAlignment = Alignment.End
@@ -62,7 +64,7 @@ fun HomeScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement =  Arrangement.Center
     ) {
-        Text( text = "Welcome ${userResponse.name}", fontSize = 25.sp)
+        Text( text = "Welcome ${userData?.name}", fontSize = 25.sp)
     }
 
 }

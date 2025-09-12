@@ -14,7 +14,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.airbnb.lottie.compose.*
 import com.example.myfitcompanion.R
-import com.example.myfitcompanion.api.model.UserResponse
 import com.example.myfitcompanion.ui.theme.darkBackground
 import com.example.myfitcompanion.utils.AuthViewModel
 
@@ -23,7 +22,7 @@ import com.example.myfitcompanion.utils.AuthViewModel
 fun SplashScreen(
     modifier: Modifier = Modifier,
     viewModel: AuthViewModel = hiltViewModel(),
-    onNavigateToHome: suspend (UserResponse) -> Unit = {},
+    onNavigateToHome: () -> Unit = {},
     onNavigateToLogin: () -> Unit = {},
     onNavigateToRegister: () -> Unit = {}
 ) {
@@ -40,7 +39,7 @@ fun SplashScreen(
     LaunchedEffect(progress, isLoggedIn) {
         if (progress >= 1f) {
             if (isLoggedIn) {
-                onNavigateToHome(viewModel.getUser().asResponse())
+                onNavigateToHome()
             } else {
                 showButtons = true
             }

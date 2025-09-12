@@ -34,7 +34,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.myfitcompanion.components.VerticalSpace
 import com.example.myfitcompanion.api.model.RegisterRequest
-import com.example.myfitcompanion.api.model.UserResponse
 import com.example.myfitcompanion.utils.ResultWrapper
 import kotlinx.coroutines.delay
 
@@ -46,7 +45,7 @@ private val DarkBackground = Color(0xFF121212)
 fun RegisterScreen(
     modifier: Modifier = Modifier,
     viewModel: RegisterViewModel = hiltViewModel(),
-    onRegisterSucceed: (UserResponse) -> Unit = {}
+    onRegisterSucceed: () -> Unit = {}
 ) {
     val state by viewModel.registerState.collectAsStateWithLifecycle()
 
@@ -232,7 +231,7 @@ fun RegisterScreen(
                 CircularProgressIndicator()
                 LaunchedEffect(currentState) {
                     delay(1000)
-                    onRegisterSucceed(currentState.data.asResponse())
+                    onRegisterSucceed()
                 }
             }
         }

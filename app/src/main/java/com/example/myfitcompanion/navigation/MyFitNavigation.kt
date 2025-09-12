@@ -7,8 +7,6 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.toRoute
-import com.example.myfitcompanion.api.model.UserResponse
 import com.example.myfitcompanion.screen.Screen
 import com.example.myfitcompanion.screen.classes.ClassesScreen
 import com.example.myfitcompanion.screen.splash.SplashScreen
@@ -32,28 +30,24 @@ fun MyFitNavigation(navController: NavHostController, padding: PaddingValues) {
     ) {
         composable<Screen.Splash> {
             SplashScreen(
-                onNavigateToHome = { user -> navigate(Screen.Home(user)) },
+                onNavigateToHome = { navigate(Screen.Home) },
                 onNavigateToLogin = { navigate(Screen.Login) },
                 onNavigateToRegister = { navigate(Screen.Register) }
             )
         }
         composable<Screen.Login> {
             LoginScreen(
-                onLoginSucceed = { user -> navigate(Screen.Home(user)) }
+                onLoginSucceed = { navigate(Screen.Home) }
             )
         }
         composable<Screen.Register> {
-            RegisterScreen(onRegisterSucceed = { user ->
-                navigate(Screen.Home(user))
-            })
+            RegisterScreen(
+                onRegisterSucceed = { navigate(Screen.Home) }
+            )
         }
         composable<Screen.Profile> { ProfileScreen() }
-        composable<Screen.Home>(
-            typeMap = mapOf(typeMapOf<UserResponse>())
-        ) {
-            val home: Screen.Home = it.toRoute()
+        composable<Screen.Home> {
             HomeScreen(
-                userResponse = home.userResponse,
                 onLogout = {
                     navController.navigate(Screen.Login) {
                         popUpTo(0) {

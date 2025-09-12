@@ -9,27 +9,31 @@ import com.example.myfitcompanion.screen.BottomNavItem
 import com.example.myfitcompanion.screen.Screen
 
 object Constants {
+    private const val HOME_LABEL = "Home"
+    private const val CLASS_LABEL = "Classes"
+    private const val PLANS_LABEL = "Plans"
+    private const val PROFILE_LABEL = "Profile"
 
     val bottomNavItems = listOf(
         BottomNavItem(
-            label = "Home",
+            label = HOME_LABEL,
             icon = Icons.Filled.Home,
             route = Screen.Home
         ),
 
         BottomNavItem(
-            label = "Classes",
+            label = CLASS_LABEL,
             icon = Icons.Filled.Menu,
             route = Screen.Classes
         ),
 
         BottomNavItem(
-            label = "Plans",
+            label = PLANS_LABEL,
             icon = Icons.Filled.ShoppingCart,
             route = Screen.Plan
         ),
         BottomNavItem(
-            label = "Profile",
+            label = PROFILE_LABEL,
             icon = Icons.Filled.Person,
             route = Screen.Profile
         )

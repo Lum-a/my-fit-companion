@@ -30,7 +30,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.myfitcompanion.api.model.UserResponse
 import com.example.myfitcompanion.components.VerticalSpace
 import com.example.myfitcompanion.utils.ResultWrapper
 import kotlinx.coroutines.delay
@@ -43,7 +42,7 @@ private val DarkBackground = Color(0xFF121212)
 fun LoginScreen(
     modifier: Modifier = Modifier,
     viewModel: LoginViewModel = hiltViewModel(),
-    onLoginSucceed: (UserResponse) -> Unit = {}
+    onLoginSucceed: () -> Unit = {}
 ) {
     val loginState by viewModel.loginState.collectAsStateWithLifecycle()
     val email by viewModel.email.collectAsStateWithLifecycle()
@@ -121,7 +120,7 @@ fun LoginScreen(
             is ResultWrapper.Success -> { Text(text = "Login Successful")
                 LaunchedEffect(state) {
                     delay(1000)
-                    onLoginSucceed(state.data)
+                    onLoginSucceed()
                 }
             }
             is ResultWrapper.Error -> Text("Error: ${(loginState as ResultWrapper.Error).message}", color = Color.Red)

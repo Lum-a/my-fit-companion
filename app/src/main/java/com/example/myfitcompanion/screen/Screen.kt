@@ -1,6 +1,5 @@
 package com.example.myfitcompanion.screen
 
-import com.example.myfitcompanion.api.model.UserResponse
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -15,7 +14,7 @@ sealed class Screen {
     data object Register: Screen()
 
     @Serializable
-    data class Home(val userResponse: UserResponse): Screen()
+    data object Home: Screen()
 
     @Serializable
     data object Profile: Screen()
