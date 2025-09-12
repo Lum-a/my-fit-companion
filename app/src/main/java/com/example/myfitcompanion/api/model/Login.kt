@@ -1,6 +1,5 @@
 package com.example.myfitcompanion.api.model
 
-import com.example.myfitcompanion.model.entities.User
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
@@ -15,9 +14,9 @@ data class LoginRequest(
 @JsonClass(generateAdapter = true)
 data class LoginResponse(
     @Json(name = "message")
-    val message: String,
+    val message: String?,
     @Json(name = "token")
     val token: String,
     @Json(name = "user")
-    val user: User
+    val user: UserResponse
 )

@@ -22,8 +22,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.myfitcompanion.navigation.MyFitNavigation
-import com.example.myfitcompanion.utils.AuthViewModel
 import com.example.myfitcompanion.ui.theme.MyFitCompanionTheme
+import com.example.myfitcompanion.ui.theme.darkBackground
+import com.example.myfitcompanion.utils.AuthViewModel
 import com.example.myfitcompanion.utils.Constants
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -47,8 +48,8 @@ fun MyFitApp(
     val viewModel = hiltViewModel<AuthViewModel>()
     val isUserLoggedIn by viewModel.isLoggedIn.collectAsState()
 
-    Surface(modifier = modifier) {
-        Scaffold(
+    Surface {
+        Scaffold(containerColor = darkBackground,
             bottomBar = {
                 if(isUserLoggedIn) {
                     BottomNavigationBar(navController)

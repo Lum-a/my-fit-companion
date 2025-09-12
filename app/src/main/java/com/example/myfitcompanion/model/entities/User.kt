@@ -2,6 +2,7 @@ package com.example.myfitcompanion.model.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.example.myfitcompanion.api.model.UserResponse
 
 @Entity(tableName = "user")
 data class User(
@@ -14,4 +15,18 @@ data class User(
     val bodyFat: Float?,
     val goal: String?,
     val createdAt: String
-)
+) {
+    fun asResponse(): UserResponse {
+        return UserResponse(
+            id = id,
+            name = name,
+            email = email,
+            role = role,
+            height = height,
+            weight = weight,
+            bodyFat = bodyFat,
+            goal = goal,
+            createdAt = createdAt
+        )
+    }
+}

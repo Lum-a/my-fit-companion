@@ -3,8 +3,8 @@ package com.example.myfitcompanion.screen.login
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.myfitcompanion.api.model.UserResponse
 import com.example.myfitcompanion.api.token.TokenManager
-import com.example.myfitcompanion.model.entities.User
 import com.example.myfitcompanion.repository.UserRepository
 import com.example.myfitcompanion.utils.ResultWrapper
 import com.example.myfitcompanion.utils.isValidEmail
@@ -20,8 +20,8 @@ class LoginViewModel @Inject constructor(
     private val tokenManager: TokenManager
 ) : ViewModel() {
 
-    private val _loginState = MutableStateFlow<ResultWrapper<User>>(ResultWrapper.Initial)
-    val loginState: StateFlow<ResultWrapper<User>> = _loginState
+    private val _loginState = MutableStateFlow<ResultWrapper<UserResponse>>(ResultWrapper.Initial)
+    val loginState: StateFlow<ResultWrapper<UserResponse>> = _loginState
 
     private val _email = MutableStateFlow("")
     val email: StateFlow<String> = _email
@@ -51,8 +51,9 @@ class LoginViewModel @Inject constructor(
                 if(response.isSuccessful) {
                     val loginData = response.body()
                     if(loginData != null) {
+                        val user = loginData.user.asUser()
                         tokenManager.saveToken(loginData.token)
-                        userRepository.insertUser(loginData.user)
+                        userRepository.insertUser(user)
                         _loginState.value = ResultWrapper.Success(loginData.user)
                         Log.d("LoginViewModel", "Login success: ${loginData.user}")
                     } else {

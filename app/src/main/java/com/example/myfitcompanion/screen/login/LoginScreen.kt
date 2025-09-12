@@ -2,15 +2,12 @@ package com.example.myfitcompanion.screen.login
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -19,9 +16,8 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,9 +30,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.myfitcompanion.components.GradientButton
+import com.example.myfitcompanion.api.model.UserResponse
 import com.example.myfitcompanion.components.VerticalSpace
 import com.example.myfitcompanion.utils.ResultWrapper
+import kotlinx.coroutines.delay
 
 // Define gold and black colors
 private val Gold = Color(0xFFFFD700)
@@ -45,7 +42,8 @@ private val DarkBackground = Color(0xFF121212)
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,
-    viewModel: LoginViewModel = hiltViewModel()
+    viewModel: LoginViewModel = hiltViewModel(),
+    onLoginSucceed: (UserResponse) -> Unit = {}
 ) {
     val loginState by viewModel.loginState.collectAsStateWithLifecycle()
     val email by viewModel.email.collectAsStateWithLifecycle()
@@ -117,10 +115,15 @@ fun LoginScreen(
 
         VerticalSpace(modifier, 16.dp)
 
-        when (loginState) {
+        when (val state = loginState) {
             is ResultWrapper.Initial -> {}
             is ResultWrapper.Loading -> CircularProgressIndicator(color = Gold)
-            is ResultWrapper.Success -> Text("Login Successful!", color = Gold)
+            is ResultWrapper.Success -> { Text(text = "Login Successful")
+                LaunchedEffect(state) {
+                    delay(1000)
+                    onLoginSucceed(state.data)
+                }
+            }
             is ResultWrapper.Error -> Text("Error: ${(loginState as ResultWrapper.Error).message}", color = Color.Red)
         }
     }

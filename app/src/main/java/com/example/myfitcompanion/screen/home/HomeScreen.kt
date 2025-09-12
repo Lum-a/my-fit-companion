@@ -33,17 +33,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.myfitcompanion.api.model.UserResponse
 
 @Composable
-@Preview
 fun HomeScreen(
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel(),
+    userResponse: UserResponse,
     onLogout: () -> Unit = {}
 ) {
     Column(
-        modifier = modifier.fillMaxSize().padding(20.dp),
+        modifier = modifier.fillMaxWidth().padding(20.dp),
         horizontalAlignment = Alignment.End
     ) {
 
@@ -53,6 +55,14 @@ fun HomeScreen(
             imageVector = Icons.AutoMirrored.Filled.ExitToApp,
             contentDescription = "logout"
         )
+    }
+
+    Column(
+        modifier = modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement =  Arrangement.Center
+    ) {
+        Text( text = "Welcome ${userResponse.name}", fontSize = 25.sp)
     }
 
 }
