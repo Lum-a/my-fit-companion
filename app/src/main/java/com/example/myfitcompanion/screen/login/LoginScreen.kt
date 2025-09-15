@@ -31,12 +31,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.myfitcompanion.components.VerticalSpace
+import com.example.myfitcompanion.ui.theme.myFitColors
 import com.example.myfitcompanion.utils.ResultWrapper
 import kotlinx.coroutines.delay
-
-// Define gold and black colors
-private val Gold = Color(0xFFFFD700)
-private val DarkBackground = Color(0xFF121212)
 
 @Composable
 fun LoginScreen(
@@ -49,7 +46,7 @@ fun LoginScreen(
     val isEmailValid by viewModel.isEmailValid.collectAsStateWithLifecycle()
 
     Column(
-        modifier = modifier.fillMaxSize().background(DarkBackground).padding(16.dp),
+        modifier = modifier.fillMaxSize().background(myFitColors.current.background).padding(16.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -62,9 +59,9 @@ fun LoginScreen(
             isError = !isEmailValid,
             modifier = Modifier.fillMaxWidth(),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = if (!isEmailValid) Color.Red else Gold,
+                focusedBorderColor = if (!isEmailValid) Color.Red else myFitColors.current.gold,
                 unfocusedBorderColor = if (!isEmailValid) Color.Red else Color.Gray,
-                cursorColor = Gold,
+                cursorColor = myFitColors.current.gold,
                 focusedTextColor = Color.White,
                 unfocusedTextColor = Color.White
             )
@@ -87,9 +84,9 @@ fun LoginScreen(
             singleLine = true,
             visualTransformation = PasswordVisualTransformation(),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = Gold,
+                focusedBorderColor = myFitColors.current.gold,
                 unfocusedBorderColor = Color.Gray,
-                cursorColor = Gold,
+                cursorColor = myFitColors.current.gold,
                 focusedTextColor = Color.White,
                 unfocusedTextColor = Color.White
             ),
@@ -102,7 +99,7 @@ fun LoginScreen(
             onClick = { viewModel.login(password = password) },
             enabled = isEmailValid && email.isNotEmpty() && password.isNotEmpty(),
             colors = ButtonDefaults.buttonColors(
-                containerColor = Gold,
+                containerColor = myFitColors.current.gold,
                 contentColor = Color.Black,
                 disabledContainerColor = Color.Gray,
                 disabledContentColor = Color.White
@@ -116,7 +113,7 @@ fun LoginScreen(
 
         when (val state = loginState) {
             is ResultWrapper.Initial -> {}
-            is ResultWrapper.Loading -> CircularProgressIndicator(color = Gold)
+            is ResultWrapper.Loading -> CircularProgressIndicator(color = myFitColors.current.gold)
             is ResultWrapper.Success -> { Text(text = "Login Successful")
                 LaunchedEffect(state) {
                     delay(1000)
@@ -140,14 +137,14 @@ fun LoginScreenTest(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(DarkBackground)
+            .background(myFitColors.current.background)
             .padding(24.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
             text = "Welcome Back 👋",
-            style = MaterialTheme.typography.headlineSmall.copy(color = Gold),
+            style = MaterialTheme.typography.headlineSmall.copy(color = myFitColors.current.gold),
             modifier = Modifier.padding(bottom = 32.dp)
         )
 
@@ -158,9 +155,9 @@ fun LoginScreenTest(
             label = { Text("Email", color = Color.Gray) },
             singleLine = true,
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = Gold,
+                focusedBorderColor = myFitColors.current.gold,
                 unfocusedBorderColor = Color.Gray,
-                cursorColor = Gold,
+                cursorColor = myFitColors.current.gold,
                 focusedTextColor = Color.White,
                 unfocusedTextColor = Color.White
             ),
@@ -177,9 +174,9 @@ fun LoginScreenTest(
             singleLine = true,
             visualTransformation = PasswordVisualTransformation(),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = Gold,
+                focusedBorderColor = myFitColors.current.gold,
                 unfocusedBorderColor = Color.Gray,
-                cursorColor = Gold,
+                cursorColor = myFitColors.current.gold,
                 focusedTextColor = Color.White,
                 unfocusedTextColor = Color.White
             ),
@@ -192,7 +189,7 @@ fun LoginScreenTest(
             onClick = { onLoginClick(email, password) },
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(
-                containerColor = Gold,
+                containerColor = myFitColors.current.gold,
                 contentColor = Color.Black,
                 disabledContainerColor = Color.Gray,
                 disabledContentColor = Color.White
@@ -206,7 +203,7 @@ fun LoginScreenTest(
         TextButton(onClick = onNavigateToRegister) {
             Text(
                 text = "Don’t have an account? Register",
-                color = Gold
+                color = myFitColors.current.gold
             )
         }
     }

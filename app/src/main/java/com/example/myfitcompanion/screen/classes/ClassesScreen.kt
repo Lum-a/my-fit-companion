@@ -32,9 +32,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.myfitcompanion.ui.theme.myFitColors
 
 @Preview
 @Composable
@@ -51,7 +53,7 @@ fun ClassesScreenTest(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(Color(0xFF121212)) // dark background
+            .background(myFitColors.current.background) // dark background
             .padding(16.dp)
     ) {
         Text(
@@ -84,14 +86,15 @@ fun FitnessClassCard(
             .fillMaxWidth()
             .height(180.dp)
             .clickable { onClick(fitnessClass) },
-        colors = CardDefaults.cardColors(containerColor = Color(0xFF1C1C1C)), // dark card
+        colors = CardDefaults.cardColors(containerColor = myFitColors.current.cardsGrey), // dark card
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(14.dp),
-            verticalArrangement = Arrangement.SpaceBetween
+            verticalArrangement = Arrangement.SpaceBetween,
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             // Gradient icon background
             Box(
@@ -99,7 +102,7 @@ fun FitnessClassCard(
                     .size(48.dp)
                     .background(
                         brush = Brush.linearGradient(
-                            colors = listOf(Color(0xFFFFA726), Color(0xFFFFEB3B)) // orange → yellow
+                            colors = listOf(myFitColors.current.orange, myFitColors.current.yellow) // orange → yellow
                         ),
                         shape = CircleShape
                     ),
@@ -113,18 +116,22 @@ fun FitnessClassCard(
                 )
             }
 
-            Column {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
                 Text(
                     text = fitnessClass.name,
                     style = MaterialTheme.typography.titleMedium.copy(color = Color.White),
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
+                    textAlign = TextAlign.Center
                 )
                 Text(
                     text = fitnessClass.description,
-                    style = MaterialTheme.typography.bodySmall.copy(color = Color(0xFFFFCC80)), // light orange
+                    style = MaterialTheme.typography.bodySmall.copy(color = myFitColors.current.lightOrange), // light orange
                     maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
+                    textAlign = TextAlign.Center
                 )
             }
         }
