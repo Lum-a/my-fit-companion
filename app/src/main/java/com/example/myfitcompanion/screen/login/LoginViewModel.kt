@@ -8,6 +8,7 @@ import com.example.myfitcompanion.api.token.TokenManager
 import com.example.myfitcompanion.repository.UserRepository
 import com.example.myfitcompanion.utils.ResultWrapper
 import com.example.myfitcompanion.utils.isValidEmail
+import com.example.myfitcompanion.utils.isValidPassword
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -23,24 +24,11 @@ class LoginViewModel @Inject constructor(
     private val _loginState = MutableStateFlow<ResultWrapper<UserResponse>>(ResultWrapper.Initial)
     val loginState: StateFlow<ResultWrapper<UserResponse>> = _loginState
 
-    private val _email = MutableStateFlow("")
-    val email: StateFlow<String> = _email
-
-    private val _isEmailValid = MutableStateFlow(true)
-    val isEmailValid: StateFlow<Boolean> = _isEmailValid
-
-    fun onEmailChanged(newEmail: String) {
-        Log.d("LoginViewModel", "Email changed: $newEmail")
-        _email.value = newEmail
-        val valid = isValidEmail(newEmail)
-        _isEmailValid.value = valid
-        Log.d("LoginViewModel", "Email valid: $valid")
-    }
-
-    fun login(email: String = _email.value, password: String) {
+    fun login(email: String, password: String) {
         Log.d("LoginViewModel", "Login called with email: $email")
-        if (!_isEmailValid.value) {
-            Log.d("LoginViewModel", "Login aborted: email is invalid")
+        if (!isValidEmail(email) ||
+            !isValidPassword(password)) {
+            Log.d("LoginViewModel", "Login aborted: email or password is invalid!")
             return
         }
         viewModelScope.launch {
