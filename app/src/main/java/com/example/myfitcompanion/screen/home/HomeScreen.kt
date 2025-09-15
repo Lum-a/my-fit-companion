@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.myfitcompanion.ui.theme.myFitColors
 
 @Composable
 fun HomeScreen(
@@ -83,7 +84,7 @@ fun HomeScreenTest(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFF121212)) // dark mode background
+            .background(myFitColors.current.background) // dark mode background
             .padding(16.dp)
     ) {
         // Welcome message
@@ -96,7 +97,7 @@ fun HomeScreenTest(
         // Membership card
         Card(
             shape = RoundedCornerShape(20.dp),
-            colors = CardDefaults.cardColors(containerColor = Color(0xFF1C1C1C)),
+            colors = CardDefaults.cardColors(containerColor = myFitColors.current.cardsGrey),
             elevation = CardDefaults.cardElevation(6.dp),
             modifier = Modifier
                 .fillMaxWidth()
@@ -113,7 +114,7 @@ fun HomeScreenTest(
                 Text(
                     text = if (membershipActive) "Active" else "Expired",
                     style = MaterialTheme.typography.bodyMedium.copy(
-                        color = if (membershipActive) Color(0xFFFFA726) else Color.Red
+                        color = if (membershipActive) myFitColors.current.orange else Color.Red
                     )
                 )
             }
@@ -176,7 +177,7 @@ fun QuickActionCard(
             .fillMaxWidth()
             .height(140.dp)
             .clickable { onClick() },
-        colors = CardDefaults.cardColors(containerColor = Color(0xFF1C1C1C)),
+        colors = CardDefaults.cardColors(containerColor = myFitColors.current.cardsGrey),
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
     ) {
         Column(
@@ -192,7 +193,7 @@ fun QuickActionCard(
                     .size(48.dp)
                     .background(
                         brush = Brush.linearGradient(
-                            listOf(Color(0xFFFFA726), Color(0xFFFFEB3B))
+                            listOf(myFitColors.current.orange, myFitColors.current.yellow)
                         ),
                         shape = CircleShape
                     ),

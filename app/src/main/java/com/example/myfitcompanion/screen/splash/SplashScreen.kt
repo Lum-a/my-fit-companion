@@ -15,6 +15,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.airbnb.lottie.compose.*
 import com.example.myfitcompanion.R
 import com.example.myfitcompanion.ui.theme.darkBackground
+import com.example.myfitcompanion.ui.theme.myFitColors
 import com.example.myfitcompanion.utils.AuthViewModel
 
 @Composable
@@ -58,8 +59,6 @@ fun SplashScreen(
             progress = progress
         )
         if (showButtons) {
-            // Define gold color
-            val Gold = Color(0xFFFFD700)
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 64.dp)
@@ -68,7 +67,7 @@ fun SplashScreen(
                     onClick = onNavigateToLogin,
                     modifier = Modifier.fillMaxWidth(0.7f),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Gold,
+                        containerColor = myFitColors.current.gold,
                         contentColor = Color.Black
                     )
                 ) {
@@ -78,7 +77,7 @@ fun SplashScreen(
                     onClick = onNavigateToRegister,
                     modifier = Modifier.fillMaxWidth(0.7f).padding(top = 16.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Gold,
+                        containerColor = myFitColors.current.gold,
                         contentColor = Color.Black
                     )
                 ) {

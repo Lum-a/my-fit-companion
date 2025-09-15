@@ -34,12 +34,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.myfitcompanion.components.VerticalSpace
 import com.example.myfitcompanion.api.model.RegisterRequest
+import com.example.myfitcompanion.ui.theme.myFitColors
 import com.example.myfitcompanion.utils.ResultWrapper
 import kotlinx.coroutines.delay
-
-// Define gold and black colors
-private val Gold = Color(0xFFFFD700)
-private val DarkBackground = Color(0xFF121212)
 
 @Composable
 fun RegisterScreen(
@@ -64,12 +61,12 @@ fun RegisterScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(DarkBackground)
+            .background(myFitColors.current.background)
             .padding(16.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Register", style = MaterialTheme.typography.headlineMedium.copy(color = Gold))
+        Text("Register", style = MaterialTheme.typography.headlineMedium.copy(color = myFitColors.current.gold))
 
         OutlinedTextField(
             value = name,
@@ -79,9 +76,9 @@ fun RegisterScreen(
             isError = name.isBlank(),
             modifier = Modifier.fillMaxWidth(),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = Gold,
+                focusedBorderColor = myFitColors.current.gold,
                 unfocusedBorderColor = Color.Gray,
-                cursorColor = Gold,
+                cursorColor = myFitColors.current.gold,
                 focusedTextColor = Color.White,
                 unfocusedTextColor = Color.White
             )
@@ -104,9 +101,9 @@ fun RegisterScreen(
             isError = !isEmailValid,
             modifier = Modifier.fillMaxWidth(),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = if (isEmailValid) Gold else Color.Red,
+                focusedBorderColor = if (isEmailValid) myFitColors.current.gold else Color.Red,
                 unfocusedBorderColor = if (isEmailValid) Color.Gray else Color.Red,
-                cursorColor = Gold,
+                cursorColor = myFitColors.current.gold,
                 focusedTextColor = Color.White,
                 unfocusedTextColor = Color.White,
                 errorTextColor = Color.White,
@@ -133,9 +130,9 @@ fun RegisterScreen(
             isError = !isPasswordValid,
             modifier = Modifier.fillMaxWidth(),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = if (!isPasswordValid) Color.Red else Gold,
+                focusedBorderColor = if (!isPasswordValid) Color.Red else myFitColors.current.gold,
                 unfocusedBorderColor = if (!isPasswordValid) Color.Red else Color.Gray,
-                cursorColor = Gold,
+                cursorColor = myFitColors.current.gold,
                 focusedTextColor = Color.White,
                 unfocusedTextColor = Color.White,
                 errorTextColor = Color.White,
@@ -159,9 +156,9 @@ fun RegisterScreen(
             label = { Text("Height (cm)", color = Color.Gray) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = Gold,
+                focusedBorderColor = myFitColors.current.gold,
                 unfocusedBorderColor = Color.Gray,
-                cursorColor = Gold,
+                cursorColor = myFitColors.current.gold,
                 focusedTextColor = Color.White,
                 unfocusedTextColor = Color.White
             ),
@@ -174,9 +171,9 @@ fun RegisterScreen(
             label = { Text("Weight (kg)", color = Color.Gray) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = Gold,
+                focusedBorderColor = myFitColors.current.gold,
                 unfocusedBorderColor = Color.Gray,
-                cursorColor = Gold,
+                cursorColor = myFitColors.current.gold,
                 focusedTextColor = Color.White,
                 unfocusedTextColor = Color.White
             ),
@@ -189,9 +186,9 @@ fun RegisterScreen(
             label = { Text("Body Fat (%)", color = Color.Gray) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = Gold,
+                focusedBorderColor = myFitColors.current.gold,
                 unfocusedBorderColor = Color.Gray,
-                cursorColor = Gold,
+                cursorColor = myFitColors.current.gold,
                 focusedTextColor = Color.White,
                 unfocusedTextColor = Color.White
             ),
@@ -203,9 +200,9 @@ fun RegisterScreen(
             onValueChange = { goal = it },
             label = { Text("Goal", color = Color.Gray) },
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = Gold,
+                focusedBorderColor = myFitColors.current.gold,
                 unfocusedBorderColor = Color.Gray,
-                cursorColor = Gold,
+                cursorColor = myFitColors.current.gold,
                 focusedTextColor = Color.White,
                 unfocusedTextColor = Color.White
             ),
@@ -216,7 +213,7 @@ fun RegisterScreen(
 
         when (val currentState = state) {
             is ResultWrapper.Initial -> {}
-            is ResultWrapper.Loading -> CircularProgressIndicator(color = Gold)
+            is ResultWrapper.Loading -> CircularProgressIndicator(color = myFitColors.current.gold)
             is ResultWrapper.Error -> {
                 Text(
                     text = "Error: ${currentState.message}",
@@ -226,7 +223,7 @@ fun RegisterScreen(
             is ResultWrapper.Success -> {
                 Text(
                     text = "Registration Successful!",
-                    color = Gold
+                    color = myFitColors.current.gold
                 )
                 CircularProgressIndicator()
                 LaunchedEffect(currentState) {
@@ -253,7 +250,7 @@ fun RegisterScreen(
             modifier = modifier.fillMaxWidth(),
             enabled = canRegister,
             colors = ButtonDefaults.buttonColors(
-                containerColor = Gold,
+                containerColor = myFitColors.current.gold,
                 contentColor = Color.Black,
                 disabledContainerColor = Color.Gray,
                 disabledContentColor = Color.White
@@ -277,14 +274,14 @@ fun RegisterScreenTest(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(DarkBackground)
+            .background(myFitColors.current.background)
             .padding(24.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
             text = "Create Account ✨",
-            style = MaterialTheme.typography.headlineSmall.copy(color = Gold),
+            style = MaterialTheme.typography.headlineSmall.copy(color = myFitColors.current.gold),
             modifier = Modifier.padding(bottom = 32.dp)
         )
 
@@ -294,9 +291,9 @@ fun RegisterScreenTest(
             label = { Text("Full Name", color = Color.Gray) },
             singleLine = true,
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = Gold,
+                focusedBorderColor = myFitColors.current.gold,
                 unfocusedBorderColor = Color.Gray,
-                cursorColor = Gold,
+                cursorColor = myFitColors.current.gold,
                 focusedTextColor = Color.White,
                 unfocusedTextColor = Color.White
             ),
@@ -311,9 +308,9 @@ fun RegisterScreenTest(
             label = { Text("Email", color = Color.Gray) },
             singleLine = true,
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = Gold,
+                focusedBorderColor = myFitColors.current.gold,
                 unfocusedBorderColor = Color.Gray,
-                cursorColor = Gold,
+                cursorColor = myFitColors.current.gold,
                 focusedTextColor = Color.White,
                 unfocusedTextColor = Color.White
             ),
@@ -329,9 +326,9 @@ fun RegisterScreenTest(
             singleLine = true,
             visualTransformation = PasswordVisualTransformation(),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = Gold,
+                focusedBorderColor = myFitColors.current.gold,
                 unfocusedBorderColor = Color.Gray,
-                cursorColor = Gold,
+                cursorColor = myFitColors.current.gold,
                 focusedTextColor = Color.White,
                 unfocusedTextColor = Color.White
             ),
@@ -344,7 +341,7 @@ fun RegisterScreenTest(
             onClick = { onRegisterClick(name, email, password) },
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(
-                containerColor = Gold,
+                containerColor = myFitColors.current.gold,
                 contentColor = Color.Black,
                 disabledContainerColor = Color.Gray,
                 disabledContentColor = Color.White
@@ -358,7 +355,7 @@ fun RegisterScreenTest(
         TextButton(onClick = onNavigateToLogin) {
             Text(
                 text = "Already have an account? Login",
-                color = Gold
+                color = myFitColors.current.gold
             )
         }
     }
