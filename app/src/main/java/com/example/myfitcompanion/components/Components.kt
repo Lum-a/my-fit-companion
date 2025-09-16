@@ -8,10 +8,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -26,11 +29,14 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.example.myfitcompanion.api.model.UserResponse
 import com.example.myfitcompanion.ui.theme.myFitColors
-import com.example.myfitcompanion.utils.isValidEmail
+import com.example.myfitcompanion.utils.ResultWrapper
+import kotlinx.coroutines.delay
 
 @Composable
 fun VerticalSpace(modifier: Modifier = Modifier, height: Dp) {
@@ -78,13 +84,17 @@ fun GradientButton(
 
 @Composable
 fun UserTextField(
+    modifier: Modifier = Modifier,
     input: String,
     label: String,
     onInputChange: (String) -> Unit,
-    inputError: Boolean,
-    onInputErrorChange: (Boolean) -> Unit,
-    modifier: Modifier = Modifier,
-    shouldFocus: Boolean = false
+    inputError: Boolean = false,
+    onInputErrorChange: (Boolean) -> Unit = {},
+    shouldFocus: Boolean = false,
+    errorMessage: String = "",
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
+    isValid: (input: String) -> Boolean = { false }
 ) {
     val focusRequester = remember { FocusRequester() }
 
@@ -100,14 +110,16 @@ fun UserTextField(
             onInputChange(it)
             onInputErrorChange(false)
         },
+        keyboardOptions = keyboardOptions,
         label = { Text(label, color = Color.Gray) },
         isError = inputError,
+        visualTransformation = visualTransformation,
         modifier = modifier
             .fillMaxWidth()
             .onFocusChanged { focusState ->
                 onInputErrorChange(
                     if (!focusState.isFocused && input.isNotEmpty()) {
-                        !isValidEmail(input )
+                        !isValid(input)
                     } else {
                         false
                     }
@@ -116,7 +128,7 @@ fun UserTextField(
             .focusRequester(focusRequester),
         colors = OutlinedTextFieldDefaults.colors(
             focusedBorderColor = if (inputError) MaterialTheme.colorScheme.error else myFitColors.current.gold,
-            unfocusedBorderColor = if (inputError) Color.Red else Color.Gray,
+            unfocusedBorderColor = if (inputError) MaterialTheme.colorScheme.error else Color.Gray,
             cursorColor = myFitColors.current.gold,
             focusedTextColor = Color.White,
             unfocusedTextColor = Color.White
@@ -125,13 +137,71 @@ fun UserTextField(
 
     if (inputError) {
         Text(
-            text = "Email is invalid",
-            color = Color.Red,
+            text = errorMessage,
+            color = MaterialTheme.colorScheme.error,
             style = MaterialTheme.typography.bodySmall,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 16.dp, top = 2.dp),
             textAlign = TextAlign.Start
         )
+    }
+}
+
+@Composable
+fun SubmitButton(
+    text: String,
+    enabled: Boolean,
+    isLoading: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Button(
+        onClick = onClick,
+        enabled = enabled && !isLoading,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = myFitColors.current.gold,
+            contentColor = Color.Black,
+            disabledContainerColor = Color.Gray,
+            disabledContentColor = Color.White
+        ),
+        modifier = modifier.fillMaxWidth()
+    ) {
+        if (isLoading) {
+            CircularProgressIndicator(
+                color = Color.Black,
+                strokeWidth = 2.dp,
+                modifier = Modifier.size(16.dp)
+            )
+        } else {
+            Text(text)
+        }
+    }
+}
+
+@Composable
+fun SubmitResponse(
+    state: ResultWrapper<UserResponse>,
+    delay: Long,
+    onSucceed: () -> Unit = {}
+) {
+    when (state) {
+        is ResultWrapper.Initial -> {}
+        is ResultWrapper.Loading -> {}
+        is ResultWrapper.Success -> {
+            LaunchedEffect(state) {
+                delay(delay)
+                onSucceed()
+            }
+        }
+
+        is ResultWrapper.Error -> {
+            Text(
+                text = state.message,
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Center
+            )
+        }
     }
 }

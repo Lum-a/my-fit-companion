@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myfitcompanion.api.token.TokenManager
-import com.example.myfitcompanion.model.entities.User
 import com.example.myfitcompanion.api.model.RegisterRequest
 import com.example.myfitcompanion.api.model.UserResponse
 import com.example.myfitcompanion.repository.UserRepository
@@ -27,7 +26,10 @@ class RegisterViewModel @Inject constructor(
     val registerState: StateFlow<ResultWrapper<UserResponse>> = _registerState
 
     fun register(registerRequest: RegisterRequest) {
-        if (!isValidEmail(registerRequest.email) || !isValidPassword(registerRequest.password)) {
+        if (!isValidEmail(registerRequest.email) ||
+            !isValidPassword(registerRequest.password) ||
+            registerRequest.name.isEmpty()
+        ) {
             Log.d(TAG, "Register aborted: email or password is invalid!")
             return
         }
