@@ -3,10 +3,8 @@ package com.example.myfitcompanion.screen.signup
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
@@ -16,7 +14,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -28,7 +25,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -46,12 +42,13 @@ fun RegisterScreen(
 ) {
     val state by viewModel.registerState.collectAsStateWithLifecycle()
 
-    val name by viewModel.name.collectAsStateWithLifecycle()
-    val email by viewModel.email.collectAsStateWithLifecycle()
-    val password by viewModel.password.collectAsStateWithLifecycle()
-    val isEmailValid by viewModel.isEmailValid.collectAsStateWithLifecycle()
-    val isPasswordValid by viewModel.isPasswordValid.collectAsStateWithLifecycle()
-    val canRegister by viewModel.canRegister.collectAsStateWithLifecycle()
+    var name by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+
+    val nameError by remember { mutableStateOf("") }
+    var emailError by remember { mutableStateOf(false) }
+    var passwordError by remember { mutableStateOf(false) }
 
     var height by remember { mutableStateOf("") }
     var weight by remember { mutableStateOf("") }
@@ -70,7 +67,7 @@ fun RegisterScreen(
 
         OutlinedTextField(
             value = name,
-            onValueChange = { viewModel.onNameChanged(it) },
+            onValueChange = { name = it },
             label = { Text("Name", color = Color.Gray) },
             singleLine = true,
             isError = name.isBlank(),
@@ -94,7 +91,7 @@ fun RegisterScreen(
 
         OutlinedTextField(
             value = email,
-            onValueChange = { viewModel.onEmailChanged(it) },
+            onValueChange = { email = it },
             label = { Text("Email", color = Color.Gray) },
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
@@ -257,106 +254,6 @@ fun RegisterScreen(
             )
         ) {
             Text("Register")
-        }
-    }
-}
-
-@Preview
-@Composable
-fun RegisterScreenTest(
-    onRegisterClick: (String, String, String) -> Unit = { _, _, _ -> },
-    onNavigateToLogin: () -> Unit = {}
-) {
-    var name by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(myFitColors.current.background)
-            .padding(24.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = "Create Account ✨",
-            style = MaterialTheme.typography.headlineSmall.copy(color = myFitColors.current.gold),
-            modifier = Modifier.padding(bottom = 32.dp)
-        )
-
-        OutlinedTextField(
-            value = name,
-            onValueChange = { name = it },
-            label = { Text("Full Name", color = Color.Gray) },
-            singleLine = true,
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = myFitColors.current.gold,
-                unfocusedBorderColor = Color.Gray,
-                cursorColor = myFitColors.current.gold,
-                focusedTextColor = Color.White,
-                unfocusedTextColor = Color.White
-            ),
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
-            label = { Text("Email", color = Color.Gray) },
-            singleLine = true,
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = myFitColors.current.gold,
-                unfocusedBorderColor = Color.Gray,
-                cursorColor = myFitColors.current.gold,
-                focusedTextColor = Color.White,
-                unfocusedTextColor = Color.White
-            ),
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text("Password", color = Color.Gray) },
-            singleLine = true,
-            visualTransformation = PasswordVisualTransformation(),
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = myFitColors.current.gold,
-                unfocusedBorderColor = Color.Gray,
-                cursorColor = myFitColors.current.gold,
-                focusedTextColor = Color.White,
-                unfocusedTextColor = Color.White
-            ),
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Button(
-            onClick = { onRegisterClick(name, email, password) },
-            modifier = Modifier.fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = myFitColors.current.gold,
-                contentColor = Color.Black,
-                disabledContainerColor = Color.Gray,
-                disabledContentColor = Color.White
-            )
-        ) {
-            Text("Register")
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        TextButton(onClick = onNavigateToLogin) {
-            Text(
-                text = "Already have an account? Login",
-                color = myFitColors.current.gold
-            )
         }
     }
 }
