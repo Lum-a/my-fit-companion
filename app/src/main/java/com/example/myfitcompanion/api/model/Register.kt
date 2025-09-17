@@ -19,7 +19,7 @@ data class RegisterRequest(
     @Json(name = "bodyFat")
     val bodyFat: Float? = null,
     @Json(name = "goal")
-    val goal: String? = null
+    val goal: Float? = null
 )
 
 @JsonClass(generateAdapter = true)
