@@ -1,7 +1,7 @@
 package com.example.myfitcompanion.utils
 
 fun isValidEmail(email: String): Boolean {
-    val regex = Regex("^[A-Za-z0-9._%+-]+@(gmail\\.com|outlook\\.com|yahoo\\.com)$")
+    val regex = Regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}\$")
     return regex.matches(email.trim()) && email.isNotEmpty()
 }
 
