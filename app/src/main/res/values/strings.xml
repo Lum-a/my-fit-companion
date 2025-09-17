@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">My Fit Companion</string>
+    <string name="invalid_password">Password must be at least 8 characters, include uppercase, lowercase, and a number!</string>
+    <string name="invalid_email">Email is invalid!</string>
+    <string name="invalid_name">Name must not be empty!</string>
 </resources>

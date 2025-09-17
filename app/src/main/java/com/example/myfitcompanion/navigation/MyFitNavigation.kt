@@ -9,6 +9,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.myfitcompanion.screen.Screen
 import com.example.myfitcompanion.screen.classes.ClassesScreen
+import com.example.myfitcompanion.screen.classes.WorkoutsScreen
 import com.example.myfitcompanion.screen.splash.SplashScreen
 import com.example.myfitcompanion.screen.home.HomeScreen
 import com.example.myfitcompanion.screen.login.LoginScreen
@@ -57,7 +58,7 @@ fun MyFitNavigation(navController: NavHostController, padding: PaddingValues) {
                 }
             )
         }
-        composable<Screen.Classes> { ClassesScreen()}
+        composable<Screen.Classes> { ClassesScreen() }
         composable<Screen.Trainer> { TrainerScreen() }
         composable<Screen.Plan> { PlanScreen() }
     }
