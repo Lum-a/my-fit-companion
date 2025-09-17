@@ -27,4 +27,7 @@ sealed class Screen {
 
     @Serializable
     data object Plan: Screen()
+
+    @Serializable
+    data object ChangePassword: Screen()
 }

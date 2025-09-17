@@ -9,11 +9,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import android.net.Uri
+import androidx.core.content.FileProvider
+import java.io.File
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import com.example.myfitcompanion.R
 import com.example.myfitcompanion.ui.theme.myFitColors
 import com.example.myfitcompanion.utils.ResultWrapper
 import com.example.myfitcompanion.utils.isValidPassword
@@ -21,7 +29,8 @@ import com.example.myfitcompanion.utils.isValidPassword
 @Composable
 fun ProfileScreen(
     modifier: Modifier = Modifier,
-    viewModel: ProfileViewModel = hiltViewModel()
+    viewModel: ProfileViewModel = hiltViewModel(),
+    onChangePassword: (() -> Unit)? = null // Add navigation lambda
 ) {
     val user by viewModel.user.collectAsStateWithLifecycle()
     val updateState by viewModel.updateState.collectAsStateWithLifecycle()
@@ -43,6 +52,15 @@ fun ProfileScreen(
         goal = user?.goal ?: ""
     }
 
+    val context = LocalContext.current
+    var cameraImageUri by remember { mutableStateOf<Uri?>(null) }
+    val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { success ->
+        if (success && cameraImageUri != null) {
+            // TODO: Upload to blob and update photoUrl
+            viewModel.uploadProfilePhoto(cameraImageUri!!, context)
+        }
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -53,15 +71,38 @@ fun ProfileScreen(
     ) {
         Text("Profile", style = MaterialTheme.typography.headlineMedium.copy(color = myFitColors.current.gold))
         Spacer(modifier = Modifier.height(16.dp))
-        // Profile photo
-        AsyncImage(
-            model = photoUrl,
-            contentDescription = "Profile Photo",
-            modifier = Modifier
-                .size(120.dp)
-                .clip(CircleShape)
-                .background(Color.Gray)
-        )
+        // Profile photo with camera button overlay
+        Box(modifier = Modifier.size(120.dp)) {
+            AsyncImage(
+                model = photoUrl,
+                contentDescription = "Profile Photo",
+                modifier = Modifier
+                    .size(120.dp)
+                    .clip(CircleShape)
+                    .background(Color.Gray),
+                onError = { /* Optionally handle error, e.g. show a placeholder */ },
+                onSuccess = { /* Optionally handle success */ }
+            )
+            IconButton(
+                onClick = {
+                    // Create a temp file for the camera image
+                    val photoFile = File.createTempFile("profile_photo", ".jpg", context.cacheDir)
+                    val uri = FileProvider.getUriForFile(context, "${context.packageName}.provider", photoFile)
+                    cameraImageUri = uri
+                    cameraLauncher.launch(uri)
+                },
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .size(36.dp)
+                    .background(Color.Black.copy(alpha = 0.6f), shape = CircleShape)
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_camera),
+                    contentDescription = "Take Photo",
+                    tint = myFitColors.current.gold
+                )
+            }
+        }
         Spacer(modifier = Modifier.height(8.dp))
         OutlinedTextField(
             value = photoUrl,
@@ -199,6 +240,18 @@ fun ProfileScreen(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Save Changes")
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        // Add Change Password button
+        Button(
+            onClick = { onChangePassword?.invoke() },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = myFitColors.current.gold,
+                contentColor = Color.Black
+            ),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Change Password")
         }
     }
 }
