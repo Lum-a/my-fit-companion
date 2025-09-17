@@ -18,5 +18,6 @@ interface UserRepository {
     suspend fun getUserId(): Int?
     suspend fun deleteUser()
     suspend fun logout()
+    fun isAdmin(): Flow<Boolean>
     fun isLoggedIn(): Flow<Boolean>
 }

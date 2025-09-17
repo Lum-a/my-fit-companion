@@ -7,9 +7,11 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.myfitcompanion.admin.AdminScreen
+import com.example.myfitcompanion.admin.AdminUserScreen
+import com.example.myfitcompanion.screen.AdminScreen
 import com.example.myfitcompanion.screen.Screen
 import com.example.myfitcompanion.screen.classes.ClassesScreen
-import com.example.myfitcompanion.screen.classes.WorkoutsScreen
 import com.example.myfitcompanion.screen.splash.SplashScreen
 import com.example.myfitcompanion.screen.home.HomeScreen
 import com.example.myfitcompanion.screen.login.LoginScreen
@@ -31,7 +33,10 @@ fun MyFitNavigation(navController: NavHostController, padding: PaddingValues) {
     ) {
         composable<Screen.Splash> {
             SplashScreen(
-                onNavigateToHome = { navigate(Screen.Home) },
+                onNavigateToHome = { isAdmin ->
+                    val screen = if (isAdmin) AdminScreen.Admin else Screen.Home
+                    navigate(screen)
+                },
                 onNavigateToLogin = { navigate(Screen.Login) },
                 onNavigateToRegister = { navigate(Screen.Register) }
             )
@@ -61,5 +66,18 @@ fun MyFitNavigation(navController: NavHostController, padding: PaddingValues) {
         composable<Screen.Classes> { ClassesScreen() }
         composable<Screen.Trainer> { TrainerScreen() }
         composable<Screen.Plan> { PlanScreen() }
+
+        //Admin screens
+        composable<AdminScreen.Admin> {
+            AdminScreen(
+                onNavigateToUsers = {
+                    navController.navigate(AdminScreen.User)
+                }
+            )
+        }
+
+        composable<AdminScreen.User> {
+            AdminUserScreen(onBack = { navController.popBackStack() })
+        }
     }
 }

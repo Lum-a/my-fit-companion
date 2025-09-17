@@ -197,7 +197,7 @@ fun SubmitResponse(
 
         is ResultWrapper.Error -> {
             Text(
-                text = state.message,
+                text = state.message ?: "Unknown error",
                 color = MaterialTheme.colorScheme.error,
                 style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Center

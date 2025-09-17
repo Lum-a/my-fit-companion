@@ -28,3 +28,14 @@ sealed class Screen {
     @Serializable
     data object Plan: Screen()
 }
+
+@Serializable
+sealed class AdminScreen {
+
+    @Serializable
+    data object Admin: Screen()
+
+    @Serializable
+    data object User: Screen()
+
+}

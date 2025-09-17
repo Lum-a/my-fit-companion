@@ -8,7 +8,6 @@ import com.example.myfitcompanion.api.token.TokenManager
 import com.example.myfitcompanion.repository.UserRepository
 import com.example.myfitcompanion.utils.ResultWrapper
 import com.example.myfitcompanion.utils.isValidEmail
-import com.example.myfitcompanion.utils.isValidPassword
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -26,9 +25,10 @@ class LoginViewModel @Inject constructor(
 
     fun login(email: String, password: String) {
         Log.d("LoginViewModel", "Login called with email: $email")
-        if (!isValidEmail(email) ||
-            !isValidPassword(password)) {
-            Log.d("LoginViewModel", "Login aborted: email or password is invalid!")
+        if (!isValidEmail(email)) {
+            val message = "email or password is invalid!"
+            _loginState.value = ResultWrapper.Error(message)
+            Log.d("LoginViewModel", message)
             return
         }
         viewModelScope.launch {

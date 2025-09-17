@@ -13,6 +13,7 @@ import com.example.myfitcompanion.api.model.RegisterResponse
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.map
 import retrofit2.Response
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -56,6 +57,12 @@ class UserRepositoryImpl @Inject constructor(
         tokenManager.clearToken()
         userDao.deleteUser()
     }
+
+    override fun isAdmin(): Flow<Boolean> =
+        userDao.getUser()
+            .map { user ->
+                user?.role == "ADMIN"
+            }
 
     override fun isLoggedIn(): Flow<Boolean> = combine(
         userDao.getUser(),

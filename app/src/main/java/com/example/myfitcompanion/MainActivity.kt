@@ -12,12 +12,12 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -46,12 +46,13 @@ fun MyFitApp(
 ) {
     val navController = rememberNavController()
     val viewModel = hiltViewModel<AuthViewModel>()
-    val isUserLoggedIn by viewModel.isLoggedIn.collectAsState()
+    val isUserLoggedIn by viewModel.isLoggedIn.collectAsStateWithLifecycle()
+    val isAdmin by viewModel.isAdmin.collectAsStateWithLifecycle()
 
     Surface {
         Scaffold(containerColor = darkBackground,
             bottomBar = {
-                if(isUserLoggedIn) {
+                if(isUserLoggedIn && !isAdmin) {
                     BottomNavigationBar(navController)
                 }
             }, content = { padding ->
