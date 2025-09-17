@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.myfitcompanion.db.room.dao.GymClassDao
 import com.example.myfitcompanion.db.room.dao.MembershipDao
 import com.example.myfitcompanion.db.room.dao.PlanDao
@@ -23,11 +25,10 @@ import com.example.myfitcompanion.model.entities.User
         GymClass::class,
         Plan::class
     ],
-    version = 3,
+    version = 4, // Bump version to 4 for schema change
     exportSchema = false
 )
 abstract class MyFitDatabase: RoomDatabase() {
-
     abstract fun userDao(): UserDao
     abstract fun membershipDao(): MembershipDao
     abstract fun trainerDao(): TrainerDao
@@ -35,23 +36,26 @@ abstract class MyFitDatabase: RoomDatabase() {
     abstract fun planDao(): PlanDao
 
     companion object {
-
         @Volatile
         private var INSTANCE: MyFitDatabase? = null
+
+        private val MIGRATION_3_4 = object : Migration(3, 4) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE user ADD COLUMN photoUrl TEXT")
+            }
+        }
 
         fun getInstance(context: Context): MyFitDatabase {
             synchronized(this) {
                 var instance = INSTANCE
-
                 if(instance == null) {
                     instance = Room.databaseBuilder(
                         context.applicationContext,
                         MyFitDatabase::class.java,
                         "myfit_database"
-                    ).fallbackToDestructiveMigration(
-                        false
-                    ).build()
-
+                    )
+                    .addMigrations(MIGRATION_3_4)
+                    .build()
                     INSTANCE = instance
                 }
                 return instance

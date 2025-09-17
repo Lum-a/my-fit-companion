@@ -11,7 +11,9 @@ import com.example.myfitcompanion.utils.ResultWrapper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,8 +23,18 @@ class ProfileViewModel @Inject constructor(
     private val userDao: UserDao
 ): ViewModel() {
 
+    private val _user = MutableStateFlow<User?>(null)
+    val user: StateFlow<User?> = _user.asStateFlow()
+
     private val _updateState = MutableStateFlow<ResultWrapper<UpdateProfileResponse>>(ResultWrapper.Initial)
     val updateState: StateFlow<ResultWrapper<UpdateProfileResponse>> = _updateState
+
+    init {
+        viewModelScope.launch {
+            val currentUser = userDao.getUser().firstOrNull()
+            _user.value = currentUser
+        }
+    }
 
     fun updateUserInfo(request: UpdateProfileRequest) {
         viewModelScope.launch {
@@ -39,10 +51,12 @@ class ProfileViewModel @Inject constructor(
                             height = updatedUser.height,
                             weight = updatedUser.weight,
                             bodyFat = updatedUser.bodyFat,
-                            goal = updatedUser.goal
+                            goal = updatedUser.goal,
+                            photoUrl = updatedUser.photoUrl // Add this if your User model supports it
                         )
                         if (mergedUser != null) {
                             userDao.updateUserDetails(mergedUser)
+                            _user.value = mergedUser
                         }
                         _updateState.value = ResultWrapper.Success(updatedUser)
                     }
@@ -54,5 +68,9 @@ class ProfileViewModel @Inject constructor(
                 _updateState.value = ResultWrapper.Error(e.localizedMessage ?: "Unknown error")
             }
         }
+    }
+
+    fun updatePhotoUrl(newUrl: String) {
+        _user.update { it?.copy(photoUrl = newUrl) }
     }
 }

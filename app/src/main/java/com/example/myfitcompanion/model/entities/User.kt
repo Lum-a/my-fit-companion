@@ -14,7 +14,8 @@ data class User(
     val weight: Float?,
     val bodyFat: Float?,
     val goal: String?,
-    val createdAt: String
+    val createdAt: String,
+    val photoUrl: String? = null // Added photoUrl for profile image
 ) {
     fun asResponse(): UserResponse {
         return UserResponse(
@@ -27,6 +28,7 @@ data class User(
             bodyFat = bodyFat,
             goal = goal,
             createdAt = createdAt
+            // photoUrl is not in UserResponse, so not mapped
         )
     }
 }
