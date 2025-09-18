@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
@@ -41,7 +42,8 @@ import com.example.myfitcompanion.ui.theme.myFitColors
 fun AdminScreen(
     onNavigateToUsers: () -> Unit = {},
     onNavigateToSessions: () -> Unit = {},
-    onNavigateToMeals: () -> Unit = {}
+    onNavigateToMeals: () -> Unit = {},
+    onLogout: () -> Unit = {}
 ) {
     Scaffold(
         topBar = {
@@ -52,7 +54,17 @@ fun AdminScreen(
                     titleContentColor = myFitColors.current.gold,
                     navigationIconContentColor = Color.White,
                     actionIconContentColor = Color.White
-                )
+                ),
+                actions = {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ExitToApp,
+                        contentDescription = "Logout",
+                        tint = myFitColors.current.gold,
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .clickable { onLogout() }
+                    )
+                }
             )
         },
         containerColor = myFitColors.current.background
