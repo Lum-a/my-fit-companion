@@ -3,6 +3,7 @@ package com.example.myfitcompanion.di
 import com.example.myfitcompanion.BuildConfig
 import com.example.myfitcompanion.api.ApiService
 import com.example.myfitcompanion.api.AuthInterceptor
+import com.example.myfitcompanion.admin.api.AdminApiService
 import com.example.myfitcompanion.api.token.TokenManager
 import com.example.myfitcompanion.api.token.TokenProvider
 import dagger.Module
@@ -50,6 +51,12 @@ object NetworkModule {
     @Singleton
     fun provideApiService(retrofit: Retrofit): ApiService {
         return retrofit.create(ApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAdminApiService(retrofit: Retrofit): AdminApiService {
+        return retrofit.create(AdminApiService::class.java)
     }
 
     @Provides

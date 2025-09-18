@@ -70,7 +70,6 @@ fun LoginScreen(
             inputError = passwordError,
             onInputErrorChange = { passwordError = it },
             errorMessage = stringResource(R.string.invalid_password),
-            isValid = { isValidPassword(password) },
             visualTransformation = PasswordVisualTransformation()
         )
 
@@ -78,7 +77,7 @@ fun LoginScreen(
 
         SubmitButton(
             text = "Login",
-            enabled = isValidEmail(email) && isValidPassword(password),
+            enabled = isValidEmail(email),
             isLoading = loginState is ResultWrapper.Loading,
             onClick = { viewModel.login(email = email, password = password) }
         )

@@ -16,4 +16,8 @@ class AuthViewModel @Inject constructor(
 
     val isLoggedIn: StateFlow<Boolean> = userRepository.isLoggedIn()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
+
+    val isAdmin: StateFlow<Boolean> = userRepository.isAdmin()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
+
 }

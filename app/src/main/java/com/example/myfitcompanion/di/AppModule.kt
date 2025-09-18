@@ -1,9 +1,11 @@
 package com.example.myfitcompanion.di
 
 import android.content.Context
+import com.example.myfitcompanion.admin.repository.AdminRepository
+import com.example.myfitcompanion.admin.repository.AdminRepositoryImpl
 import com.example.myfitcompanion.api.ApiService
+import com.example.myfitcompanion.admin.api.AdminApiService
 import com.example.myfitcompanion.api.token.TokenManager
-import com.example.myfitcompanion.api.token.TokenProvider
 import com.example.myfitcompanion.db.room.MyFitDatabase
 import com.example.myfitcompanion.db.room.dao.GymClassDao
 import com.example.myfitcompanion.db.room.dao.MembershipDao
@@ -52,5 +54,13 @@ object AppModule {
         tokenManager: TokenManager
     ): UserRepository {
         return UserRepositoryImpl(apiService, userDao, tokenManager)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAdminRepository(
+        adminApiService: AdminApiService
+    ): AdminRepository {
+        return AdminRepositoryImpl(adminApiService)
     }
 }

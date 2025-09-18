@@ -12,6 +12,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.airbnb.lottie.compose.*
 import com.example.myfitcompanion.R
 import com.example.myfitcompanion.ui.theme.darkBackground
@@ -28,7 +29,7 @@ fun SplashScreen(
     onNavigateToRegister: () -> Unit = {}
 ) {
 
-    val isLoggedIn by viewModel.isLoggedIn.collectAsState()
+    val isLoggedIn by viewModel.isLoggedIn.collectAsStateWithLifecycle()
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.myfit_animation))
     val progress by animateLottieCompositionAsState(
         composition = composition,
