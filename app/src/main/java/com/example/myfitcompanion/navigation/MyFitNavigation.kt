@@ -70,9 +70,18 @@ fun MyFitNavigation(navController: NavHostController, padding: PaddingValues, is
             )
         }
         composable<Screen.Profile> { ProfileScreen() }
-        composable<Screen.Home> { HomeScreen(onLogout = { logout() }) }
+        composable<Screen.Home> {
+            HomeScreen(
+                onLogout = { logout() },
+                onTrainersClick = { navigate(Screen.Trainer) },
+                onClassesClick = { navigate(Screen.Classes) },
+                onPlansClick = { navigate(Screen.Plan) },
+            )
+        }
         composable<Screen.Classes> { ClassesScreen() }
-        composable<Screen.Trainer> { TrainerScreen() }
+        composable<Screen.Trainer> { TrainerScreen(
+            onTrainerClick = { navigate(Screen.Profile) }
+        ) }
         composable<Screen.Plan> { PlanScreen() }
 
         //Admin screens
