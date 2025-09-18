@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -22,6 +23,7 @@ import com.example.myfitcompanion.screen.plan.PlanScreen
 import com.example.myfitcompanion.screen.profile.ProfileScreen
 import com.example.myfitcompanion.screen.signup.RegisterScreen
 import com.example.myfitcompanion.screen.trainer.TrainerScreen
+import com.example.myfitcompanion.utils.AuthViewModel
 
 @Composable
 fun MyFitNavigation(navController: NavHostController, padding: PaddingValues, isAdmin: Boolean = false) {
@@ -29,6 +31,18 @@ fun MyFitNavigation(navController: NavHostController, padding: PaddingValues, is
     fun navigate(route: Any) {
         return navController.navigate(route)
     }
+
+    val authViewModel = hiltViewModel<AuthViewModel>()
+
+    fun logout() {
+        authViewModel.logout()
+        navController.navigate(Screen.Login) {
+            popUpTo(0) {
+                inclusive = true
+            }
+        }
+    }
+
     NavHost(
         navController = navController,
         startDestination = Screen.Splash,
@@ -58,13 +72,7 @@ fun MyFitNavigation(navController: NavHostController, padding: PaddingValues, is
         composable<Screen.Profile> { ProfileScreen() }
         composable<Screen.Home> {
             HomeScreen(
-                onLogout = {
-                    navController.navigate(Screen.Login) {
-                        popUpTo(0) {
-                            inclusive = true
-                        }
-                    }
-                },
+                onLogout = { logout() },
                 onTrainersClick = { navigate(Screen.Trainer) },
                 onClassesClick = { navigate(Screen.Classes) },
                 onPlansClick = { navigate(Screen.Plan) },
@@ -87,7 +95,8 @@ fun MyFitNavigation(navController: NavHostController, padding: PaddingValues, is
                 },
                 onNavigateToSessions = {
                     navController.navigate(AdminScreen.Session)
-                }
+                },
+                onLogout = { logout() }
             )
         }
 
