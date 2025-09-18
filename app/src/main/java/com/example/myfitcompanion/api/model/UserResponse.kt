@@ -13,6 +13,10 @@ data class UserResponse(
     val id: Int,
     @Json(name = "name")
     val name: String,
+    @Json(name = "firstName")
+    val firstName: String? = null,
+    @Json(name = "lastName")
+    val lastName: String? = null,
     @Json(name = "email")
     val email: String,
     @Json(name = "role")

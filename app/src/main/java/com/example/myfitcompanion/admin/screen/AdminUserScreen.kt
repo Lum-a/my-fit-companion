@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.myfitcompanion.admin.viewmodel.AdminViewModel
 import com.example.myfitcompanion.api.model.CreateUserRequest
+import com.example.myfitcompanion.api.model.UpdateUserRequest
 import com.example.myfitcompanion.api.model.UserResponse
 import com.example.myfitcompanion.ui.theme.myFitColors
 import com.example.myfitcompanion.utils.ResultWrapper
@@ -56,10 +57,8 @@ fun AdminUserScreen(
 ) {
     val usersState by viewModel.users.collectAsState()
     var showDialog by remember { mutableStateOf(false) }
-    var name by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var role by remember { mutableStateOf("") }
+
+    var userToEdit by remember { mutableStateOf<UserResponse?>(null) }
 
     Scaffold(
         topBar = {
@@ -114,7 +113,7 @@ fun AdminUserScreen(
                         items(state.data) { user ->
                             UserCard(
                                 user = user,
-                                onEdit = { /* TODO: open edit dialog */ },
+                                onEdit = { userToEdit = user},
                                 onDelete = { viewModel.deleteUser(user.id) }
                             )
                         }
@@ -123,63 +122,26 @@ fun AdminUserScreen(
             }
         }
         if (showDialog) {
-            AlertDialog(
-                onDismissRequest = { showDialog = false },
-                confirmButton = {
-                    TextButton(onClick = {
-                        if (name.isNotBlank() && email.isNotBlank() && password.isNotBlank() && role.isNotBlank()) {
-                            viewModel.addUser(
-                                CreateUserRequest(
-                                    email = email,
-                                    password = password,
-                                    firstName = name,
-                                    lastName = "", // You can add another field for lastName if needed
-                                    role = role
-                                )
-                            )
-                            showDialog = false
-                            name = ""
-                            email = ""
-                            password = ""
-                            role = ""
-                        }
-                    }) {
-                        Text("Create")
-                    }
-                },
-                dismissButton = {
-                    TextButton(onClick = { showDialog = false }) {
-                        Text("Cancel")
-                    }
-                },
-                title = { Text("Create User") },
-                text = {
-                    Column {
-                        OutlinedTextField(
-                            value = name,
-                            onValueChange = { name = it },
-                            label = { Text("Name") },
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                        OutlinedTextField(
-                            value = email,
-                            onValueChange = { email = it },
-                            label = { Text("Email") },
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                        OutlinedTextField(
-                            value = password,
-                            onValueChange = { password = it },
-                            label = { Text("Password") },
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                        OutlinedTextField(
-                            value = role,
-                            onValueChange = { role = it },
-                            label = { Text("Role") },
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                    }
+            UserDialog(
+                isUpdate = false,
+                onDismiss = { showDialog = false },
+                onCreate = { createUserRequest ->
+                    viewModel.addUser(createUserRequest)
+                    showDialog = false
+                }
+            )
+        }
+        userToEdit?.let { user ->
+            UserDialog(
+                isUpdate = true,
+                initialFirstName = user.firstName ?: "",
+                initialLastName = user.lastName ?: "",
+                initialEmail = user.email,
+                initialRole = user.role,
+                onDismiss = { userToEdit = null },
+                onUpdate = { request ->
+                    viewModel.updateUser(user.id, request)
+                    userToEdit = null
                 }
             )
         }
@@ -222,3 +184,96 @@ fun UserCard(
         }
     }
 }
+
+@Composable
+fun UserDialog(
+    isUpdate: Boolean,
+    initialFirstName: String = "",
+    initialLastName: String = "",
+    initialEmail: String = "",
+    initialRole: String = "",
+    onDismiss: () -> Unit,
+    onCreate: (CreateUserRequest) -> Unit = {},
+    onUpdate: (UpdateUserRequest) -> Unit = {}
+) {
+    var firstName by remember { mutableStateOf(initialFirstName) }
+    var lastName by remember { mutableStateOf(initialLastName) }
+    var email by remember { mutableStateOf(initialEmail) }
+    var password by remember { mutableStateOf("") }
+    var role by remember { mutableStateOf(initialRole) }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            TextButton(onClick = {
+                if (firstName.isNotBlank() && lastName.isNotBlank() && email.isNotBlank() && role.isNotBlank()) {
+                    if (isUpdate) {
+                        onUpdate(
+                            UpdateUserRequest(
+                                firstName = firstName,
+                                lastName = lastName,
+                                email = email,
+                                role = role.uppercase()
+                            )
+                        )
+                    } else {
+                        onCreate(
+                            CreateUserRequest(
+                                email = email,
+                                password = password,
+                                firstName = firstName,
+                                lastName = lastName,
+                                role = role.uppercase()
+                            )
+                        )
+                    }
+                }
+            }) {
+                Text(if (isUpdate) "Update" else "Create")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        },
+        title = { Text(if (isUpdate) "Update User" else "Create User") },
+        text = {
+            Column {
+                OutlinedTextField(
+                    value = firstName,
+                    onValueChange = { firstName = it },
+                    label = { Text("First Name") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                OutlinedTextField(
+                    value = lastName,
+                    onValueChange = { lastName = it },
+                    label = { Text("Last Name") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                OutlinedTextField(
+                    value = email,
+                    onValueChange = { email = it },
+                    label = { Text("Email") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                OutlinedTextField(
+                    value = role,
+                    onValueChange = { role = it },
+                    label = { Text("Role") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                if (!isUpdate) {
+                    OutlinedTextField(
+                        value = password,
+                        onValueChange = { password = it },
+                        label = { Text("Password") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            }
+        }
+    )
+}
+
