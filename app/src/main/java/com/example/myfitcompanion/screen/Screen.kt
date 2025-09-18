@@ -38,4 +38,13 @@ sealed class AdminScreen {
     @Serializable
     data object User: Screen()
 
+    @Serializable
+    data object Session: Screen()
+
+    @Serializable
+    data object Meals: Screen()
+
+    @Serializable
+    data object Exercise: Screen()
+
 }

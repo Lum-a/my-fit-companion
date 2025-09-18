@@ -1,4 +1,4 @@
-package com.example.myfitcompanion.admin
+package com.example.myfitcompanion.admin.screen
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -40,7 +40,7 @@ import com.example.myfitcompanion.ui.theme.myFitColors
 @Preview
 fun AdminScreen(
     onNavigateToUsers: () -> Unit = {},
-    onNavigateToClasses: () -> Unit = {},
+    onNavigateToSessions: () -> Unit = {},
     onNavigateToMeals: () -> Unit = {}
 ) {
     Scaffold(
@@ -71,10 +71,10 @@ fun AdminScreen(
                 onClick = onNavigateToUsers
             )
             AdminBox(
-                title = "Classes",
-                description = "Manage available fitness classes",
+                title = "Sessions",
+                description = "Manage available fitness sessions",
                 icon = Icons.Default.Menu,
-                onClick = onNavigateToClasses
+                onClick = onNavigateToSessions
             )
 
             AdminBox(

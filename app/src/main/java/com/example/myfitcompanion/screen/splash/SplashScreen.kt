@@ -24,13 +24,12 @@ import com.example.myfitcompanion.utils.AuthViewModel
 fun SplashScreen(
     modifier: Modifier = Modifier,
     viewModel: AuthViewModel = hiltViewModel(),
-    onNavigateToHome: (isAdmin: Boolean) -> Unit = {},
+    onNavigateToHome: () -> Unit = {},
     onNavigateToLogin: () -> Unit = {},
     onNavigateToRegister: () -> Unit = {}
 ) {
 
     val isLoggedIn by viewModel.isLoggedIn.collectAsStateWithLifecycle()
-    val isAdmin by viewModel.isAdmin.collectAsStateWithLifecycle()
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.myfit_animation))
     val progress by animateLottieCompositionAsState(
         composition = composition,
@@ -42,7 +41,7 @@ fun SplashScreen(
     LaunchedEffect(progress, isLoggedIn) {
         if (progress >= 1f) {
             if (isLoggedIn) {
-                onNavigateToHome(isAdmin)
+                onNavigateToHome()
             } else {
                 showButtons = true
             }

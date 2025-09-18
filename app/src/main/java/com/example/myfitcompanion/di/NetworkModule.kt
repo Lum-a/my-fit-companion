@@ -3,7 +3,7 @@ package com.example.myfitcompanion.di
 import com.example.myfitcompanion.BuildConfig
 import com.example.myfitcompanion.api.ApiService
 import com.example.myfitcompanion.api.AuthInterceptor
-import com.example.myfitcompanion.api.admin.AdminApiService
+import com.example.myfitcompanion.admin.api.AdminApiService
 import com.example.myfitcompanion.api.token.TokenManager
 import com.example.myfitcompanion.api.token.TokenProvider
 import dagger.Module

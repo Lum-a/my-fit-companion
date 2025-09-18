@@ -1,4 +1,4 @@
-package com.example.myfitcompanion.admin
+package com.example.myfitcompanion.admin.screen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,10 +12,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -32,12 +33,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.TextButton
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.myfitcompanion.admin.viewmodel.AdminViewModel
+import com.example.myfitcompanion.api.model.CreateUserRequest
 import com.example.myfitcompanion.api.model.UserResponse
 import com.example.myfitcompanion.ui.theme.myFitColors
 import com.example.myfitcompanion.utils.ResultWrapper
@@ -50,6 +55,11 @@ fun AdminUserScreen(
     onBack: () -> Unit = {}
 ) {
     val usersState by viewModel.users.collectAsState()
+    var showDialog by remember { mutableStateOf(false) }
+    var name by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var role by remember { mutableStateOf("") }
 
     Scaffold(
         topBar = {
@@ -57,7 +67,7 @@ fun AdminUserScreen(
                 title = { Text("Manage Users") },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -68,7 +78,7 @@ fun AdminUserScreen(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = {  },
+                onClick = { showDialog = true },
                 containerColor = myFitColors.current.gold
             ) {
                 Icon(Icons.Default.Add, contentDescription = "Add User")
@@ -82,6 +92,9 @@ fun AdminUserScreen(
             contentAlignment = Alignment.Center
         ) {
             when (val state = usersState) {
+                is ResultWrapper.Initial -> {
+                    LaunchedEffect(Unit) { viewModel.loadUsers() }
+                }
                 is ResultWrapper.Loading -> {
                     CircularProgressIndicator(color = myFitColors.current.gold)
                 }
@@ -107,11 +120,68 @@ fun AdminUserScreen(
                         }
                     }
                 }
-                ResultWrapper.Initial -> {
-                    // trigger first load
-                    LaunchedEffect(Unit) { viewModel.loadUsers() }
-                }
             }
+        }
+        if (showDialog) {
+            AlertDialog(
+                onDismissRequest = { showDialog = false },
+                confirmButton = {
+                    TextButton(onClick = {
+                        if (name.isNotBlank() && email.isNotBlank() && password.isNotBlank() && role.isNotBlank()) {
+                            viewModel.addUser(
+                                CreateUserRequest(
+                                    email = email,
+                                    password = password,
+                                    firstName = name,
+                                    lastName = "", // You can add another field for lastName if needed
+                                    role = role
+                                )
+                            )
+                            showDialog = false
+                            name = ""
+                            email = ""
+                            password = ""
+                            role = ""
+                        }
+                    }) {
+                        Text("Create")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showDialog = false }) {
+                        Text("Cancel")
+                    }
+                },
+                title = { Text("Create User") },
+                text = {
+                    Column {
+                        OutlinedTextField(
+                            value = name,
+                            onValueChange = { name = it },
+                            label = { Text("Name") },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        OutlinedTextField(
+                            value = email,
+                            onValueChange = { email = it },
+                            label = { Text("Email") },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        OutlinedTextField(
+                            value = password,
+                            onValueChange = { password = it },
+                            label = { Text("Password") },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        OutlinedTextField(
+                            value = role,
+                            onValueChange = { role = it },
+                            label = { Text("Role") },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                }
+            )
         }
     }
 }
@@ -152,5 +222,3 @@ fun UserCard(
         }
     }
 }
-
-

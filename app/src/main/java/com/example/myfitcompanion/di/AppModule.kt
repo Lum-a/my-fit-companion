@@ -4,7 +4,7 @@ import android.content.Context
 import com.example.myfitcompanion.admin.repository.AdminRepository
 import com.example.myfitcompanion.admin.repository.AdminRepositoryImpl
 import com.example.myfitcompanion.api.ApiService
-import com.example.myfitcompanion.api.admin.AdminApiService
+import com.example.myfitcompanion.admin.api.AdminApiService
 import com.example.myfitcompanion.api.token.TokenManager
 import com.example.myfitcompanion.db.room.MyFitDatabase
 import com.example.myfitcompanion.db.room.dao.GymClassDao

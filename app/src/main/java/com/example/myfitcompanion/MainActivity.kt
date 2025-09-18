@@ -13,7 +13,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -41,9 +40,7 @@ class MainActivity : ComponentActivity() {
 
 @Preview(showBackground = true)
 @Composable
-fun MyFitApp(
-    modifier: Modifier = Modifier
-) {
+fun MyFitApp() {
     val navController = rememberNavController()
     val viewModel = hiltViewModel<AuthViewModel>()
     val isUserLoggedIn by viewModel.isLoggedIn.collectAsStateWithLifecycle()
@@ -52,52 +49,52 @@ fun MyFitApp(
     Surface {
         Scaffold(containerColor = darkBackground,
             bottomBar = {
-                if(isUserLoggedIn && !isAdmin) {
-                    BottomNavigationBar(navController)
-                }
+                BottomNavigationBar(navController, !isAdmin && isUserLoggedIn)
             }, content = { padding ->
-                MyFitNavigation(navController, padding)
+                MyFitNavigation(navController, padding, isAdmin)
             }
         )
     }
 }
 
 @Composable
-fun BottomNavigationBar(navController: NavHostController) {
-    NavigationBar(
-        containerColor = Color(0xFF2C2B2B)
-    ) {
+fun BottomNavigationBar(navController: NavHostController, shouldShow: Boolean) {
+    if(shouldShow) {
+        NavigationBar(
+            containerColor = Color(0xFF2C2B2B)
+        ) {
 
-        val navBackStackEntry by navController.currentBackStackEntryAsState()
+            val navBackStackEntry by navController.currentBackStackEntryAsState()
 
-        val currentRoute = navBackStackEntry?.destination?.route
+            val currentRoute = navBackStackEntry?.destination?.route
 
-        Constants.bottomNavItems.forEach { navItem ->
+            Constants.bottomNavItems.forEach { navItem ->
 
-            NavigationBarItem(
+                NavigationBarItem(
 
-                selected = currentRoute == navItem.route,
+                    selected = currentRoute == navItem.route,
 
-                onClick = {
-                    navController.navigate(navItem.route)
-                },
+                    onClick = {
+                        navController.navigate(navItem.route)
+                    },
 
-                icon = {
-                    Icon(imageVector = navItem.icon, contentDescription = navItem.label)
-                },
+                    icon = {
+                        Icon(imageVector = navItem.icon, contentDescription = navItem.label)
+                    },
 
-                label = {
-                    Text(text = navItem.label)
-                },
-                alwaysShowLabel = false,
+                    label = {
+                        Text(text = navItem.label)
+                    },
+                    alwaysShowLabel = false,
 
-                colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = Color.White, // Icon color when selected
-                    unselectedIconColor = Color.White, // Icon color when not selected
-                    selectedTextColor = Color.White, // Label color when selected
-                    indicatorColor = Color(0xFF195334) // Highlight color for selected item
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = Color.White, // Icon color when selected
+                        unselectedIconColor = Color.White, // Icon color when not selected
+                        selectedTextColor = Color.White, // Label color when selected
+                        indicatorColor = Color(0xFF195334) // Highlight color for selected item
+                    )
                 )
-            )
+            }
         }
     }
 }

@@ -7,8 +7,11 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.myfitcompanion.admin.AdminScreen
-import com.example.myfitcompanion.admin.AdminUserScreen
+import com.example.myfitcompanion.admin.screen.AdminExerciseScreen
+import com.example.myfitcompanion.admin.screen.AdminMealScreen
+import com.example.myfitcompanion.admin.screen.AdminScreen
+import com.example.myfitcompanion.admin.screen.AdminSessionScreen
+import com.example.myfitcompanion.admin.screen.AdminUserScreen
 import com.example.myfitcompanion.screen.AdminScreen
 import com.example.myfitcompanion.screen.Screen
 import com.example.myfitcompanion.screen.classes.ClassesScreen
@@ -21,7 +24,7 @@ import com.example.myfitcompanion.screen.signup.RegisterScreen
 import com.example.myfitcompanion.screen.trainer.TrainerScreen
 
 @Composable
-fun MyFitNavigation(navController: NavHostController, padding: PaddingValues) {
+fun MyFitNavigation(navController: NavHostController, padding: PaddingValues, isAdmin: Boolean = false) {
 
     fun navigate(route: Any) {
         return navController.navigate(route)
@@ -33,7 +36,7 @@ fun MyFitNavigation(navController: NavHostController, padding: PaddingValues) {
     ) {
         composable<Screen.Splash> {
             SplashScreen(
-                onNavigateToHome = { isAdmin ->
+                onNavigateToHome = {
                     val screen = if (isAdmin) AdminScreen.Admin else Screen.Home
                     navigate(screen)
                 },
@@ -42,8 +45,9 @@ fun MyFitNavigation(navController: NavHostController, padding: PaddingValues) {
             )
         }
         composable<Screen.Login> {
+            val screen = if(isAdmin) AdminScreen.Admin else Screen.Home
             LoginScreen(
-                onLoginSucceed = { navigate(Screen.Home) }
+                onLoginSucceed = { navigate(screen) }
             )
         }
         composable<Screen.Register> {
@@ -72,12 +76,26 @@ fun MyFitNavigation(navController: NavHostController, padding: PaddingValues) {
             AdminScreen(
                 onNavigateToUsers = {
                     navController.navigate(AdminScreen.User)
+                },
+                onNavigateToMeals = {
+                    navController.navigate(AdminScreen.Meals)
+                },
+                onNavigateToSessions = {
+                    navController.navigate(AdminScreen.Session)
                 }
             )
         }
 
-        composable<AdminScreen.User> {
-            AdminUserScreen(onBack = { navController.popBackStack() })
+        //admin screens
+        composable<AdminScreen.User> { AdminUserScreen(onBack = { navController.popBackStack() }) }
+        composable<AdminScreen.Meals> { AdminMealScreen(onBack = { navController.popBackStack() }) }
+        composable<AdminScreen.Session> {
+            AdminSessionScreen(
+                onBack = { navController.popBackStack() },
+                onSessionClick = { navController.navigate(AdminScreen.Exercise) }
+            )
         }
+        composable<AdminScreen.Exercise> { AdminExerciseScreen(onBack = { navController.popBackStack() }) }
+
     }
 }
