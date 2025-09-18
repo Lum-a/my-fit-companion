@@ -139,7 +139,7 @@ fun RegisterScreen(
                         height = height.toFloatOrNull(),
                         weight = weight.toFloatOrNull(),
                         bodyFat = bodyFat.toFloatOrNull(),
-                        goal = goal.ifBlank { null }
+                        goal = goal.toFloatOrNull()
                     )
                 )
             }
