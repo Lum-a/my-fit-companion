@@ -38,7 +38,6 @@ class TrainerRepositoryImpl @Inject constructor(
             Log.d("TrainerRepositoryImpl", "response:${response}")
             if (response.isSuccessful) {
                 response.body()?.let { trainerResponses ->
-                    Log.d("TrainerRepositoryImpl", "Fetched trainers:${trainerResponses.size} trainers from API")
                     // Convert TrainerResponse to Trainer entities and insert to database
                     trainerResponses.forEach { trainerResponse ->
                         val trainer = Trainer(

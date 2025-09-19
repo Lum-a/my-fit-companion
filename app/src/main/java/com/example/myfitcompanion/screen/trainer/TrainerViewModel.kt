@@ -1,5 +1,6 @@
 package com.example.myfitcompanion.screen.trainer
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myfitcompanion.model.entities.Trainer
@@ -32,7 +33,7 @@ class TrainerViewModel @Inject constructor(
             try {
                 trainerRepository.syncTrainersFromApi()
             } catch (e: Exception) {
-            } finally {
+                Log.e("TrainerViewModel", "Error syncing trainers: ${e.message}" )
             }
         }
     }
