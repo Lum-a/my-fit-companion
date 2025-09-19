@@ -47,4 +47,7 @@ sealed class AdminScreen {
     @Serializable
     data object Exercise: Screen()
 
+    @Serializable
+    data object Trainer: Screen()
+
 }

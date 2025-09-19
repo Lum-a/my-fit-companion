@@ -43,6 +43,7 @@ fun AdminScreen(
     onNavigateToUsers: () -> Unit = {},
     onNavigateToSessions: () -> Unit = {},
     onNavigateToMeals: () -> Unit = {},
+    onNavigateToTrainers: () -> Unit = {},
     onLogout: () -> Unit = {}
 ) {
     Scaffold(
@@ -94,6 +95,13 @@ fun AdminScreen(
                 description = "Manage Meals",
                 icon = Icons.Default.Favorite,
                 onClick = onNavigateToMeals
+            )
+
+            AdminBox(
+                title = "Trainers",
+                description = "Manage Trainers",
+                icon = Icons.Default.Person,
+                onClick = onNavigateToTrainers
             )
         }
     }

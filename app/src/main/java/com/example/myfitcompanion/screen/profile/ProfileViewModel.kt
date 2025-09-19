@@ -27,31 +27,32 @@ class ProfileViewModel @Inject constructor(
     fun updateUserInfo(request: UpdateProfileRequest) {
         viewModelScope.launch {
             _updateState.value = ResultWrapper.Loading
-            try {
-                val response = userRepository.updateUser(request)
-                if (response.isSuccessful) {
-                    val updatedUser = response.body()
-                    if(updatedUser != null) {
-                        val currentUser = userDao.getUser().firstOrNull()
-                        val mergedUser: User? = currentUser?.copy(
-                            name = updatedUser.name,
-                            email = updatedUser.email,
-                            height = updatedUser.height,
-                            weight = updatedUser.weight,
-                            bodyFat = updatedUser.bodyFat,
-                            goal = updatedUser.goal
-                        )
-                        if (mergedUser != null) {
-                            userDao.updateUserDetails(mergedUser)
-                        }
-                        _updateState.value = ResultWrapper.Success(updatedUser)
+            when (val result = userRepository.updateUser(request)) {
+                is ResultWrapper.Success -> {
+                    val updatedUser = result.data
+                    val currentUser = userDao.getUser().firstOrNull()
+                    val mergedUser: User? = currentUser?.copy(
+                        name = updatedUser.name,
+                        email = updatedUser.email,
+                        height = updatedUser.height,
+                        weight = updatedUser.weight,
+                        bodyFat = updatedUser.bodyFat,
+                        goal = updatedUser.goal
+                    )
+                    if (mergedUser != null) {
+                        userDao.updateUserDetails(mergedUser)
                     }
-
-                } else {
-                    _updateState.value = ResultWrapper.Error("Failed to update user")
+                    _updateState.value = ResultWrapper.Success(updatedUser)
                 }
-            } catch (e: Exception) {
-                _updateState.value = ResultWrapper.Error(e.localizedMessage ?: "Unknown error")
+                is ResultWrapper.Error -> {
+                    _updateState.value = ResultWrapper.Error(result.message ?: "Failed to update user")
+                }
+                is ResultWrapper.Loading -> {
+                    // Already set to loading above
+                }
+                is ResultWrapper.Initial -> {
+                    _updateState.value = ResultWrapper.Initial
+                }
             }
         }
     }

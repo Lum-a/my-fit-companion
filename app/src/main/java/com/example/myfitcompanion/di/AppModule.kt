@@ -70,8 +70,9 @@ object AppModule {
     @Provides
     @Singleton
     fun provideAdminRepository(
-        adminApiService: AdminApiService
+        adminApiService: AdminApiService,
+        apiService: ApiService
     ): AdminRepository {
-        return AdminRepositoryImpl(adminApiService)
+        return AdminRepositoryImpl(adminApiService, apiService)
     }
 }

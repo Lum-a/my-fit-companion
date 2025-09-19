@@ -12,6 +12,7 @@ import com.example.myfitcompanion.admin.screen.AdminExerciseScreen
 import com.example.myfitcompanion.admin.screen.AdminMealScreen
 import com.example.myfitcompanion.admin.screen.AdminScreen
 import com.example.myfitcompanion.admin.screen.AdminSessionScreen
+import com.example.myfitcompanion.admin.screen.AdminTrainerScreen
 import com.example.myfitcompanion.admin.screen.AdminUserScreen
 import com.example.myfitcompanion.screen.AdminScreen
 import com.example.myfitcompanion.screen.Screen
@@ -87,15 +88,10 @@ fun MyFitNavigation(navController: NavHostController, padding: PaddingValues, is
         //Admin screens
         composable<AdminScreen.Admin> {
             AdminScreen(
-                onNavigateToUsers = {
-                    navController.navigate(AdminScreen.User)
-                },
-                onNavigateToMeals = {
-                    navController.navigate(AdminScreen.Meals)
-                },
-                onNavigateToSessions = {
-                    navController.navigate(AdminScreen.Session)
-                },
+                onNavigateToUsers = { navigate(AdminScreen.User) },
+                onNavigateToMeals = { navigate(AdminScreen.Meals) },
+                onNavigateToSessions = { navigate(AdminScreen.Session) },
+                onNavigateToTrainers = { navigate(AdminScreen.Trainer) },
                 onLogout = { logout() }
             )
         }
@@ -110,6 +106,7 @@ fun MyFitNavigation(navController: NavHostController, padding: PaddingValues, is
             )
         }
         composable<AdminScreen.Exercise> { AdminExerciseScreen(onBack = { navController.popBackStack() }) }
+        composable<AdminScreen.Trainer> { AdminTrainerScreen(onBack = { navController.popBackStack() }) }
 
     }
 }
