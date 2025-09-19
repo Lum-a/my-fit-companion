@@ -15,7 +15,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
-import retrofit2.Response
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -26,12 +25,18 @@ class UserRepositoryImpl @Inject constructor(
     private val tokenManager: TokenManager
 ): UserRepository {
 
-    override suspend fun login(email: String, password: String): Response<LoginResponse> {
-        return apiService.login(LoginRequest(email, password))
+    override suspend fun login(request: LoginRequest): ResultWrapper<LoginResponse> = try {
+        val response = apiService.login(request)
+        ResultWrapper.Success(response)
+    } catch (e: Exception) {
+        ResultWrapper.Error(e.message)
     }
 
-    override suspend fun register(request: RegisterRequest): Response<RegisterResponse> {
-        return apiService.register(request)
+    override suspend fun register(request: RegisterRequest): ResultWrapper<RegisterResponse>  = try {
+        val response = apiService.register(request)
+        ResultWrapper.Success(response)
+    } catch (e: Exception) {
+        ResultWrapper.Error(e.message)
     }
 
     override fun getUser(): Flow<User?> {

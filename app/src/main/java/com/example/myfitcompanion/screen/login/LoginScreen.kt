@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.myfitcompanion.R
+import com.example.myfitcompanion.api.model.LoginRequest
 import com.example.myfitcompanion.components.SubmitButton
 import com.example.myfitcompanion.components.SubmitResponse
 import com.example.myfitcompanion.components.UserTextField
@@ -77,9 +78,9 @@ fun LoginScreen(
 
         SubmitButton(
             text = "Login",
-            enabled = isValidEmail(email),
+            enabled = isValidEmail(email) && password.isNotEmpty(),
             isLoading = loginState is ResultWrapper.Loading,
-            onClick = { viewModel.login(email = email, password = password) }
+            onClick = { viewModel.login(LoginRequest(email = email, password = password)) }
         )
 
         VerticalSpace(modifier, 16.dp)

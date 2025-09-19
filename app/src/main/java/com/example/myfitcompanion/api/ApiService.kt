@@ -5,12 +5,15 @@ import com.example.myfitcompanion.api.model.UpdateProfileResponse
 import com.example.myfitcompanion.api.model.ClassBookingRequest
 import com.example.myfitcompanion.api.model.ClassBookingResponse
 import com.example.myfitcompanion.api.model.ClassResponse
+import com.example.myfitcompanion.api.model.ExerciseResponse
 import com.example.myfitcompanion.api.model.LoginRequest
 import com.example.myfitcompanion.api.model.LoginResponse
+import com.example.myfitcompanion.api.model.MealsResponse
 import com.example.myfitcompanion.api.model.MembershipResponse
 import com.example.myfitcompanion.api.model.PlanResponse
 import com.example.myfitcompanion.api.model.RegisterRequest
 import com.example.myfitcompanion.api.model.RegisterResponse
+import com.example.myfitcompanion.api.model.SessionsResponse
 import com.example.myfitcompanion.api.model.TrainerResponse
 import retrofit2.Response
 import retrofit2.http.Body
@@ -22,13 +25,10 @@ import retrofit2.http.Path
 interface ApiService {
 
     @POST("auth/login")
-    suspend fun login(@Body request: LoginRequest): Response<LoginResponse>
+    suspend fun login(@Body request: LoginRequest): LoginResponse
 
     @POST("auth/register")
-    suspend fun register(@Body request: RegisterRequest): Response<RegisterResponse>
-
-    @GET("memberships/{userId}")
-    suspend fun getMembership(@Path("userId") userId: String): MembershipResponse
+    suspend fun register(@Body request: RegisterRequest): RegisterResponse
 
     @GET("plans")
     suspend fun getPlans(): List<PlanResponse>
@@ -36,14 +36,15 @@ interface ApiService {
     @GET("trainers")
     suspend fun getTrainers(): List<TrainerResponse>
 
-    @GET("classes")
-    suspend fun getClasses(): List<ClassResponse>
+    @GET("sessions")
+    suspend fun getSessions(): List<SessionsResponse>
 
-    @POST("classes/{classId}/book")
-    suspend fun bookClass(
-        @Path("classId") classId: Long,
-        @Body bookingRequest: ClassBookingRequest
-    ): ClassBookingResponse
+    @GET("meals")
+    suspend fun getMeals(): List<MealsResponse>
+
+    @GET("exercises")
+    suspend fun getExercises(): List<ExerciseResponse>
+
 
     @PUT("users/{userId}")
     suspend fun updateProfile(

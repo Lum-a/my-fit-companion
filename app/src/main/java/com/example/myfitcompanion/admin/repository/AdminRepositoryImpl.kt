@@ -90,7 +90,7 @@ class AdminRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getSessions(): ResultWrapper<List<SessionsResponse>> = try {
-        val response = adminApiService.getSessions()
+        val response = apiService.getSessions()
         ResultWrapper.Success(response)
     } catch (e: Exception) {
         ResultWrapper.Error(e.message)

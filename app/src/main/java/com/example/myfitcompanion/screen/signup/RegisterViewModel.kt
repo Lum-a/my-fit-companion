@@ -30,34 +30,33 @@ class RegisterViewModel @Inject constructor(
             !isValidPassword(registerRequest.password) ||
             registerRequest.name.isEmpty()
         ) {
-            Log.d(TAG, "Register aborted: email or password is invalid!")
+            val message = "Name, email or password is invalid!"
+            _registerState.value = ResultWrapper.Error(message)
+            Log.d(TAG, "Register aborted: $message")
             return
         }
         Log.d(TAG, "Register called with: $registerRequest")
         viewModelScope.launch {
             _registerState.value = ResultWrapper.Loading
-            try {
-                val response = userRepository.register(registerRequest)
-                Log.d(TAG, "Register API response: $response")
-                if(response.isSuccessful) {
-                    val body = response.body()
-                    if(body != null) {
-                        tokenManager.saveToken(body.token)
-                        userRepository.insertUser(body.user.asUser())
-                        _registerState.value = ResultWrapper.Success(body.user)
-                        Log.d(TAG, "Registration success: ${body.user}")
-                    } else {
-                        _registerState.value = ResultWrapper.Error("Empty response")
-                        Log.d(TAG, "Registration error: Empty response")
-                    }
-                } else {
-                    val errorMsg = response.errorBody()?.string() ?: "Registration failed"
-                    _registerState.value = ResultWrapper.Error(errorMsg)
-                    Log.d(TAG, "Registration error: $errorMsg")
+            when (val result = userRepository.register(registerRequest)) {
+                is ResultWrapper.Success -> {
+                    val registerData = result.data
+                    val user = registerData.user.asUser()
+                    tokenManager.saveToken(registerData.token)
+                    userRepository.insertUser(user)
+                    _registerState.value = ResultWrapper.Success(registerData.user)
+                    Log.d(TAG, "Registration success: ${registerData.user}")
                 }
-            } catch (e: Exception) {
-                _registerState.value = ResultWrapper.Error(e.message ?: "Unknown error")
-                Log.d(TAG, "Registration exception: ${e.message}")
+                is ResultWrapper.Error -> {
+                    _registerState.value = ResultWrapper.Error(result.message ?: "Registration failed")
+                    Log.d(TAG, "Registration error: ${result.message}")
+                }
+                is ResultWrapper.Loading -> {
+                    // Already set to loading above
+                }
+                is ResultWrapper.Initial -> {
+                    _registerState.value = ResultWrapper.Error("Unexpected initial state")
+                }
             }
         }
     }

@@ -53,9 +53,6 @@ interface AdminApiService {
     @POST("admin/sessions")
     suspend fun addSession(@Body session: SessionRequest): SessionsResponse
 
-    @GET("admin/sessions")
-    suspend fun getSessions(): List<SessionsResponse>
-
     @PUT("admin/sessions/{id}")
     suspend fun updateSession(@Path("id") sessionId: Int, @Body session: SessionRequest): SessionsResponse
 

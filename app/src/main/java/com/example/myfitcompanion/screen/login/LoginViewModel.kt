@@ -3,6 +3,7 @@ package com.example.myfitcompanion.screen.login
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.myfitcompanion.api.model.LoginRequest
 import com.example.myfitcompanion.api.model.UserResponse
 import com.example.myfitcompanion.api.token.TokenManager
 import com.example.myfitcompanion.repository.UserRepository
@@ -23,9 +24,8 @@ class LoginViewModel @Inject constructor(
     private val _loginState = MutableStateFlow<ResultWrapper<UserResponse>>(ResultWrapper.Initial)
     val loginState: StateFlow<ResultWrapper<UserResponse>> = _loginState
 
-    fun login(email: String, password: String) {
-        Log.d("LoginViewModel", "Login called with email: $email")
-        if (!isValidEmail(email)) {
+    fun login(request: LoginRequest) {
+        if (!isValidEmail(request.email) || request.password.isBlank()) {
             val message = "email or password is invalid!"
             _loginState.value = ResultWrapper.Error(message)
             Log.d("LoginViewModel", message)
@@ -33,29 +33,25 @@ class LoginViewModel @Inject constructor(
         }
         viewModelScope.launch {
             _loginState.value = ResultWrapper.Loading
-            try {
-                val response  = userRepository.login(email, password)
-                Log.d("LoginViewModel", "Login API response: $response")
-                if(response.isSuccessful) {
-                    val loginData = response.body()
-                    if(loginData != null) {
-                        val user = loginData.user.asUser()
-                        tokenManager.saveToken(loginData.token)
-                        userRepository.insertUser(user)
-                        _loginState.value = ResultWrapper.Success(loginData.user)
-                        Log.d("LoginViewModel", "Login success: ${loginData.user}")
-                    } else {
-                        _loginState.value = ResultWrapper.Error("Empty response body")
-                        Log.d("LoginViewModel", "Login error: Empty response body")
-                    }
-                } else {
-                    val errorMsg = response.errorBody()?.string() ?: "Login failed"
-                    _loginState.value = ResultWrapper.Error(errorMsg)
-                    Log.d("LoginViewModel", "Login error: $errorMsg")
+            when (val result = userRepository.login(request)) {
+                is ResultWrapper.Success -> {
+                    val loginData = result.data
+                    val user = loginData.user.asUser()
+                    tokenManager.saveToken(loginData.token)
+                    userRepository.insertUser(user)
+                    _loginState.value = ResultWrapper.Success(loginData.user)
+                    Log.d("LoginViewModel", "Login success: ${loginData.user}")
                 }
-            } catch (e: Exception) {
-                _loginState.value = ResultWrapper.Error(e.message ?: "Unknown error")
-                Log.d("LoginViewModel", "Login exception: ${e.message}")
+                is ResultWrapper.Error -> {
+                    _loginState.value = ResultWrapper.Error(result.message ?: "Login failed")
+                    Log.d("LoginViewModel", "Login error: ${result.message}")
+                }
+                is ResultWrapper.Loading -> {
+                    // Already set to loading above
+                }
+                is ResultWrapper.Initial -> {
+                    _loginState.value = ResultWrapper.Error("Unexpected initial state")
+                }
             }
         }
     }
