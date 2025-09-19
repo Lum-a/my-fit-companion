@@ -14,6 +14,8 @@ import com.example.myfitcompanion.db.room.dao.TrainerDao
 import com.example.myfitcompanion.db.room.dao.UserDao
 import com.example.myfitcompanion.repository.UserRepository
 import com.example.myfitcompanion.repository.UserRepositoryImpl
+import com.example.myfitcompanion.screen.trainer.TrainerRepository
+import com.example.myfitcompanion.screen.trainer.TrainerRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -54,6 +56,15 @@ object AppModule {
         tokenManager: TokenManager
     ): UserRepository {
         return UserRepositoryImpl(apiService, userDao, tokenManager)
+    }
+
+    @Provides
+    @Singleton
+    fun provideTrainerRepository(
+        apiService: ApiService,
+        trainerDao: TrainerDao
+    ): TrainerRepository {
+        return TrainerRepositoryImpl(apiService, trainerDao)
     }
 
     @Provides
