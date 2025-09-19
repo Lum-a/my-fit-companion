@@ -12,7 +12,7 @@ interface TrainerDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTrainer(vararg trainer: Trainer)
 
-    @Query("SELECT * FROM trainers ORDER BY name ASC")
+    @Query("SELECT * FROM trainers ORDER BY firstName ASC")
     fun getAllTrainers(): Flow<List<Trainer>>
 
     @Query("SELECT * FROM trainers WHERE trainerId = :trainerId")

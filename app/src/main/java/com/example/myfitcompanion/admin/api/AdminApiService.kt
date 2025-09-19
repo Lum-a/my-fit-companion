@@ -7,6 +7,9 @@ import com.example.myfitcompanion.api.model.MealRequest
 import com.example.myfitcompanion.api.model.MealsResponse
 import com.example.myfitcompanion.api.model.SessionRequest
 import com.example.myfitcompanion.api.model.SessionsResponse
+import com.example.myfitcompanion.api.model.TrainerRequest
+import com.example.myfitcompanion.api.model.TrainerResponse
+import com.example.myfitcompanion.api.model.UpdateTrainerRequest
 import com.example.myfitcompanion.api.model.UpdateUserRequest
 import com.example.myfitcompanion.api.model.UserResponse
 import retrofit2.http.Body
@@ -71,5 +74,18 @@ interface AdminApiService {
 
     @DELETE("admin/exercises/{id}")
     suspend fun deleteExercise(@Path("id") exerciseId: Int)
+
+    // Trainers
+    @POST("admin/trainers")
+    suspend fun addTrainer(@Body trainer: TrainerRequest): TrainerResponse
+
+    @GET("admin/trainers")
+    suspend fun getTrainers(): List<TrainerResponse>
+
+    @PUT("admin/trainers/{id}")
+    suspend fun updateTrainer(@Path("id") trainerId: Int, @Body trainer: UpdateTrainerRequest): TrainerResponse
+
+    @DELETE("admin/trainers/{id}")
+    suspend fun deleteTrainer(@Path("id") trainerId: Int)
 
 }

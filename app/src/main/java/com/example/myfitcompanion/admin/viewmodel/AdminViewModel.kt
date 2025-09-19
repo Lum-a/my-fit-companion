@@ -12,6 +12,9 @@ import com.example.myfitcompanion.api.model.SessionsResponse
 import com.example.myfitcompanion.api.model.SessionRequest
 import com.example.myfitcompanion.api.model.ExerciseResponse
 import com.example.myfitcompanion.api.model.ExerciseRequest
+import com.example.myfitcompanion.api.model.TrainerResponse
+import com.example.myfitcompanion.api.model.TrainerRequest
+import com.example.myfitcompanion.api.model.UpdateTrainerRequest
 import com.example.myfitcompanion.utils.ResultWrapper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -148,6 +151,37 @@ class AdminViewModel @Inject constructor(
         viewModelScope.launch {
             adminRepository.deleteMeal(mealId)
             loadMeals()
+        }
+    }
+
+    // Trainers
+    private val _trainers = MutableStateFlow<ResultWrapper<List<TrainerResponse>>>(ResultWrapper.Initial)
+    val trainers = _trainers.asStateFlow()
+
+    fun loadTrainers() {
+        viewModelScope.launch {
+            _trainers.value = ResultWrapper.Loading
+            _trainers.value = adminRepository.getTrainers()
+        }
+    }
+
+    fun addTrainer(trainer: TrainerRequest) {
+        viewModelScope.launch {
+            adminRepository.addTrainer(trainer)
+            loadTrainers()
+        }
+    }
+
+    fun updateTrainer(trainerId: Int, trainer: UpdateTrainerRequest) {
+        viewModelScope.launch {
+            adminRepository.updateTrainer(trainerId, trainer)
+            loadTrainers()
+        }
+    }
+    fun deleteTrainer(trainerId: Int) {
+        viewModelScope.launch {
+            adminRepository.deleteTrainer(trainerId)
+            loadTrainers()
         }
     }
 }

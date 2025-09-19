@@ -8,6 +8,9 @@ import com.example.myfitcompanion.api.model.SessionsResponse
 import com.example.myfitcompanion.api.model.SessionRequest
 import com.example.myfitcompanion.api.model.ExerciseResponse
 import com.example.myfitcompanion.api.model.ExerciseRequest
+import com.example.myfitcompanion.api.model.TrainerResponse
+import com.example.myfitcompanion.api.model.TrainerRequest
+import com.example.myfitcompanion.api.model.UpdateTrainerRequest
 import com.example.myfitcompanion.api.model.CreateUserRequest
 import com.example.myfitcompanion.api.model.UpdateUserRequest
 import com.example.myfitcompanion.utils.ResultWrapper
@@ -129,6 +132,35 @@ class AdminRepositoryImpl @Inject constructor(
 
     override suspend fun deleteExercise(exerciseId: Int): ResultWrapper<Unit> = try {
         adminApiService.deleteExercise(exerciseId)
+        ResultWrapper.Success(Unit)
+    } catch (e: Exception) {
+        ResultWrapper.Error(e.message)
+    }
+
+    // Trainers
+    override suspend fun getTrainers(): ResultWrapper<List<TrainerResponse>> = try {
+        val response = adminApiService.getTrainers()
+        ResultWrapper.Success(response)
+    } catch (e: Exception) {
+        ResultWrapper.Error(e.message)
+    }
+
+    override suspend fun addTrainer(trainer: TrainerRequest): ResultWrapper<TrainerResponse> = try {
+        val response = adminApiService.addTrainer(trainer)
+        ResultWrapper.Success(response)
+    } catch (e: Exception) {
+        ResultWrapper.Error(e.message)
+    }
+
+    override suspend fun updateTrainer(trainerId: Int, trainer: UpdateTrainerRequest): ResultWrapper<TrainerResponse> = try {
+        val response = adminApiService.updateTrainer(trainerId, trainer)
+        ResultWrapper.Success(response)
+    } catch (e: Exception) {
+        ResultWrapper.Error(e.message)
+    }
+
+    override suspend fun deleteTrainer(trainerId: Int): ResultWrapper<Unit> = try {
+        adminApiService.deleteTrainer(trainerId)
         ResultWrapper.Success(Unit)
     } catch (e: Exception) {
         ResultWrapper.Error(e.message)
