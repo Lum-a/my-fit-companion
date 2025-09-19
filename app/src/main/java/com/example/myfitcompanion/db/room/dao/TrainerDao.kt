@@ -10,8 +10,11 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface TrainerDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertTrainer(trainer: Trainer)
+    suspend fun insertTrainer(vararg trainer: Trainer)
 
     @Query("SELECT * FROM trainers ORDER BY name ASC")
     fun getAllTrainers(): Flow<List<Trainer>>
+
+    @Query("SELECT * FROM trainers WHERE trainerId = :trainerId")
+    suspend fun getTrainerById(trainerId: Long): Trainer?
 }

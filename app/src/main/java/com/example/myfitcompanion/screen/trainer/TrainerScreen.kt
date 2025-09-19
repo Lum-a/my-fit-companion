@@ -27,6 +27,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,6 +37,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImagePainter
 import coil.compose.SubcomposeAsyncImage
 import coil.compose.SubcomposeAsyncImageContent
@@ -46,11 +49,13 @@ import com.example.myfitcompanion.ui.theme.myFitColors
 @Composable
 fun TrainerScreen(
     modifier: Modifier = Modifier,
+    viewModel: TrainerViewModel = hiltViewModel(),
     onTrainerClick: (Trainer) -> Unit = {}
 ) {
     // Sample data for preview - in real app this would come from ViewModel
     val trainers = getSampleTrainers()
-
+    val realTrainers by viewModel.trainers.collectAsStateWithLifecycle()
+    val trainerList = realTrainers.ifEmpty { trainers }
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -73,7 +78,7 @@ fun TrainerScreen(
                 )
             }
 
-            items(trainers) { trainer ->
+            items(trainerList) { trainer ->
                 TrainerCard(
                     trainer = trainer,
                     onClick = { onTrainerClick(trainer) }
