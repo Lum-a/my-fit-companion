@@ -26,6 +26,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.myfitcompanion.ui.theme.myFitColors
+import com.example.myfitcompanion.utils.ResultWrapper
 
 @Composable
 fun HomeScreen(
@@ -44,11 +46,17 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
     onLogout: () -> Unit = {},
     onCheckInClick: () -> Unit = {},
-    onClassesClick: () -> Unit = {},
+    onSessionsClick: () -> Unit = {},
     onTrainersClick: () -> Unit = {},
-    onPlansClick: () -> Unit = {}
+    onMealsClick: () -> Unit = {}
 ) {
     val userData by viewModel.user.collectAsStateWithLifecycle()
+    val recentSessionState by viewModel.recentSessionState.collectAsStateWithLifecycle()
+
+    // Load recent session when screen opens
+    LaunchedEffect(Unit) {
+        viewModel.getRecentSession()
+    }
 
     Column(
         modifier = modifier
@@ -78,7 +86,7 @@ fun HomeScreen(
             modifier = Modifier.padding(bottom = 12.dp, top = 8.dp)
         )
 
-        // Membership card
+        // Recent Sessions
         Card(
             shape = RoundedCornerShape(20.dp),
             colors = CardDefaults.cardColors(containerColor = myFitColors.current.cardsGrey),
@@ -92,15 +100,45 @@ fun HomeScreen(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
-                    text = "Membership",
+                    text = "Recent Sessions",
                     style = MaterialTheme.typography.titleMedium.copy(color = Color.White)
                 )
-                Text(
-                    text = "Active", // You can add membership status to userData if needed
-                    style = MaterialTheme.typography.bodyMedium.copy(
-                        color = myFitColors.current.orange
-                    )
-                )
+
+                when (val state = recentSessionState) {
+                    is ResultWrapper.Loading -> {
+                        Text(
+                            text = "Loading...",
+                            style = MaterialTheme.typography.bodyMedium.copy(
+                                color = myFitColors.current.orange
+                            )
+                        )
+                    }
+                    is ResultWrapper.Success -> {
+                        val session = state.data
+                        Text(
+                            text = "${session.name} - ${session.date}",
+                            style = MaterialTheme.typography.bodyMedium.copy(
+                                color = myFitColors.current.orange
+                            )
+                        )
+                    }
+                    is ResultWrapper.Error -> {
+                        Text(
+                            text = "No recent sessions found",
+                            style = MaterialTheme.typography.bodyMedium.copy(
+                                color = myFitColors.current.orange
+                            )
+                        )
+                    }
+                    is ResultWrapper.Initial -> {
+                        Text(
+                            text = "No sessions yet",
+                            style = MaterialTheme.typography.bodyMedium.copy(
+                                color = myFitColors.current.orange
+                            )
+                        )
+                    }
+                }
             }
         }
 
@@ -126,9 +164,9 @@ fun HomeScreen(
             }
             item {
                 QuickActionCard(
-                    label = "Classes",
+                    label = "Sessions",
                     icon = Icons.Default.Home,
-                    onClick = onClassesClick
+                    onClick = onSessionsClick
                 )
             }
             item {
@@ -140,9 +178,9 @@ fun HomeScreen(
             }
             item {
                 QuickActionCard(
-                    label = "Plans",
+                    label = "Meals",
                     icon = Icons.Default.Create,
-                    onClick = onPlansClick
+                    onClick = onMealsClick
                 )
             }
         }

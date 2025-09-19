@@ -5,7 +5,7 @@ import com.example.myfitcompanion.api.model.MealRequest
 import com.example.myfitcompanion.api.model.UserResponse
 import com.example.myfitcompanion.api.model.CreateUserRequest
 import com.example.myfitcompanion.api.model.UpdateUserRequest
-import com.example.myfitcompanion.api.model.SessionsResponse
+import com.example.myfitcompanion.api.model.SessionResponse
 import com.example.myfitcompanion.api.model.SessionRequest
 import com.example.myfitcompanion.api.model.ExerciseResponse
 import com.example.myfitcompanion.api.model.ExerciseRequest
@@ -22,6 +22,8 @@ interface AdminRepository {
     suspend fun updateUser(userId: Int, user: UpdateUserRequest): ResultWrapper<UserResponse>
     suspend fun deleteUser(userId: Int): ResultWrapper<Unit>
 
+    suspend fun getUserId(): Int?
+
     //meals
     suspend fun getMeals(): ResultWrapper<List<MealsResponse>>
     suspend fun addMeal(meal: MealRequest): ResultWrapper<MealsResponse>
@@ -29,9 +31,9 @@ interface AdminRepository {
     suspend fun deleteMeal(mealId: Int): ResultWrapper<Unit>
 
     //sessions
-    suspend fun getSessions(): ResultWrapper<List<SessionsResponse>>
-    suspend fun addSession(session: SessionRequest): ResultWrapper<SessionsResponse>
-    suspend fun updateSession(sessionId: Int, session: SessionRequest): ResultWrapper<SessionsResponse>
+    suspend fun getSessions(): ResultWrapper<List<SessionResponse>>
+    suspend fun addSession(session: SessionRequest): ResultWrapper<SessionResponse>
+    suspend fun updateSession(sessionId: Int, session: SessionRequest): ResultWrapper<SessionResponse>
     suspend fun deleteSession(sessionId: Int): ResultWrapper<Unit>
 
     //exercises

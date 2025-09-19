@@ -5,7 +5,7 @@ import com.example.myfitcompanion.api.ApiService
 import com.example.myfitcompanion.api.model.UserResponse
 import com.example.myfitcompanion.api.model.MealsResponse
 import com.example.myfitcompanion.api.model.MealRequest
-import com.example.myfitcompanion.api.model.SessionsResponse
+import com.example.myfitcompanion.api.model.SessionResponse
 import com.example.myfitcompanion.api.model.SessionRequest
 import com.example.myfitcompanion.api.model.ExerciseResponse
 import com.example.myfitcompanion.api.model.ExerciseRequest
@@ -14,14 +14,17 @@ import com.example.myfitcompanion.api.model.TrainerRequest
 import com.example.myfitcompanion.api.model.UpdateTrainerRequest
 import com.example.myfitcompanion.api.model.CreateUserRequest
 import com.example.myfitcompanion.api.model.UpdateUserRequest
+import com.example.myfitcompanion.db.room.dao.UserDao
 import com.example.myfitcompanion.utils.ResultWrapper
+import kotlinx.coroutines.flow.firstOrNull
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class AdminRepositoryImpl @Inject constructor(
     private val adminApiService: AdminApiService,
-    private val apiService: ApiService
+    private val apiService: ApiService,
+    private val userDao: UserDao
 ): AdminRepository {
 
     override suspend fun getUsers(): ResultWrapper<List<UserResponse>> = try {
@@ -50,6 +53,10 @@ class AdminRepositoryImpl @Inject constructor(
         ResultWrapper.Success(Unit)
     } catch (e: Exception) {
         ResultWrapper.Error(e.message)
+    }
+
+    override suspend fun getUserId(): Int? {
+       return userDao.getUser().firstOrNull()?.id
     }
 
     // Meals
@@ -82,21 +89,21 @@ class AdminRepositoryImpl @Inject constructor(
     }
 
     // Sessions
-    override suspend fun addSession(session: SessionRequest): ResultWrapper<SessionsResponse> = try {
+    override suspend fun addSession(session: SessionRequest): ResultWrapper<SessionResponse> = try {
         val response = adminApiService.addSession(session)
         ResultWrapper.Success(response)
     } catch (e: Exception) {
         ResultWrapper.Error(e.message)
     }
 
-    override suspend fun getSessions(): ResultWrapper<List<SessionsResponse>> = try {
+    override suspend fun getSessions(): ResultWrapper<List<SessionResponse>> = try {
         val response = apiService.getSessions()
         ResultWrapper.Success(response)
     } catch (e: Exception) {
         ResultWrapper.Error(e.message)
     }
 
-    override suspend fun updateSession(sessionId: Int, session: SessionRequest): ResultWrapper<SessionsResponse> = try {
+    override suspend fun updateSession(sessionId: Int, session: SessionRequest): ResultWrapper<SessionResponse> = try {
         val response = adminApiService.updateSession(sessionId, session)
         ResultWrapper.Success(response)
     } catch (e: Exception) {

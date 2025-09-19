@@ -4,21 +4,19 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.example.myfitcompanion.model.entities.GymClass
+import com.example.myfitcompanion.model.entities.Session
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface GymClassDao {
+interface SessionsDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertClass(gymClass: GymClass)
+    suspend fun attendSession(session: Session)
 
     @Query("SELECT * FROM classes WHERE classId = :id LIMIT 1")
-    suspend fun getClassById(id: Long): GymClass?
+    suspend fun getSessionById(id: Int): Session?
 
     @Query("SELECT * FROM classes ORDER BY startTime ASC")
-    fun getAllClasses(): Flow<List<GymClass>>
+    fun getSessions(): Flow<List<Session>>
 
-    @Query("DELETE FROM classes WHERE classId = :id")
-    suspend fun deleteClassById(id: Long)
 }

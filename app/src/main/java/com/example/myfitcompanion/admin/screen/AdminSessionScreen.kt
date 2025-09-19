@@ -26,23 +26,24 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.myfitcompanion.admin.viewmodel.AdminViewModel
 import com.example.myfitcompanion.api.model.SessionRequest
-import com.example.myfitcompanion.api.model.SessionsResponse
+import com.example.myfitcompanion.api.model.SessionResponse
 import com.example.myfitcompanion.ui.theme.myFitColors
 import com.example.myfitcompanion.utils.ResultWrapper
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AdminSessionScreen(
     viewModel: AdminViewModel = hiltViewModel(),
     onBack: () -> Unit = {},
-    onSessionClick: (SessionsResponse) -> Unit = {}
+    onSessionClick: (SessionResponse) -> Unit = {}
 ) {
     val sessionsState by viewModel.sessions.collectAsState()
     var showDialog by remember { mutableStateOf(false) }
     var name by remember { mutableStateOf("") }
-    var date by remember { mutableStateOf("") }
     var duration by remember { mutableStateOf("") }
-    var userId by remember { mutableStateOf("") }
+    var imageUrl by remember { mutableStateOf("") }
+    val scope = rememberCoroutineScope()
 
     Scaffold(
         topBar = {
@@ -92,6 +93,14 @@ fun AdminSessionScreen(
                     )
                 }
                 is ResultWrapper.Success -> {
+                    if(state.data.isEmpty()) {
+                        Text(
+                            "No sessions available. Click the + button to add a new session.",
+                            color = Color.Gray,
+                            modifier = Modifier.padding(16.dp)
+                        )
+                        return@Box
+                    }
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),
                         contentPadding = PaddingValues(16.dp),
@@ -115,21 +124,23 @@ fun AdminSessionScreen(
                 confirmButton = {
                     TextButton(onClick = {
                         val durationInt = duration.toIntOrNull()
-                        val userIdInt = userId.toIntOrNull()
-                        if (name.isNotBlank() && date.isNotBlank() && durationInt != null && userIdInt != null) {
-                            viewModel.addSession(
-                                SessionRequest(
-                                    name = name,
-                                    date = date,
-                                    duration = durationInt,
-                                    userId = userIdInt
+                        scope.launch {
+                            val userId = viewModel.getUserId()
+                            if (name.isNotBlank() && durationInt != null && userId != null) {
+                                viewModel.addSession(
+                                    SessionRequest(
+                                        name = name,
+                                        date = System.currentTimeMillis(),
+                                        duration = durationInt,
+                                        userId = userId,
+                                        imageUrl = imageUrl
+                                    )
                                 )
-                            )
+                            }
                             showDialog = false
                             name = ""
-                            date = ""
                             duration = ""
-                            userId = ""
+                            imageUrl = ""
                         }
                     }) {
                         Text("Create")
@@ -150,21 +161,15 @@ fun AdminSessionScreen(
                             modifier = Modifier.fillMaxWidth()
                         )
                         OutlinedTextField(
-                            value = date,
-                            onValueChange = { date = it },
-                            label = { Text("Date (YYYY-MM-DD)") },
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                        OutlinedTextField(
                             value = duration,
                             onValueChange = { duration = it },
                             label = { Text("Duration (min)") },
                             modifier = Modifier.fillMaxWidth()
                         )
                         OutlinedTextField(
-                            value = userId,
-                            onValueChange = { userId = it },
-                            label = { Text("User ID") },
+                            value = imageUrl,
+                            onValueChange = { imageUrl = it },
+                            label = { Text("Image URL") },
                             modifier = Modifier.fillMaxWidth()
                         )
                     }
@@ -176,7 +181,7 @@ fun AdminSessionScreen(
 
 @Composable
 fun SessionCard(
-    session: SessionsResponse,
+    session: SessionResponse,
     onClick: () -> Unit,
     onEdit: () -> Unit,
     onDelete: () -> Unit
