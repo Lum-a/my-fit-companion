@@ -28,26 +28,26 @@ interface ApiService {
     suspend fun register(@Body request: RegisterRequest): Response<RegisterResponse>
 
     @GET("memberships/{userId}")
-    suspend fun getMembership(@Path("userId") userId: String): Response<MembershipResponse>
+    suspend fun getMembership(@Path("userId") userId: String): MembershipResponse
 
     @GET("plans")
-    suspend fun getPlans(): Response<List<PlanResponse>>
+    suspend fun getPlans(): List<PlanResponse>
 
     @GET("trainers")
-    suspend fun getTrainers(): Response<List<TrainerResponse>>
+    suspend fun getTrainers(): List<TrainerResponse>
 
     @GET("classes")
-    suspend fun getClasses(): Response<List<ClassResponse>>
+    suspend fun getClasses(): List<ClassResponse>
 
     @POST("classes/{classId}/book")
     suspend fun bookClass(
         @Path("classId") classId: Long,
         @Body bookingRequest: ClassBookingRequest
-    ): Response<ClassBookingResponse>
+    ): ClassBookingResponse
 
     @PUT("users/{userId}")
     suspend fun updateProfile(
         @Path("userId") userId: Int?,
         @Body request: UpdateProfileRequest
-    ): Response<UpdateProfileResponse>
+    ): UpdateProfileResponse
 }

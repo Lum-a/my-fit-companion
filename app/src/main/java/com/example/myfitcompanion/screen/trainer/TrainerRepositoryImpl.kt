@@ -5,8 +5,8 @@ import com.example.myfitcompanion.api.ApiService
 import com.example.myfitcompanion.api.model.TrainerResponse
 import com.example.myfitcompanion.db.room.dao.TrainerDao
 import com.example.myfitcompanion.model.entities.Trainer
+import com.example.myfitcompanion.utils.ResultWrapper
 import kotlinx.coroutines.flow.Flow
-import retrofit2.Response
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -16,8 +16,12 @@ class TrainerRepositoryImpl @Inject constructor(
     private val trainerDao: TrainerDao
 ): TrainerRepository {
 
-    override suspend fun getTrainersFromApi(): Response<List<TrainerResponse>> {
-        return apiService.getTrainers()
+    override suspend fun getTrainersFromApi(): ResultWrapper<List<TrainerResponse>> = try {
+        val response = apiService.getTrainers()
+        ResultWrapper.Success(response)
+    } catch (e: Exception) {
+        Log.e("TrainerRepositoryImpl", "Error getting trainers from API: ${e.message}")
+        ResultWrapper.Error(e.message)
     }
 
     override suspend fun insertTrainer(trainer: Trainer) {
@@ -32,27 +36,31 @@ class TrainerRepositoryImpl @Inject constructor(
         return trainerDao.getTrainerById(trainerId)
     }
 
-    override suspend fun syncTrainersFromApi() {
-        try {
-            val response = getTrainersFromApi()
-            Log.d("TrainerRepositoryImpl", "response:${response}")
-            if (response.isSuccessful) {
-                response.body()?.let { trainerResponses ->
-                    // Convert TrainerResponse to Trainer entities and insert to database
-                    trainerResponses.forEach { trainerResponse ->
-                        val trainer = Trainer(
-                            trainerId = trainerResponse.trainerId,
-                            firstName = trainerResponse.firstName,
-                            lastName = trainerResponse.lastName,
-                            specialization = trainerResponse.specialization,
-                            contactInfo = trainerResponse.contactInfo
-                        )
-                        insertTrainer(trainer)
-                    }
+    override suspend fun syncTrainersFromApi(): ResultWrapper<Unit> = try {
+        when (val result = getTrainersFromApi()) {
+            is ResultWrapper.Success -> {
+                Log.d("TrainerRepositoryImpl", "trainers: ${result.data}")
+                // Convert TrainerResponse to Trainer entities and insert to database
+                result.data.forEach { trainerResponse ->
+                    val trainer = Trainer(
+                        trainerId = trainerResponse.trainerId,
+                        firstName = trainerResponse.firstName,
+                        lastName = trainerResponse.lastName,
+                        specialization = trainerResponse.specialization,
+                        contactInfo = trainerResponse.contactInfo
+                    )
+                    insertTrainer(trainer)
                 }
+                ResultWrapper.Success(Unit)
             }
-        } catch (e: Exception) {
-            Log.e("TrainerRepositoryImpl", "Error syncing trainers: ${e.message}" )
+            is ResultWrapper.Error -> {
+                Log.e("TrainerRepositoryImpl", "Error syncing trainers: ${result.message}")
+                ResultWrapper.Error(result.message)
+            }
+            else -> ResultWrapper.Error("Unknown error occurred")
         }
+    } catch (e: Exception) {
+        Log.e("TrainerRepositoryImpl", "Error syncing trainers: ${e.message}")
+        ResultWrapper.Error(e.message)
     }
 }

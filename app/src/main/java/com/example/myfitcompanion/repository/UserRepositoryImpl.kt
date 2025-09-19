@@ -10,6 +10,7 @@ import com.example.myfitcompanion.api.model.LoginResponse
 import com.example.myfitcompanion.api.model.RegisterRequest
 import com.example.myfitcompanion.model.entities.User
 import com.example.myfitcompanion.api.model.RegisterResponse
+import com.example.myfitcompanion.utils.ResultWrapper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.firstOrNull
@@ -45,8 +46,11 @@ class UserRepositoryImpl @Inject constructor(
         userDao.insertUser(user)
     }
 
-    override suspend fun updateUser(request: UpdateProfileRequest): Response<UpdateProfileResponse> {
-        return apiService.updateProfile(getUserId(), request)
+    override suspend fun updateUser(request: UpdateProfileRequest): ResultWrapper<UpdateProfileResponse> = try {
+        val response = apiService.updateProfile(getUserId(), request)
+        ResultWrapper.Success(response)
+    } catch (e: Exception) {
+        ResultWrapper.Error(e.message)
     }
 
     override suspend fun deleteUser() {

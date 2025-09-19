@@ -75,12 +75,10 @@ interface AdminApiService {
     @DELETE("admin/exercises/{id}")
     suspend fun deleteExercise(@Path("id") exerciseId: Int)
 
-    // Trainers
+    // Trainers - only admin operations (add, update, delete)
     @POST("admin/trainers")
     suspend fun addTrainer(@Body trainer: TrainerRequest): TrainerResponse
 
-    @GET("admin/trainers")
-    suspend fun getTrainers(): List<TrainerResponse>
 
     @PUT("admin/trainers/{id}")
     suspend fun updateTrainer(@Path("id") trainerId: Int, @Body trainer: UpdateTrainerRequest): TrainerResponse

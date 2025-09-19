@@ -6,6 +6,7 @@ import com.example.myfitcompanion.api.model.LoginResponse
 import com.example.myfitcompanion.api.model.RegisterRequest
 import com.example.myfitcompanion.model.entities.User
 import com.example.myfitcompanion.api.model.RegisterResponse
+import com.example.myfitcompanion.utils.ResultWrapper
 import kotlinx.coroutines.flow.Flow
 import retrofit2.Response
 
@@ -13,7 +14,7 @@ interface UserRepository {
     suspend fun login(email: String, password: String): Response<LoginResponse>
     suspend fun register(request: RegisterRequest): Response<RegisterResponse>
     suspend fun insertUser(user: User)
-    suspend fun updateUser(request: UpdateProfileRequest): Response<UpdateProfileResponse>
+    suspend fun updateUser(request: UpdateProfileRequest): ResultWrapper<UpdateProfileResponse>
     fun getUser(): Flow<User?>
     suspend fun getUserId(): Int?
     suspend fun deleteUser()

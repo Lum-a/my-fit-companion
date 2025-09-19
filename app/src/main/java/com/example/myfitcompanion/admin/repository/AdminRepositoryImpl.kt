@@ -1,6 +1,7 @@
 package com.example.myfitcompanion.admin.repository
 
 import com.example.myfitcompanion.admin.api.AdminApiService
+import com.example.myfitcompanion.api.ApiService
 import com.example.myfitcompanion.api.model.UserResponse
 import com.example.myfitcompanion.api.model.MealsResponse
 import com.example.myfitcompanion.api.model.MealRequest
@@ -19,7 +20,8 @@ import javax.inject.Singleton
 
 @Singleton
 class AdminRepositoryImpl @Inject constructor(
-    private val adminApiService: AdminApiService
+    private val adminApiService: AdminApiService,
+    private val apiService: ApiService
 ): AdminRepository {
 
     override suspend fun getUsers(): ResultWrapper<List<UserResponse>> = try {
@@ -139,7 +141,7 @@ class AdminRepositoryImpl @Inject constructor(
 
     // Trainers
     override suspend fun getTrainers(): ResultWrapper<List<TrainerResponse>> = try {
-        val response = adminApiService.getTrainers()
+        val response = apiService.getTrainers()
         ResultWrapper.Success(response)
     } catch (e: Exception) {
         ResultWrapper.Error(e.message)
