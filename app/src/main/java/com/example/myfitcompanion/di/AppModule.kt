@@ -7,9 +7,7 @@ import com.example.myfitcompanion.api.ApiService
 import com.example.myfitcompanion.admin.api.AdminApiService
 import com.example.myfitcompanion.api.token.TokenManager
 import com.example.myfitcompanion.db.room.MyFitDatabase
-import com.example.myfitcompanion.db.room.dao.GymClassDao
-import com.example.myfitcompanion.db.room.dao.MembershipDao
-import com.example.myfitcompanion.db.room.dao.PlanDao
+import com.example.myfitcompanion.db.room.dao.SessionsDao
 import com.example.myfitcompanion.db.room.dao.TrainerDao
 import com.example.myfitcompanion.db.room.dao.UserDao
 import com.example.myfitcompanion.repository.UserRepository
@@ -37,16 +35,10 @@ object AppModule {
     fun provideUserDao(db: MyFitDatabase): UserDao = db.userDao()
 
     @Provides
-    fun provideMembershipDao(db: MyFitDatabase): MembershipDao = db.membershipDao()
-
-    @Provides
     fun provideTrainerDao(db: MyFitDatabase): TrainerDao = db.trainerDao()
 
     @Provides
-    fun provideGymClassDao(db: MyFitDatabase): GymClassDao = db.gymClassDao()
-
-    @Provides
-    fun providePlanDao(db: MyFitDatabase): PlanDao = db.planDao()
+    fun provideSessionsDao(db: MyFitDatabase): SessionsDao = db.sessionsDao()
 
     @Provides
     @Singleton
@@ -71,8 +63,9 @@ object AppModule {
     @Singleton
     fun provideAdminRepository(
         adminApiService: AdminApiService,
-        apiService: ApiService
+        apiService: ApiService,
+        userDao: UserDao
     ): AdminRepository {
-        return AdminRepositoryImpl(adminApiService, apiService)
+        return AdminRepositoryImpl(adminApiService, apiService, userDao)
     }
 }

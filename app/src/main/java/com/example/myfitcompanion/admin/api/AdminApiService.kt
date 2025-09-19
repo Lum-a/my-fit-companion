@@ -6,7 +6,7 @@ import com.example.myfitcompanion.api.model.ExerciseResponse
 import com.example.myfitcompanion.api.model.MealRequest
 import com.example.myfitcompanion.api.model.MealsResponse
 import com.example.myfitcompanion.api.model.SessionRequest
-import com.example.myfitcompanion.api.model.SessionsResponse
+import com.example.myfitcompanion.api.model.SessionResponse
 import com.example.myfitcompanion.api.model.TrainerRequest
 import com.example.myfitcompanion.api.model.TrainerResponse
 import com.example.myfitcompanion.api.model.UpdateTrainerRequest
@@ -51,10 +51,10 @@ interface AdminApiService {
 
     // Sessions
     @POST("admin/sessions")
-    suspend fun addSession(@Body session: SessionRequest): SessionsResponse
+    suspend fun addSession(@Body session: SessionRequest): SessionResponse
 
     @PUT("admin/sessions/{id}")
-    suspend fun updateSession(@Path("id") sessionId: Int, @Body session: SessionRequest): SessionsResponse
+    suspend fun updateSession(@Path("id") sessionId: Int, @Body session: SessionRequest): SessionResponse
 
     @DELETE("admin/sessions/{id}")
     suspend fun deleteSession(@Path("id") sessionId: Int)

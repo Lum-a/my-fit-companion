@@ -1,5 +1,6 @@
 package com.example.myfitcompanion.repository
 
+import android.util.Log
 import com.example.myfitcompanion.api.ApiService
 import com.example.myfitcompanion.api.model.UpdateProfileRequest
 import com.example.myfitcompanion.api.model.UpdateProfileResponse
@@ -10,6 +11,7 @@ import com.example.myfitcompanion.api.model.LoginResponse
 import com.example.myfitcompanion.api.model.RegisterRequest
 import com.example.myfitcompanion.model.entities.User
 import com.example.myfitcompanion.api.model.RegisterResponse
+import com.example.myfitcompanion.api.model.SessionResponse
 import com.example.myfitcompanion.utils.ResultWrapper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -80,5 +82,26 @@ class UserRepositoryImpl @Inject constructor(
         user != null && !token.isNullOrEmpty()
     }
 
+    override suspend fun getRecentSession(): ResultWrapper<SessionResponse> = try {
+            val response = apiService.getRecentSession(getUserId())
+            ResultWrapper.Success(response)
+        } catch (e: Exception) {
+            ResultWrapper.Error(e.message)
+        }
+
+    override suspend fun addRecentSession(sessionId: Int) {
+        try {
+            apiService.addRecentSession(sessionId, getUserId())
+        } catch (e: Exception) {
+            Log.d("UserRepositoryImpl", "addRecentSession: ${e.message}")
+        }
+    }
+
+    override suspend fun getSessions(): ResultWrapper<List<SessionResponse>> = try {
+        val response = apiService.getSessions()
+        ResultWrapper.Success(response)
+    } catch (e: Exception) {
+        ResultWrapper.Error(e.message)
+    }
 
 }

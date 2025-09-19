@@ -8,7 +8,7 @@ import com.example.myfitcompanion.api.model.CreateUserRequest
 import com.example.myfitcompanion.api.model.UpdateUserRequest
 import com.example.myfitcompanion.api.model.MealsResponse
 import com.example.myfitcompanion.api.model.MealRequest
-import com.example.myfitcompanion.api.model.SessionsResponse
+import com.example.myfitcompanion.api.model.SessionResponse
 import com.example.myfitcompanion.api.model.SessionRequest
 import com.example.myfitcompanion.api.model.ExerciseResponse
 import com.example.myfitcompanion.api.model.ExerciseRequest
@@ -24,7 +24,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AdminViewModel @Inject constructor(
-    private val adminRepository: AdminRepository
+    private val adminRepository: AdminRepository,
 ): ViewModel() {
     // Users
     private val _users = MutableStateFlow<ResultWrapper<List<UserResponse>>>(ResultWrapper.Initial)
@@ -35,6 +35,10 @@ class AdminViewModel @Inject constructor(
             _users.value = ResultWrapper.Loading
             _users.value = adminRepository.getUsers()
         }
+    }
+
+    suspend fun getUserId(): Int? {
+        return adminRepository.getUserId()
     }
 
     fun addUser(user: CreateUserRequest) {
@@ -59,7 +63,7 @@ class AdminViewModel @Inject constructor(
     }
 
     // Sessions
-    private val _sessions = MutableStateFlow<ResultWrapper<List<SessionsResponse>>>(ResultWrapper.Initial)
+    private val _sessions = MutableStateFlow<ResultWrapper<List<SessionResponse>>>(ResultWrapper.Initial)
     val sessions = _sessions.asStateFlow()
 
     fun loadSessions() {

@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "classes")
-data class GymClass(
+data class Session(
     @PrimaryKey(autoGenerate = true) val classId: Long = 0,
     val name: String,
     val description: String? = null,

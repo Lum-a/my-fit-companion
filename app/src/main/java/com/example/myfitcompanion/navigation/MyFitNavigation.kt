@@ -16,11 +16,12 @@ import com.example.myfitcompanion.admin.screen.AdminTrainerScreen
 import com.example.myfitcompanion.admin.screen.AdminUserScreen
 import com.example.myfitcompanion.screen.AdminScreen
 import com.example.myfitcompanion.screen.Screen
-import com.example.myfitcompanion.screen.classes.ClassesScreen
+import com.example.myfitcompanion.screen.exercise.ExerciseScreen
+import com.example.myfitcompanion.screen.session.SessionScreen
 import com.example.myfitcompanion.screen.splash.SplashScreen
 import com.example.myfitcompanion.screen.home.HomeScreen
 import com.example.myfitcompanion.screen.login.LoginScreen
-import com.example.myfitcompanion.screen.plan.PlanScreen
+import com.example.myfitcompanion.screen.meal.MealScreen
 import com.example.myfitcompanion.screen.profile.ProfileScreen
 import com.example.myfitcompanion.screen.signup.RegisterScreen
 import com.example.myfitcompanion.screen.trainer.TrainerScreen
@@ -75,15 +76,14 @@ fun MyFitNavigation(navController: NavHostController, padding: PaddingValues, is
             HomeScreen(
                 onLogout = { logout() },
                 onTrainersClick = { navigate(Screen.Trainer) },
-                onClassesClick = { navigate(Screen.Classes) },
-                onPlansClick = { navigate(Screen.Plan) },
+                onSessionsClick = { navigate(Screen.Session) },
+                onMealsClick = { navigate(Screen.Meal) },
             )
         }
-        composable<Screen.Classes> { ClassesScreen() }
-        composable<Screen.Trainer> { TrainerScreen(
-            onTrainerClick = { navigate(Screen.Profile) }
-        ) }
-        composable<Screen.Plan> { PlanScreen() }
+        composable<Screen.Session> { SessionScreen(onSessionClick = { navigate(Screen.Exercise) }) }
+        composable<Screen.Exercise> { ExerciseScreen() }
+        composable<Screen.Meal> { MealScreen() }
+        composable<Screen.Trainer> { TrainerScreen(onTrainerClick = { navigate(Screen.Profile) }) }
 
         //Admin screens
         composable<AdminScreen.Admin> {

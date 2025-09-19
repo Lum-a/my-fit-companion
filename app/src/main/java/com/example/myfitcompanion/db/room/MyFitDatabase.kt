@@ -4,35 +4,35 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.myfitcompanion.db.room.dao.GymClassDao
-import com.example.myfitcompanion.db.room.dao.MembershipDao
-import com.example.myfitcompanion.db.room.dao.PlanDao
+import com.example.myfitcompanion.db.room.dao.SessionsDao
+import com.example.myfitcompanion.db.room.dao.MealDao
+import com.example.myfitcompanion.db.room.dao.ExerciseDao
 import com.example.myfitcompanion.db.room.dao.TrainerDao
 import com.example.myfitcompanion.db.room.dao.UserDao
-import com.example.myfitcompanion.model.entities.GymClass
-import com.example.myfitcompanion.model.entities.Membership
-import com.example.myfitcompanion.model.entities.Plan
+import com.example.myfitcompanion.model.entities.Exercise
+import com.example.myfitcompanion.model.entities.Meal
+import com.example.myfitcompanion.model.entities.Session
 import com.example.myfitcompanion.model.entities.Trainer
 import com.example.myfitcompanion.model.entities.User
 
 @Database(
     entities = [
         User::class,
-        Membership::class,
         Trainer::class,
-        GymClass::class,
-        Plan::class
+        Session::class,
+        Exercise::class,
+        Meal::class
     ],
-    version = 4,
+    version = 5,
     exportSchema = false
 )
 abstract class MyFitDatabase: RoomDatabase() {
 
     abstract fun userDao(): UserDao
-    abstract fun membershipDao(): MembershipDao
+    abstract fun mealDao(): MealDao
     abstract fun trainerDao(): TrainerDao
-    abstract fun gymClassDao(): GymClassDao
-    abstract fun planDao(): PlanDao
+    abstract fun sessionsDao(): SessionsDao
+    abstract fun exerciseDao(): ExerciseDao
 
     companion object {
 

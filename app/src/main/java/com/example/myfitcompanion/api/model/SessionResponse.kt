@@ -4,7 +4,7 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
-data class SessionsResponse(
+data class SessionResponse(
     @Json(name = "id")
     val id: Int,
     @Json(name = "name")
@@ -14,5 +14,7 @@ data class SessionsResponse(
     @Json(name = "duration")
     val duration: Int, // in minutes
     @Json(name = "userId")
-    val userId: Int
+    val userId: Int,
+    @Json(name = "imageUrl")
+    val imageUrl: String? = null
 )

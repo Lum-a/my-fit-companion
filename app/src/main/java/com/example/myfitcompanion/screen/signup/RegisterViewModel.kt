@@ -48,14 +48,14 @@ class RegisterViewModel @Inject constructor(
                     Log.d(TAG, "Registration success: ${registerData.user}")
                 }
                 is ResultWrapper.Error -> {
-                    _registerState.value = ResultWrapper.Error(result.message ?: "Registration failed")
+                    _registerState.value = ResultWrapper.Error("Registration failed: ${result.message}")
                     Log.d(TAG, "Registration error: ${result.message}")
                 }
                 is ResultWrapper.Loading -> {
                     // Already set to loading above
                 }
                 is ResultWrapper.Initial -> {
-                    _registerState.value = ResultWrapper.Error("Unexpected initial state")
+                    _registerState.value = ResultWrapper.Initial
                 }
             }
         }

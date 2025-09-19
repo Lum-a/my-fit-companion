@@ -43,14 +43,14 @@ class LoginViewModel @Inject constructor(
                     Log.d("LoginViewModel", "Login success: ${loginData.user}")
                 }
                 is ResultWrapper.Error -> {
-                    _loginState.value = ResultWrapper.Error(result.message ?: "Login failed")
+                    _loginState.value = ResultWrapper.Error("Invalid email or password!")
                     Log.d("LoginViewModel", "Login error: ${result.message}")
                 }
                 is ResultWrapper.Loading -> {
                     // Already set to loading above
                 }
                 is ResultWrapper.Initial -> {
-                    _loginState.value = ResultWrapper.Error("Unexpected initial state")
+                    _loginState.value = ResultWrapper.Initial
                 }
             }
         }

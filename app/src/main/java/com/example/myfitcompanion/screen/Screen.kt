@@ -20,13 +20,16 @@ sealed class Screen {
     data object Profile: Screen()
 
     @Serializable
-    data object Classes: Screen()
+    data object Session: Screen()
 
     @Serializable
     data object Trainer: Screen()
 
     @Serializable
-    data object Plan: Screen()
+    data object Meal: Screen()
+
+    @Serializable
+    data object Exercise: Screen()
 }
 
 @Serializable
