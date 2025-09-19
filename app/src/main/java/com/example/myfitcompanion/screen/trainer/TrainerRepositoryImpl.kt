@@ -42,7 +42,8 @@ class TrainerRepositoryImpl @Inject constructor(
                     trainerResponses.forEach { trainerResponse ->
                         val trainer = Trainer(
                             trainerId = trainerResponse.trainerId,
-                            name = trainerResponse.name,
+                            firstName = trainerResponse.firstName,
+                            lastName = trainerResponse.lastName,
                             specialization = trainerResponse.specialization,
                             contactInfo = trainerResponse.contactInfo
                         )

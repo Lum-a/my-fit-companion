@@ -93,6 +93,8 @@ fun TrainerCard(
     trainer: Trainer,
     onClick: () -> Unit
 ) {
+    val fullName = "${trainer.firstName} ${trainer.lastName}"
+
     Card(
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(containerColor = myFitColors.current.cardsGrey),
@@ -109,8 +111,8 @@ fun TrainerCard(
         ) {
             // Trainer profile picture
             TrainerProfileImage(
-                imageUrl = getTrainerImageUrl(trainer.name),
-                trainerName = trainer.name,
+                imageUrl = getTrainerImageUrl(fullName),
+                trainerName = fullName,
                 modifier = Modifier.size(80.dp)
             )
 
@@ -123,7 +125,7 @@ fun TrainerCard(
                     .fillMaxWidth()
             ) {
                 Text(
-                    text = trainer.name,
+                    text = fullName,
                     style = MaterialTheme.typography.titleLarge.copy(
                         color = Color.White,
                         fontWeight = FontWeight.Bold
@@ -246,43 +248,50 @@ private fun getSampleTrainers(): List<Trainer> {
     return listOf(
         Trainer(
             trainerId = 1,
-            name = "Sarah Johnson",
+            firstName = "Sarah",
+            lastName = "Johnson",
             specialization = "HIIT & Strength Training",
             contactInfo = "sarah.j@myfit.com"
         ),
         Trainer(
             trainerId = 2,
-            name = "Mike Chen",
+            firstName = "Mike",
+            lastName = "Chen",
             specialization = "Yoga & Flexibility",
             contactInfo = "mike.c@myfit.com"
         ),
         Trainer(
             trainerId = 3,
-            name = "Jessica Rodriguez",
+            firstName = "Jessica",
+            lastName = "Rodriguez",
             specialization = "CrossFit & Conditioning",
             contactInfo = "jessica.r@myfit.com"
         ),
         Trainer(
             trainerId = 4,
-            name = "David Thompson",
+            firstName = "David",
+            lastName = "Thompson",
             specialization = "Powerlifting & Bodybuilding",
             contactInfo = "david.t@myfit.com"
         ),
         Trainer(
             trainerId = 5,
-            name = "Emma Wilson",
+            firstName = "Emma",
+            lastName = "Wilson",
             specialization = "Dance & Cardio",
             contactInfo = "emma.w@myfit.com"
         ),
         Trainer(
             trainerId = 6,
-            name = "Alex Martinez",
+            firstName = "Alex",
+            lastName = "Martinez",
             specialization = "Boxing & Martial Arts",
             contactInfo = "alex.m@myfit.com"
         ),
         Trainer(
             trainerId = 7,
-            name = "Lisa Park",
+            firstName = "Lisa",
+            lastName = "Park",
             specialization = "Pilates & Core Strength",
             contactInfo = "lisa.p@myfit.com"
         )
@@ -309,7 +318,8 @@ fun TrainerCardPreview() {
             TrainerCard(
                 trainer = Trainer(
                     trainerId = 1,
-                    name = "Sarah Johnson",
+                    firstName = "Sarah",
+                    lastName = "Johnson",
                     specialization = "HIIT & Strength Training",
                     contactInfo = "sarah.j@myfit.com"
                 ),

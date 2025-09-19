@@ -8,7 +8,8 @@ import androidx.room.PrimaryKey
 data class Trainer(
     @PrimaryKey(autoGenerate = true)
     val trainerId: Long = 0,
-    val name: String,
+    val firstName: String,
+    val lastName: String,
     val specialization: String? = null,
     val contactInfo: String? = null
 )
