@@ -3,24 +3,26 @@ package com.example.myfitcompanion.admin.screen
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.myfitcompanion.admin.viewmodel.AdminViewModel
+import com.example.myfitcompanion.api.model.CreateUserRequest
 import com.example.myfitcompanion.api.model.TrainerResponse
-import com.example.myfitcompanion.api.model.TrainerRequest
 import com.example.myfitcompanion.api.model.UpdateTrainerRequest
+import com.example.myfitcompanion.ui.theme.myFitColors
 import com.example.myfitcompanion.utils.ResultWrapper
 
 /**
@@ -48,14 +50,19 @@ fun AdminTrainerScreen(
                 title = { Text("Manage Trainers") },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = myFitColors.current.background,
+                    titleContentColor = myFitColors.current.gold
+                )
             )
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { showCreateDialog = true }
+                onClick = { showCreateDialog = true },
+                containerColor = myFitColors.current.gold
             ) {
                 Icon(Icons.Default.Add, contentDescription = "Add Trainer")
             }
@@ -64,9 +71,13 @@ fun AdminTrainerScreen(
         Box(
             modifier = modifier
                 .fillMaxSize()
-                .padding(paddingValues)
+                .padding(paddingValues),
+            contentAlignment = Alignment.Center
         ) {
             when (val state = trainersState) {
+                is ResultWrapper.Initial -> {
+                    LaunchedEffect(Unit) { viewModel.loadUsers() }
+                }
                 is ResultWrapper.Loading -> {
                     CircularProgressIndicator(
                         modifier = Modifier.align(Alignment.Center)
@@ -79,10 +90,10 @@ fun AdminTrainerScreen(
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         items(state.data) { trainer ->
-                            TrainerItem(
+                            UserCard(
                                 trainer = trainer,
-                                onEdit = { editingTrainer = it },
-                                onDelete = { viewModel.deleteTrainer(it.trainerId) }
+                                onEdit = { editingTrainer = trainer },
+                                onDelete = { viewModel.deleteTrainer(trainer.trainerId) }
                             )
                         }
                     }
@@ -93,9 +104,6 @@ fun AdminTrainerScreen(
                         modifier = Modifier.align(Alignment.Center),
                         color = MaterialTheme.colorScheme.error
                     )
-                }
-                is ResultWrapper.Initial -> {
-                    // Show nothing or loading state
                 }
             }
         }
@@ -124,65 +132,36 @@ fun AdminTrainerScreen(
 }
 
 @Composable
-private fun TrainerItem(
+fun UserCard(
     trainer: TrainerResponse,
-    onEdit: (TrainerResponse) -> Unit,
-    onDelete: (TrainerResponse) -> Unit
+    onEdit: () -> Unit,
+    onDelete: () -> Unit
 ) {
     Card(
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = myFitColors.current.cardsGrey
+        ),
         modifier = Modifier.fillMaxWidth()
     ) {
-        Column(
+        Row(
             modifier = Modifier
-                .fillMaxWidth()
                 .padding(16.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Top
-            ) {
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = "${trainer.firstName} ${trainer.lastName}",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        text = "Email: ${trainer.email}",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    trainer.specialization?.let {
-                        Text(
-                            text = "Specialization: $it",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                    trainer.contactInfo?.let {
-                        Text(
-                            text = "Contact: $it",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
+            Column {
+                Text("${trainer.firstName} ${trainer.lastName}", color = Color.White, style = MaterialTheme.typography.titleMedium)
+                Text(trainer.email, color = Color.Gray, style = MaterialTheme.typography.bodySmall)
+                Text(trainer.specialization ?: "Unknown", color = myFitColors.current.gold, style = MaterialTheme.typography.bodySmall)
+            }
+            Row {
+                IconButton(onClick = onEdit) {
+                    Icon(Icons.Default.Edit, contentDescription = "Edit", tint = myFitColors.current.yellow)
                 }
-                Row {
-                    IconButton(onClick = { onEdit(trainer) }) {
-                        Icon(
-                            Icons.Default.Edit,
-                            contentDescription = "Edit",
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                    IconButton(onClick = { onDelete(trainer) }) {
-                        Icon(
-                            Icons.Default.Delete,
-                            contentDescription = "Delete",
-                            tint = MaterialTheme.colorScheme.error
-                        )
-                    }
+                IconButton(onClick = onDelete) {
+                    Icon(Icons.Default.Delete, contentDescription = "Delete", tint = Color.Red)
                 }
             }
         }
@@ -192,7 +171,7 @@ private fun TrainerItem(
 @Composable
 private fun CreateTrainerDialog(
     onDismiss: () -> Unit,
-    onSave: (TrainerRequest) -> Unit
+    onSave: (CreateUserRequest) -> Unit
 ) {
     var firstName by remember { mutableStateOf("") }
     var lastName by remember { mutableStateOf("") }
@@ -272,13 +251,14 @@ private fun CreateTrainerDialog(
                         email.isNotBlank() && password.isNotBlank() &&
                         password == confirmPassword) {
                         onSave(
-                            TrainerRequest(
+                            CreateUserRequest(
                                 firstName = firstName,
                                 lastName = lastName,
                                 email = email,
                                 password = password,
                                 specialization = specialization.takeIf { it.isNotBlank() },
-                                contactInfo = contactInfo.takeIf { it.isNotBlank() }
+                                contactInfo = contactInfo.takeIf { it.isNotBlank() },
+                                role = "trainer".uppercase()
                             )
                         )
                     }

@@ -10,7 +10,6 @@ import com.example.myfitcompanion.api.model.SessionRequest
 import com.example.myfitcompanion.api.model.ExerciseResponse
 import com.example.myfitcompanion.api.model.ExerciseRequest
 import com.example.myfitcompanion.api.model.TrainerResponse
-import com.example.myfitcompanion.api.model.TrainerRequest
 import com.example.myfitcompanion.api.model.UpdateTrainerRequest
 import com.example.myfitcompanion.api.model.CreateUserRequest
 import com.example.myfitcompanion.api.model.UpdateUserRequest
@@ -149,13 +148,6 @@ class AdminRepositoryImpl @Inject constructor(
     // Trainers
     override suspend fun getTrainers(): ResultWrapper<List<TrainerResponse>> = try {
         val response = apiService.getTrainers()
-        ResultWrapper.Success(response)
-    } catch (e: Exception) {
-        ResultWrapper.Error(e.message)
-    }
-
-    override suspend fun addTrainer(trainer: TrainerRequest): ResultWrapper<TrainerResponse> = try {
-        val response = adminApiService.addTrainer(trainer)
         ResultWrapper.Success(response)
     } catch (e: Exception) {
         ResultWrapper.Error(e.message)

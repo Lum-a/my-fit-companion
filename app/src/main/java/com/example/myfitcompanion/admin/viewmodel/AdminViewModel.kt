@@ -13,7 +13,6 @@ import com.example.myfitcompanion.api.model.SessionRequest
 import com.example.myfitcompanion.api.model.ExerciseResponse
 import com.example.myfitcompanion.api.model.ExerciseRequest
 import com.example.myfitcompanion.api.model.TrainerResponse
-import com.example.myfitcompanion.api.model.TrainerRequest
 import com.example.myfitcompanion.api.model.UpdateTrainerRequest
 import com.example.myfitcompanion.utils.ResultWrapper
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -169,9 +168,9 @@ class AdminViewModel @Inject constructor(
         }
     }
 
-    fun addTrainer(trainer: TrainerRequest) {
+    fun addTrainer(user: CreateUserRequest) {
         viewModelScope.launch {
-            adminRepository.addTrainer(trainer)
+            adminRepository.addUser(user)
             loadTrainers()
         }
     }
