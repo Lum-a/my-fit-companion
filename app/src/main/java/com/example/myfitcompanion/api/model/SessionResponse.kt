@@ -9,7 +9,7 @@ data class SessionResponse(
     val id: Int,
     @Json(name = "name")
     val name: String,
-    @Json(name = "date")
+    @Json(name = "createdAt")
     val date: String, // ISO format recommended
     @Json(name = "duration")
     val duration: Int, // in minutes
