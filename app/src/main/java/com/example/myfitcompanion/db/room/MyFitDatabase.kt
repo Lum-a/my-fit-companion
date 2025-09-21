@@ -25,7 +25,7 @@ import com.example.myfitcompanion.model.entities.User
         Exercise::class,
         Meal::class
     ],
-    version = 6,
+    version = 7,
     exportSchema = false
 )
 abstract class MyFitDatabase: RoomDatabase() {
@@ -39,12 +39,6 @@ abstract class MyFitDatabase: RoomDatabase() {
         @Volatile
         private var INSTANCE: MyFitDatabase? = null
 
-        private val MIGRATION_3_4 = object : Migration(3, 4) {
-            override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("ALTER TABLE user ADD COLUMN photoUrl TEXT")
-            }
-        }
-
         fun getInstance(context: Context): MyFitDatabase {
             synchronized(this) {
                 var instance = INSTANCE
@@ -53,9 +47,10 @@ abstract class MyFitDatabase: RoomDatabase() {
                         context.applicationContext,
                         MyFitDatabase::class.java,
                         "myfit_database"
-                    )
-                    .addMigrations(MIGRATION_3_4)
-                    .build()
+                    ).fallbackToDestructiveMigration(
+                        false
+                    ).build()
+
                     INSTANCE = instance
                 }
                 return instance
