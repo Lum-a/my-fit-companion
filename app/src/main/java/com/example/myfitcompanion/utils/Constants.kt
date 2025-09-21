@@ -10,8 +10,8 @@ import com.example.myfitcompanion.screen.Screen
 
 object Constants {
     private const val HOME_LABEL = "Home"
-    private const val CLASS_LABEL = "Classes"
-    private const val PLANS_LABEL = "Plans"
+    private const val WORKOUT_LABEL = "Workouts"
+    private const val MEALS_LABEL = "Meals"
     private const val PROFILE_LABEL = "Profile"
 
     val bottomNavItems = listOf(
@@ -22,15 +22,15 @@ object Constants {
         ),
 
         BottomNavItem(
-            label = CLASS_LABEL,
+            label = WORKOUT_LABEL,
             icon = Icons.Filled.Menu,
-            route = Screen.Classes
+            route = Screen.Workout
         ),
 
         BottomNavItem(
-            label = PLANS_LABEL,
+            label = MEALS_LABEL,
             icon = Icons.Filled.ShoppingCart,
-            route = Screen.Plan
+            route = Screen.Meal
         ),
         BottomNavItem(
             label = PROFILE_LABEL,

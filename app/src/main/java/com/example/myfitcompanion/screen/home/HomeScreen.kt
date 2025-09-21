@@ -26,6 +26,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,40 +35,148 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.myfitcompanion.ui.theme.myFitColors
+import com.example.myfitcompanion.utils.ResultWrapper
 
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel(),
-    onLogout: () -> Unit = {}
+    onLogout: () -> Unit = {},
+    onCheckInClick: () -> Unit = {},
+    onWorkoutClick: () -> Unit = {},
+    onTrainersClick: () -> Unit = {},
+    onMealsClick: () -> Unit = {}
 ) {
     val userData by viewModel.user.collectAsStateWithLifecycle()
+    val recentExerciseState by viewModel.recentExercise.collectAsStateWithLifecycle()
 
     Column(
-        modifier = modifier.fillMaxWidth().padding(20.dp),
-        horizontalAlignment = Alignment.End
+        modifier = modifier
+            .fillMaxSize()
+            .background(myFitColors.current.background)
+            .padding(16.dp)
     ) {
+        // Logout button positioned at top right
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.TopEnd
+        ) {
+            Icon(
+                modifier = Modifier.clickable {
+                    viewModel.logout { onLogout() }
+                },
+                imageVector = Icons.AutoMirrored.Filled.ExitToApp,
+                contentDescription = "logout",
+                tint = Color.White
+            )
+        }
 
-        Icon(modifier = modifier.clickable {
-            viewModel.logout { onLogout() }
-        },
-            imageVector = Icons.AutoMirrored.Filled.ExitToApp,
-            contentDescription = "logout"
+        // Welcome message
+        Text(
+            text = "Welcome back, ${userData?.name ?: "User"} 👋",
+            style = MaterialTheme.typography.headlineSmall.copy(color = Color.White),
+            modifier = Modifier.padding(bottom = 12.dp, top = 8.dp)
         )
-    }
 
-    Column(
-        modifier = modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement =  Arrangement.Center
-    ) {
-        Text( text = "Welcome ${userData?.name}", fontSize = 25.sp)
-    }
+        // Recent Exercises
+        Card(
+            shape = RoundedCornerShape(20.dp),
+            colors = CardDefaults.cardColors(containerColor = myFitColors.current.cardsGrey),
+            elevation = CardDefaults.cardElevation(6.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(20.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(
+                    text = "Recent Exercise",
+                    style = MaterialTheme.typography.titleMedium.copy(color = Color.White)
+                )
 
+                when (val state = recentExerciseState) {
+                    is ResultWrapper.Initial -> {
+                        LaunchedEffect(Unit) {
+                            viewModel.getRecentExercise()
+                        }
+                    }
+                    is ResultWrapper.Loading -> {
+                        Text(
+                            text = "Loading...",
+                            style = MaterialTheme.typography.bodyMedium.copy(
+                                color = myFitColors.current.orange
+                            )
+                        )
+                    }
+                    is ResultWrapper.Success -> {
+                        val exercise = state.data
+                        Text(
+                            text = "${exercise.name} - ${exercise.type}",
+                            style = MaterialTheme.typography.bodyMedium.copy(
+                                color = myFitColors.current.orange
+                            )
+                        )
+                    }
+                    is ResultWrapper.Error -> {
+                        Text(
+                            text = "No recent exercises found",
+                            style = MaterialTheme.typography.bodyMedium.copy(
+                                color = myFitColors.current.orange
+                            )
+                        )
+                    }
+                }
+            }
+        }
+
+        // Quick actions grid
+        Text(
+            text = "Quick Actions",
+            style = MaterialTheme.typography.titleMedium.copy(color = Color.White),
+            modifier = Modifier.padding(bottom = 12.dp)
+        )
+
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier.fillMaxSize()
+        ) {
+            item {
+                QuickActionCard(
+                    label = "Check In",
+                    icon = Icons.Default.Search,
+                    onClick = onCheckInClick
+                )
+            }
+            item {
+                QuickActionCard(
+                    label = "Workouts",
+                    icon = Icons.Default.Home,
+                    onClick = onWorkoutClick
+                )
+            }
+            item {
+                QuickActionCard(
+                    label = "Trainers",
+                    icon = Icons.Default.AccountCircle,
+                    onClick = onTrainersClick
+                )
+            }
+            item {
+                QuickActionCard(
+                    label = "Meals",
+                    icon = Icons.Default.Create,
+                    onClick = onMealsClick
+                )
+            }
+        }
+    }
 }
 
 

@@ -2,11 +2,15 @@ package com.example.myfitcompanion.screen.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.myfitcompanion.api.model.ExerciseResponse
 import com.example.myfitcompanion.model.entities.User
 import com.example.myfitcompanion.repository.UserRepository
+import com.example.myfitcompanion.utils.ResultWrapper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -23,6 +27,9 @@ class HomeViewModel @Inject constructor(
            initialValue = null
        )
 
+    private val _recentExercise = MutableStateFlow<ResultWrapper<ExerciseResponse>>(ResultWrapper.Initial)
+    val recentExercise: StateFlow<ResultWrapper<ExerciseResponse>> = _recentExercise.asStateFlow()
+
     fun logout(onLoggedOut: () -> Unit) {
         viewModelScope.launch {
             repository.logout()
@@ -30,5 +37,24 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun getRecentExercise() {
+        viewModelScope.launch {
+            _recentExercise.value = ResultWrapper.Loading
+            when (val result = repository.getRecentExercise()) {
+                is ResultWrapper.Success -> {
+                    _recentExercise.value = ResultWrapper.Success(result.data)
+                }
+                is ResultWrapper.Error -> {
+                    _recentExercise.value = ResultWrapper.Error(result.message ?: "Failed to get recent exercise")
+                }
+                is ResultWrapper.Loading -> {
+                    // Already set to loading above
+                }
+                is ResultWrapper.Initial -> {
+                    _recentExercise.value = ResultWrapper.Error("Unexpected initial state")
+                }
+            }
+        }
+    }
 
 }

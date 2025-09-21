@@ -18,20 +18,20 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.myfitcompanion.R
+import com.example.myfitcompanion.api.model.LoginRequest
 import com.example.myfitcompanion.components.SubmitButton
-import com.example.myfitcompanion.components.SubmitResponse
+import com.example.myfitcompanion.components.UserResponse
 import com.example.myfitcompanion.components.UserTextField
 import com.example.myfitcompanion.components.VerticalSpace
 import com.example.myfitcompanion.ui.theme.myFitColors
 import com.example.myfitcompanion.utils.ResultWrapper
 import com.example.myfitcompanion.utils.isValidEmail
-import com.example.myfitcompanion.utils.isValidPassword
 
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,
     viewModel: LoginViewModel = hiltViewModel(),
-    onLoginSucceed: () -> Unit = {}
+    onLoginSucceed: (isAdmin: Boolean) -> Unit = {}
 ) {
     val loginState by viewModel.loginState.collectAsStateWithLifecycle()
 
@@ -70,7 +70,6 @@ fun LoginScreen(
             inputError = passwordError,
             onInputErrorChange = { passwordError = it },
             errorMessage = stringResource(R.string.invalid_password),
-            isValid = { isValidPassword(password) },
             visualTransformation = PasswordVisualTransformation()
         )
 
@@ -78,17 +77,17 @@ fun LoginScreen(
 
         SubmitButton(
             text = "Login",
-            enabled = isValidEmail(email) && isValidPassword(password),
+            enabled = isValidEmail(email) && password.isNotEmpty(),
             isLoading = loginState is ResultWrapper.Loading,
-            onClick = { viewModel.login(email = email, password = password) }
+            onClick = { viewModel.login(LoginRequest(email = email, password = password)) }
         )
 
         VerticalSpace(modifier, 16.dp)
 
-        SubmitResponse(
+        UserResponse(
             state = loginState,
             delay = 200,
-            onSucceed = onLoginSucceed
+            onSucceed = { onLoginSucceed(it) }
         )
     }
 }

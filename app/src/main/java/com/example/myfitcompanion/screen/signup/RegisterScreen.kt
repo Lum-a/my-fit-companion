@@ -23,7 +23,7 @@ import com.example.myfitcompanion.R
 import com.example.myfitcompanion.components.VerticalSpace
 import com.example.myfitcompanion.api.model.RegisterRequest
 import com.example.myfitcompanion.components.SubmitButton
-import com.example.myfitcompanion.components.SubmitResponse
+import com.example.myfitcompanion.components.UserResponse
 import com.example.myfitcompanion.components.UserTextField
 import com.example.myfitcompanion.ui.theme.myFitColors
 import com.example.myfitcompanion.utils.ResultWrapper
@@ -34,7 +34,7 @@ import com.example.myfitcompanion.utils.isValidPassword
 fun RegisterScreen(
     modifier: Modifier = Modifier,
     viewModel: RegisterViewModel = hiltViewModel(),
-    onRegisterSucceed: () -> Unit = {}
+    onRegisterSucceed: (Boolean) -> Unit = {}
 ) {
     val state by viewModel.registerState.collectAsStateWithLifecycle()
 
@@ -139,16 +139,16 @@ fun RegisterScreen(
                         height = height.toFloatOrNull(),
                         weight = weight.toFloatOrNull(),
                         bodyFat = bodyFat.toFloatOrNull(),
-                        goal = goal.ifBlank { null }
+                        goal = goal.toFloatOrNull()
                     )
                 )
             }
         )
 
-        SubmitResponse(
+        UserResponse(
             state = state,
             delay = 200,
-            onSucceed = onRegisterSucceed
+            onSucceed = { onRegisterSucceed(it) }
         )
     }
 }

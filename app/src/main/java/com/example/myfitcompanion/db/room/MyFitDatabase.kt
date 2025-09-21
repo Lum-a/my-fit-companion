@@ -6,34 +6,34 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.example.myfitcompanion.db.room.dao.GymClassDao
-import com.example.myfitcompanion.db.room.dao.MembershipDao
-import com.example.myfitcompanion.db.room.dao.PlanDao
+import com.example.myfitcompanion.db.room.dao.ExerciseDao
+import com.example.myfitcompanion.db.room.dao.MealDao
 import com.example.myfitcompanion.db.room.dao.TrainerDao
 import com.example.myfitcompanion.db.room.dao.UserDao
-import com.example.myfitcompanion.model.entities.GymClass
-import com.example.myfitcompanion.model.entities.Membership
-import com.example.myfitcompanion.model.entities.Plan
+import com.example.myfitcompanion.db.room.dao.WorkoutsDao
+import com.example.myfitcompanion.model.entities.Exercise
+import com.example.myfitcompanion.model.entities.Meal
+import com.example.myfitcompanion.model.entities.Workout
 import com.example.myfitcompanion.model.entities.Trainer
 import com.example.myfitcompanion.model.entities.User
 
 @Database(
     entities = [
         User::class,
-        Membership::class,
         Trainer::class,
-        GymClass::class,
-        Plan::class
+        Workout::class,
+        Exercise::class,
+        Meal::class
     ],
-    version = 4, // Bump version to 4 for schema change
+    version = 6,
     exportSchema = false
 )
 abstract class MyFitDatabase: RoomDatabase() {
     abstract fun userDao(): UserDao
-    abstract fun membershipDao(): MembershipDao
+    abstract fun mealDao(): MealDao
     abstract fun trainerDao(): TrainerDao
-    abstract fun gymClassDao(): GymClassDao
-    abstract fun planDao(): PlanDao
+    abstract fun workoutDao(): WorkoutsDao
+    abstract fun exerciseDao(): ExerciseDao
 
     companion object {
         @Volatile

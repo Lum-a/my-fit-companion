@@ -1,6 +1,8 @@
 package com.example.myfitcompanion.repository
 
+import android.util.Log
 import com.example.myfitcompanion.api.ApiService
+import com.example.myfitcompanion.api.model.ExerciseResponse
 import com.example.myfitcompanion.api.model.UpdateProfileRequest
 import com.example.myfitcompanion.api.model.UpdateProfileResponse
 import com.example.myfitcompanion.api.token.TokenManager
@@ -10,10 +12,12 @@ import com.example.myfitcompanion.api.model.LoginResponse
 import com.example.myfitcompanion.api.model.RegisterRequest
 import com.example.myfitcompanion.model.entities.User
 import com.example.myfitcompanion.api.model.RegisterResponse
+import com.example.myfitcompanion.api.model.WorkoutResponse
+import com.example.myfitcompanion.utils.ResultWrapper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.firstOrNull
-import retrofit2.Response
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -24,12 +28,18 @@ class UserRepositoryImpl @Inject constructor(
     private val tokenManager: TokenManager
 ): UserRepository {
 
-    override suspend fun login(email: String, password: String): Response<LoginResponse> {
-        return apiService.login(LoginRequest(email, password))
+    override suspend fun login(request: LoginRequest): ResultWrapper<LoginResponse> = try {
+        val response = apiService.login(request)
+        ResultWrapper.Success(response)
+    } catch (e: Exception) {
+        ResultWrapper.Error(e.message)
     }
 
-    override suspend fun register(request: RegisterRequest): Response<RegisterResponse> {
-        return apiService.register(request)
+    override suspend fun register(request: RegisterRequest): ResultWrapper<RegisterResponse>  = try {
+        val response = apiService.register(request)
+        ResultWrapper.Success(response)
+    } catch (e: Exception) {
+        ResultWrapper.Error(e.message)
     }
 
     override fun getUser(): Flow<User?> {
@@ -44,8 +54,11 @@ class UserRepositoryImpl @Inject constructor(
         userDao.insertUser(user)
     }
 
-    override suspend fun updateUser(request: UpdateProfileRequest): Response<UpdateProfileResponse> {
-        return apiService.updateProfile(getUserId(), request)
+    override suspend fun updateUser(request: UpdateProfileRequest): ResultWrapper<UpdateProfileResponse> = try {
+        val response = apiService.updateProfile(getUserId(), request)
+        ResultWrapper.Success(response)
+    } catch (e: Exception) {
+        ResultWrapper.Error(e.message)
     }
 
     override suspend fun deleteUser() {
@@ -57,6 +70,12 @@ class UserRepositoryImpl @Inject constructor(
         userDao.deleteUser()
     }
 
+    override fun isAdmin(): Flow<Boolean> =
+        userDao.getUser()
+            .map { user ->
+                user?.role == "admin".uppercase()
+            }
+
     override fun isLoggedIn(): Flow<Boolean> = combine(
         userDao.getUser(),
         tokenManager.authToken
@@ -64,5 +83,40 @@ class UserRepositoryImpl @Inject constructor(
         user != null && !token.isNullOrEmpty()
     }
 
+    override suspend fun getRecentExercise(): ResultWrapper<ExerciseResponse> = try {
+            val response = apiService.getRecentExercise(getUserId())
+            ResultWrapper.Success(response)
+        } catch (e: Exception) {
+            ResultWrapper.Error(e.message)
+        }
+
+    override suspend fun addRecentExercise(splitId: Int) {
+        try {
+            apiService.addRecentExercise(splitId, getUserId())
+        } catch (e: Exception) {
+            Log.d("UserRepositoryImpl", "addRecentExercise: ${e.message}")
+        }
+    }
+
+    override suspend fun getWorkouts(): ResultWrapper<List<WorkoutResponse>> = try {
+        val response = apiService.getWorkouts()
+        ResultWrapper.Success(response)
+    } catch (e: Exception) {
+        ResultWrapper.Error(e.message)
+    }
+
+    override suspend fun getSplits(workoutId: Int): ResultWrapper<List<com.example.myfitcompanion.api.model.SplitResponse>> = try {
+        val response = apiService.getWorkoutSplits(workoutId)
+        ResultWrapper.Success(response)
+    } catch (e: Exception) {
+        ResultWrapper.Error(e.message)
+    }
+
+    override suspend fun getExercises(splitId: Int): ResultWrapper<List<ExerciseResponse>> = try {
+        val response = apiService.getExercises(splitId)
+        ResultWrapper.Success(response)
+    } catch (e: Exception) {
+        ResultWrapper.Error(e.message)
+    }
 
 }
