@@ -5,8 +5,8 @@ import com.example.myfitcompanion.api.model.ExerciseRequest
 import com.example.myfitcompanion.api.model.ExerciseResponse
 import com.example.myfitcompanion.api.model.MealRequest
 import com.example.myfitcompanion.api.model.MealsResponse
-import com.example.myfitcompanion.api.model.SessionRequest
-import com.example.myfitcompanion.api.model.SessionResponse
+import com.example.myfitcompanion.api.model.WorkoutRequest
+import com.example.myfitcompanion.api.model.WorkoutResponse
 import com.example.myfitcompanion.api.model.TrainerResponse
 import com.example.myfitcompanion.api.model.UpdateTrainerRequest
 import com.example.myfitcompanion.api.model.UpdateUserRequest
@@ -48,22 +48,19 @@ interface AdminApiService {
     @DELETE("admin/meals/{id}")
     suspend fun deleteMeal(@Path("id") mealId: Int)
 
-    // Sessions
-    @POST("admin/sessions")
-    suspend fun addSession(@Body session: SessionRequest): SessionResponse
+    // Workouts
+    @POST("admin/workouts")
+    suspend fun addWorkout(@Body workout: WorkoutRequest): WorkoutResponse
 
-    @PUT("admin/sessions/{id}")
-    suspend fun updateSession(@Path("id") sessionId: Int, @Body session: SessionRequest): SessionResponse
+    @PUT("admin/workouts/{id}")
+    suspend fun updateWorkout(@Path("id") workoutId: Int, @Body workout: WorkoutRequest): WorkoutResponse
 
-    @DELETE("admin/sessions/{id}")
-    suspend fun deleteSession(@Path("id") sessionId: Int)
+    @DELETE("admin/workouts/{id}")
+    suspend fun deleteWorkout(@Path("id") workoutId: Int)
 
     // Exercises
     @POST("admin/exercises")
     suspend fun addExercise(@Body exercise: ExerciseRequest): ExerciseResponse
-
-    @GET("admin/exercises")
-    suspend fun getExercises(): List<ExerciseResponse>
 
     @PUT("admin/exercises/{id}")
     suspend fun updateExercise(@Path("id") exerciseId: Int, @Body exercise: ExerciseRequest): ExerciseResponse

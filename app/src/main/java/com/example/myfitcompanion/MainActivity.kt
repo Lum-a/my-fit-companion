@@ -1,6 +1,7 @@
 package com.example.myfitcompanion
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -45,6 +46,8 @@ fun MyFitApp() {
     val viewModel = hiltViewModel<AuthViewModel>()
     val isUserLoggedIn by viewModel.isLoggedIn.collectAsStateWithLifecycle()
     val isAdmin by viewModel.isAdmin.collectAsStateWithLifecycle()
+
+    Log.d("MainActivity", "isUserLoggedIn: $isUserLoggedIn, isAdmin: $isAdmin")
 
     Surface {
         Scaffold(containerColor = darkBackground,

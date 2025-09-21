@@ -4,7 +4,7 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
-data class SessionRequest(
+data class WorkoutRequest(
     @Json(name = "name")
     val name: String,
     @Json(name = "date")

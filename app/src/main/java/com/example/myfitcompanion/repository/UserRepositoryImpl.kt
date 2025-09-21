@@ -2,6 +2,7 @@ package com.example.myfitcompanion.repository
 
 import android.util.Log
 import com.example.myfitcompanion.api.ApiService
+import com.example.myfitcompanion.api.model.ExerciseResponse
 import com.example.myfitcompanion.api.model.UpdateProfileRequest
 import com.example.myfitcompanion.api.model.UpdateProfileResponse
 import com.example.myfitcompanion.api.token.TokenManager
@@ -11,7 +12,7 @@ import com.example.myfitcompanion.api.model.LoginResponse
 import com.example.myfitcompanion.api.model.RegisterRequest
 import com.example.myfitcompanion.model.entities.User
 import com.example.myfitcompanion.api.model.RegisterResponse
-import com.example.myfitcompanion.api.model.SessionResponse
+import com.example.myfitcompanion.api.model.WorkoutResponse
 import com.example.myfitcompanion.utils.ResultWrapper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -72,7 +73,7 @@ class UserRepositoryImpl @Inject constructor(
     override fun isAdmin(): Flow<Boolean> =
         userDao.getUser()
             .map { user ->
-                user?.role == "ADMIN"
+                user?.role == "admin".uppercase()
             }
 
     override fun isLoggedIn(): Flow<Boolean> = combine(
@@ -82,23 +83,23 @@ class UserRepositoryImpl @Inject constructor(
         user != null && !token.isNullOrEmpty()
     }
 
-    override suspend fun getRecentSession(): ResultWrapper<SessionResponse> = try {
-            val response = apiService.getRecentSession(getUserId())
+    override suspend fun getRecentExercise(): ResultWrapper<ExerciseResponse> = try {
+            val response = apiService.getRecentExercise(getUserId())
             ResultWrapper.Success(response)
         } catch (e: Exception) {
             ResultWrapper.Error(e.message)
         }
 
-    override suspend fun addRecentSession(sessionId: Int) {
+    override suspend fun addRecentExercise(workoutId: Int) {
         try {
-            apiService.addRecentSession(sessionId, getUserId())
+            apiService.addRecentExercise(workoutId, getUserId())
         } catch (e: Exception) {
-            Log.d("UserRepositoryImpl", "addRecentSession: ${e.message}")
+            Log.d("UserRepositoryImpl", "addRecentExercise: ${e.message}")
         }
     }
 
-    override suspend fun getSessions(): ResultWrapper<List<SessionResponse>> = try {
-        val response = apiService.getSessions()
+    override suspend fun getWorkouts(): ResultWrapper<List<WorkoutResponse>> = try {
+        val response = apiService.getWorkouts()
         ResultWrapper.Success(response)
     } catch (e: Exception) {
         ResultWrapper.Error(e.message)

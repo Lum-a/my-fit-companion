@@ -46,17 +46,12 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
     onLogout: () -> Unit = {},
     onCheckInClick: () -> Unit = {},
-    onSessionsClick: () -> Unit = {},
+    onWorkoutClick: () -> Unit = {},
     onTrainersClick: () -> Unit = {},
     onMealsClick: () -> Unit = {}
 ) {
     val userData by viewModel.user.collectAsStateWithLifecycle()
-    val recentSessionState by viewModel.recentSessionState.collectAsStateWithLifecycle()
-
-    // Load recent session when screen opens
-    LaunchedEffect(Unit) {
-        viewModel.getRecentSession()
-    }
+    val recentExerciseState by viewModel.recentExercise.collectAsStateWithLifecycle()
 
     Column(
         modifier = modifier
@@ -86,7 +81,7 @@ fun HomeScreen(
             modifier = Modifier.padding(bottom = 12.dp, top = 8.dp)
         )
 
-        // Recent Sessions
+        // Recent Exercises
         Card(
             shape = RoundedCornerShape(20.dp),
             colors = CardDefaults.cardColors(containerColor = myFitColors.current.cardsGrey),
@@ -100,11 +95,16 @@ fun HomeScreen(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
-                    text = "Recent Sessions",
+                    text = "Recent Exercise",
                     style = MaterialTheme.typography.titleMedium.copy(color = Color.White)
                 )
 
-                when (val state = recentSessionState) {
+                when (val state = recentExerciseState) {
+                    is ResultWrapper.Initial -> {
+                        LaunchedEffect(Unit) {
+                            viewModel.getRecentExercise()
+                        }
+                    }
                     is ResultWrapper.Loading -> {
                         Text(
                             text = "Loading...",
@@ -114,9 +114,9 @@ fun HomeScreen(
                         )
                     }
                     is ResultWrapper.Success -> {
-                        val session = state.data
+                        val exercise = state.data
                         Text(
-                            text = "${session.name} - ${session.date}",
+                            text = "${exercise.name} - ${exercise.type}",
                             style = MaterialTheme.typography.bodyMedium.copy(
                                 color = myFitColors.current.orange
                             )
@@ -124,15 +124,7 @@ fun HomeScreen(
                     }
                     is ResultWrapper.Error -> {
                         Text(
-                            text = "No recent sessions found",
-                            style = MaterialTheme.typography.bodyMedium.copy(
-                                color = myFitColors.current.orange
-                            )
-                        )
-                    }
-                    is ResultWrapper.Initial -> {
-                        Text(
-                            text = "No sessions yet",
+                            text = "No recent exercises found",
                             style = MaterialTheme.typography.bodyMedium.copy(
                                 color = myFitColors.current.orange
                             )
@@ -164,9 +156,9 @@ fun HomeScreen(
             }
             item {
                 QuickActionCard(
-                    label = "Sessions",
+                    label = "Workouts",
                     icon = Icons.Default.Home,
-                    onClick = onSessionsClick
+                    onClick = onWorkoutClick
                 )
             }
             item {

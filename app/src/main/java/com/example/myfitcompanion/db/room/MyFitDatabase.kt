@@ -4,14 +4,14 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.myfitcompanion.db.room.dao.SessionsDao
+import com.example.myfitcompanion.db.room.dao.WorkoutsDao
 import com.example.myfitcompanion.db.room.dao.MealDao
 import com.example.myfitcompanion.db.room.dao.ExerciseDao
 import com.example.myfitcompanion.db.room.dao.TrainerDao
 import com.example.myfitcompanion.db.room.dao.UserDao
 import com.example.myfitcompanion.model.entities.Exercise
 import com.example.myfitcompanion.model.entities.Meal
-import com.example.myfitcompanion.model.entities.Session
+import com.example.myfitcompanion.model.entities.Workout
 import com.example.myfitcompanion.model.entities.Trainer
 import com.example.myfitcompanion.model.entities.User
 
@@ -19,11 +19,11 @@ import com.example.myfitcompanion.model.entities.User
     entities = [
         User::class,
         Trainer::class,
-        Session::class,
+        Workout::class,
         Exercise::class,
         Meal::class
     ],
-    version = 5,
+    version = 6,
     exportSchema = false
 )
 abstract class MyFitDatabase: RoomDatabase() {
@@ -31,7 +31,7 @@ abstract class MyFitDatabase: RoomDatabase() {
     abstract fun userDao(): UserDao
     abstract fun mealDao(): MealDao
     abstract fun trainerDao(): TrainerDao
-    abstract fun sessionsDao(): SessionsDao
+    abstract fun workoutDao(): WorkoutsDao
     abstract fun exerciseDao(): ExerciseDao
 
     companion object {

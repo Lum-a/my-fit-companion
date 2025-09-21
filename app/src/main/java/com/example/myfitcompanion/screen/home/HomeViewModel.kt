@@ -2,7 +2,7 @@ package com.example.myfitcompanion.screen.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.myfitcompanion.api.model.SessionResponse
+import com.example.myfitcompanion.api.model.ExerciseResponse
 import com.example.myfitcompanion.model.entities.User
 import com.example.myfitcompanion.repository.UserRepository
 import com.example.myfitcompanion.utils.ResultWrapper
@@ -27,8 +27,8 @@ class HomeViewModel @Inject constructor(
            initialValue = null
        )
 
-    private val _recentSessionState = MutableStateFlow<ResultWrapper<SessionResponse>>(ResultWrapper.Initial)
-    val recentSessionState: StateFlow<ResultWrapper<SessionResponse>> = _recentSessionState.asStateFlow()
+    private val _recentExercise = MutableStateFlow<ResultWrapper<ExerciseResponse>>(ResultWrapper.Initial)
+    val recentExercise: StateFlow<ResultWrapper<ExerciseResponse>> = _recentExercise.asStateFlow()
 
     fun logout(onLoggedOut: () -> Unit) {
         viewModelScope.launch {
@@ -37,21 +37,21 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun getRecentSession() {
+    fun getRecentExercise() {
         viewModelScope.launch {
-            _recentSessionState.value = ResultWrapper.Loading
-            when (val result = repository.getRecentSession()) {
+            _recentExercise.value = ResultWrapper.Loading
+            when (val result = repository.getRecentExercise()) {
                 is ResultWrapper.Success -> {
-                    _recentSessionState.value = ResultWrapper.Success(result.data)
+                    _recentExercise.value = ResultWrapper.Success(result.data)
                 }
                 is ResultWrapper.Error -> {
-                    _recentSessionState.value = ResultWrapper.Error(result.message ?: "Failed to get recent session")
+                    _recentExercise.value = ResultWrapper.Error(result.message ?: "Failed to get recent exercise")
                 }
                 is ResultWrapper.Loading -> {
                     // Already set to loading above
                 }
                 is ResultWrapper.Initial -> {
-                    _recentSessionState.value = ResultWrapper.Error("Unexpected initial state")
+                    _recentExercise.value = ResultWrapper.Error("Unexpected initial state")
                 }
             }
         }

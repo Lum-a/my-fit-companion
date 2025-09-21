@@ -20,7 +20,7 @@ sealed class Screen {
     data object Profile: Screen()
 
     @Serializable
-    data object Session: Screen()
+    data object Workout: Screen()
 
     @Serializable
     data object Trainer: Screen()
@@ -42,7 +42,7 @@ sealed class AdminScreen {
     data object User: Screen()
 
     @Serializable
-    data object Session: Screen()
+    data object Workout: Screen()
 
     @Serializable
     data object Meals: Screen()

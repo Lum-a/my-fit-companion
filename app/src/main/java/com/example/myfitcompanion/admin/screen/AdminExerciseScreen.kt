@@ -31,7 +31,7 @@ import com.example.myfitcompanion.utils.ResultWrapper
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AdminExerciseScreen(
-    sessionId: Int = 0,
+    workoutId: Int = 0,
     viewModel: AdminViewModel = hiltViewModel(),
     onBack: () -> Unit = {}
 ) {

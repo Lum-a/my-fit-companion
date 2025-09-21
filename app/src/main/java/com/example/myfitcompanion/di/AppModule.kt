@@ -7,7 +7,7 @@ import com.example.myfitcompanion.api.ApiService
 import com.example.myfitcompanion.admin.api.AdminApiService
 import com.example.myfitcompanion.api.token.TokenManager
 import com.example.myfitcompanion.db.room.MyFitDatabase
-import com.example.myfitcompanion.db.room.dao.SessionsDao
+import com.example.myfitcompanion.db.room.dao.WorkoutsDao
 import com.example.myfitcompanion.db.room.dao.TrainerDao
 import com.example.myfitcompanion.db.room.dao.UserDao
 import com.example.myfitcompanion.repository.UserRepository
@@ -38,7 +38,7 @@ object AppModule {
     fun provideTrainerDao(db: MyFitDatabase): TrainerDao = db.trainerDao()
 
     @Provides
-    fun provideSessionsDao(db: MyFitDatabase): SessionsDao = db.sessionsDao()
+    fun provideWorkoutDao(db: MyFitDatabase): WorkoutsDao = db.workoutDao()
 
     @Provides
     @Singleton

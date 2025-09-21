@@ -41,7 +41,7 @@ import com.example.myfitcompanion.ui.theme.myFitColors
 @Preview
 fun AdminScreen(
     onNavigateToUsers: () -> Unit = {},
-    onNavigateToSessions: () -> Unit = {},
+    onNavigateToWorkouts: () -> Unit = {},
     onNavigateToMeals: () -> Unit = {},
     onNavigateToTrainers: () -> Unit = {},
     onLogout: () -> Unit = {}
@@ -84,10 +84,10 @@ fun AdminScreen(
                 onClick = onNavigateToUsers
             )
             AdminBox(
-                title = "Sessions",
-                description = "Manage available fitness sessions",
+                title = "Workouts",
+                description = "Manage available fitness workouts",
                 icon = Icons.Default.Menu,
-                onClick = onNavigateToSessions
+                onClick = onNavigateToWorkouts
             )
 
             AdminBox(

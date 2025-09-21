@@ -20,19 +20,18 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.myfitcompanion.R
 import com.example.myfitcompanion.api.model.LoginRequest
 import com.example.myfitcompanion.components.SubmitButton
-import com.example.myfitcompanion.components.SubmitResponse
+import com.example.myfitcompanion.components.UserResponse
 import com.example.myfitcompanion.components.UserTextField
 import com.example.myfitcompanion.components.VerticalSpace
 import com.example.myfitcompanion.ui.theme.myFitColors
 import com.example.myfitcompanion.utils.ResultWrapper
 import com.example.myfitcompanion.utils.isValidEmail
-import com.example.myfitcompanion.utils.isValidPassword
 
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,
     viewModel: LoginViewModel = hiltViewModel(),
-    onLoginSucceed: () -> Unit = {}
+    onLoginSucceed: (isAdmin: Boolean) -> Unit = {}
 ) {
     val loginState by viewModel.loginState.collectAsStateWithLifecycle()
 
@@ -85,10 +84,10 @@ fun LoginScreen(
 
         VerticalSpace(modifier, 16.dp)
 
-        SubmitResponse(
+        UserResponse(
             state = loginState,
             delay = 200,
-            onSucceed = onLoginSucceed
+            onSucceed = { onLoginSucceed(it) }
         )
     }
 }

@@ -1,4 +1,4 @@
-package com.example.myfitcompanion.screen.session
+package com.example.myfitcompanion.screen.workout
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -38,20 +38,20 @@ import coil.compose.AsyncImagePainter
 import coil.compose.SubcomposeAsyncImage
 import coil.compose.SubcomposeAsyncImageContent
 import com.example.myfitcompanion.R
-import com.example.myfitcompanion.api.model.SessionResponse
+import com.example.myfitcompanion.api.model.WorkoutResponse
 import com.example.myfitcompanion.ui.theme.myFitColors
 import com.example.myfitcompanion.utils.ResultWrapper
 
 @Composable
-fun SessionScreen(
-    viewModel: SessionViewModel = hiltViewModel(),
-    onSessionClick: (SessionResponse) -> Unit = {}
+fun WorkoutScreen(
+    viewModel: WorkoutViewModel = hiltViewModel(),
+    onWorkoutClick: (WorkoutResponse) -> Unit = {}
 ) {
-    val sessionsState by viewModel.sessionsState.collectAsStateWithLifecycle()
+    val workoutState by viewModel.workoutState.collectAsStateWithLifecycle()
 
-    // Load sessions when screen opens
+    // Load workouts when screen opens
     LaunchedEffect(Unit) {
-        viewModel.loadSessions()
+        viewModel.loadWorkouts()
     }
 
     Box(
@@ -60,7 +60,7 @@ fun SessionScreen(
             .background(myFitColors.current.background)
             .padding(16.dp)
     ) {
-        when (val sessions = sessionsState) {
+        when (val workouts = workoutState) {
             is ResultWrapper.Loading -> {
                 CircularProgressIndicator(
                     modifier = Modifier.align(Alignment.Center),
@@ -68,9 +68,9 @@ fun SessionScreen(
                 )
             }
             is ResultWrapper.Success -> {
-                if (sessions.data.isEmpty()) {
+                if (workouts.data.isEmpty()) {
                     Text(
-                        text = "No sessions available",
+                        text = "No workouts available",
                         style = MaterialTheme.typography.titleMedium.copy(color = Color.White),
                         modifier = Modifier.align(Alignment.Center)
                     )
@@ -81,12 +81,12 @@ fun SessionScreen(
                         horizontalArrangement = Arrangement.spacedBy(16.dp),
                         modifier = Modifier.fillMaxSize()
                     ) {
-                        items(sessions.data) { session ->
-                            SessionCard(
-                                session = session,
+                        items(workouts.data) { workout ->
+                            WorkoutCard(
+                                workout = workout,
                                 onClick = {
-                                    onSessionClick(session)
-                                    viewModel.addRecentSession(session.id)
+                                    onWorkoutClick(workout)
+                                    viewModel.addRecentExercise(workout.id)
                                 }
                             )
                         }
@@ -99,12 +99,12 @@ fun SessionScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "Failed to load sessions",
+                        text = "Failed to load workouts",
                         style = MaterialTheme.typography.titleMedium.copy(color = Color.White),
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
                     Text(
-                        text = sessions.message ?: "Unknown error",
+                        text = workouts.message ?: "Unknown error",
                         style = MaterialTheme.typography.bodyMedium.copy(color = Color.Gray)
                     )
                 }
@@ -117,8 +117,8 @@ fun SessionScreen(
 }
 
 @Composable
-fun SessionCard(
-    session: SessionResponse,
+fun WorkoutCard(
+    workout: WorkoutResponse,
     onClick: () -> Unit
 ) {
     Card(
@@ -131,11 +131,11 @@ fun SessionCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
-            // Session image (if available)
-            session.imageUrl?.let { imageUrl ->
+            // Workout image (if available)
+            workout.imageUrl?.let { imageUrl ->
                 SubcomposeAsyncImage(
                     model = imageUrl,
-                    contentDescription = session.name,
+                    contentDescription = workout.name,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize()
                 ) {
@@ -160,7 +160,7 @@ fun SessionCard(
                             ) {
                                 Icon(
                                     painter = painterResource(id = R.drawable.ic_launcher_foreground),
-                                    contentDescription = "Session image",
+                                    contentDescription = "Workout image",
                                     tint = Color.Gray,
                                     modifier = Modifier.size(48.dp)
                                 )
@@ -184,7 +184,7 @@ fun SessionCard(
                 )
             }
 
-            // Overlay with session info
+            // Overlay with workout info
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -195,32 +195,29 @@ fun SessionCard(
                     )
             )
 
-            // Session details
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(16.dp),
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
-                // Session name
                 Text(
-                    text = session.name,
+                    text = workout.name,
                     style = MaterialTheme.typography.titleMedium.copy(
                         color = Color.White,
                         fontWeight = FontWeight.Bold
                     )
                 )
 
-                // Session details
                 Column {
-                    session.date?.let { date ->
+                    workout.date?.let { date ->
                         Text(
                             text = "Date: $date",
                             style = MaterialTheme.typography.bodySmall.copy(color = Color.White),
                             modifier = Modifier.padding(bottom = 4.dp)
                         )
                     }
-                    session.duration?.let { duration ->
+                    workout.duration?.let { duration ->
                         Text(
                             text = "Duration: $duration min",
                             style = MaterialTheme.typography.bodySmall.copy(color = Color.White)
@@ -235,10 +232,10 @@ fun SessionCard(
 // Keep the preview with sample data for design purposes
 @Preview
 @Composable
-fun SessionScreenPreview() {
+fun WorkoutScreenTest() {
     // Sample data for preview
-    val sampleSessions = listOf(
-        SessionResponse(
+    val sampleWorkouts = listOf(
+        WorkoutResponse(
             id = 1,
             name = "Morning Cardio",
             date = "2025-09-19",
@@ -246,7 +243,7 @@ fun SessionScreenPreview() {
             imageUrl = "https://images.pexels.com/photos/1552249/pexels-photo-1552249.jpeg",
             userId = 1
         ),
-        SessionResponse(
+        WorkoutResponse(
             id = 2,
             name = "Strength Training",
             date = "2025-09-18",
@@ -268,9 +265,9 @@ fun SessionScreenPreview() {
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             modifier = Modifier.fillMaxSize()
         ) {
-            items(sampleSessions) { session ->
-                SessionCard(
-                    session = session,
+            items(sampleWorkouts) { workout ->
+                WorkoutCard(
+                    workout = workout,
                     onClick = { }
                 )
             }
