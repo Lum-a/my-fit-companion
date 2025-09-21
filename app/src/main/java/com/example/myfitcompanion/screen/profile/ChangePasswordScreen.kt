@@ -105,10 +105,10 @@ fun ChangePasswordScreen(
             Button(
                 onClick = {
                     resetErrors()
-                    if (oldPassword != (user?.password ?: "")) {
-                        errorText = "Old password is incorrect"
-                        return@Button
-                    }
+//                    if (oldPassword != (user?.password ?: "")) {
+//                        errorText = "Old password is incorrect"
+//                        return@Button
+//                    }
                     if (!isValidPassword(newPassword)) {
                         errorText = "Password must be at least 8 characters, include uppercase, lowercase, and a number"
                         return@Button
@@ -119,11 +119,11 @@ fun ChangePasswordScreen(
                     }
                     isLoading = true
                     // Call update API
-                    viewModel.updateUserInfo(
-                        UpdateProfileRequest(
-                            password = newPassword
-                        )
-                    )
+//                    viewModel.updateUserInfo(
+//                        UpdateProfileRequest(
+//                            password = newPassword
+//                        )
+//                    )
                     isLoading = false
                     success = true
                     onPasswordChanged()
