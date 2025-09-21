@@ -7,7 +7,6 @@ import com.example.myfitcompanion.api.model.MealRequest
 import com.example.myfitcompanion.api.model.MealsResponse
 import com.example.myfitcompanion.api.model.SessionRequest
 import com.example.myfitcompanion.api.model.SessionResponse
-import com.example.myfitcompanion.api.model.TrainerRequest
 import com.example.myfitcompanion.api.model.TrainerResponse
 import com.example.myfitcompanion.api.model.UpdateTrainerRequest
 import com.example.myfitcompanion.api.model.UpdateUserRequest
@@ -71,11 +70,6 @@ interface AdminApiService {
 
     @DELETE("admin/exercises/{id}")
     suspend fun deleteExercise(@Path("id") exerciseId: Int)
-
-    // Trainers - only admin operations (add, update, delete)
-    @POST("admin/trainers")
-    suspend fun addTrainer(@Body trainer: TrainerRequest): TrainerResponse
-
 
     @PUT("admin/trainers/{id}")
     suspend fun updateTrainer(@Path("id") trainerId: Int, @Body trainer: UpdateTrainerRequest): TrainerResponse

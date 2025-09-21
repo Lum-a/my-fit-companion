@@ -13,6 +13,10 @@ data class CreateUserRequest(
     val firstName: String,
     @Json(name = "lastName")
     val lastName: String,
+    @Json(name = "specialization")
+    val specialization: String? = null,
+    @Json(name = "contactInfo")
+    val contactInfo: String? = null,
     @Json(name = "role")
     val role: String
 )

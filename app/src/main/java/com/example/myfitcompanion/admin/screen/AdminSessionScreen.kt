@@ -202,7 +202,7 @@ fun SessionCard(
         ) {
             Column {
                 Text(session.name, color = Color.White, style = MaterialTheme.typography.titleMedium)
-                Text(session.date, color = Color.Gray, style = MaterialTheme.typography.bodySmall)
+                Text(session.date ?: "", color = Color.Gray, style = MaterialTheme.typography.bodySmall)
                 Text("Duration: ${session.duration} min", color = myFitColors.current.gold, style = MaterialTheme.typography.bodySmall)
             }
             Row {

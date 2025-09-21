@@ -10,7 +10,6 @@ import com.example.myfitcompanion.api.model.SessionRequest
 import com.example.myfitcompanion.api.model.ExerciseResponse
 import com.example.myfitcompanion.api.model.ExerciseRequest
 import com.example.myfitcompanion.api.model.TrainerResponse
-import com.example.myfitcompanion.api.model.TrainerRequest
 import com.example.myfitcompanion.api.model.UpdateTrainerRequest
 import com.example.myfitcompanion.utils.ResultWrapper
 
@@ -44,7 +43,6 @@ interface AdminRepository {
 
     //trainers
     suspend fun getTrainers(): ResultWrapper<List<TrainerResponse>>
-    suspend fun addTrainer(trainer: TrainerRequest): ResultWrapper<TrainerResponse>
     suspend fun updateTrainer(trainerId: Int, trainer: UpdateTrainerRequest): ResultWrapper<TrainerResponse>
     suspend fun deleteTrainer(trainerId: Int): ResultWrapper<Unit>
 
