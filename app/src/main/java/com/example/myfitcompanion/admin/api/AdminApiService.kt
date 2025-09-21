@@ -5,6 +5,8 @@ import com.example.myfitcompanion.api.model.ExerciseRequest
 import com.example.myfitcompanion.api.model.ExerciseResponse
 import com.example.myfitcompanion.api.model.MealRequest
 import com.example.myfitcompanion.api.model.MealsResponse
+import com.example.myfitcompanion.api.model.SplitRequest
+import com.example.myfitcompanion.api.model.SplitResponse
 import com.example.myfitcompanion.api.model.WorkoutRequest
 import com.example.myfitcompanion.api.model.WorkoutResponse
 import com.example.myfitcompanion.api.model.TrainerResponse
@@ -58,14 +60,24 @@ interface AdminApiService {
     @DELETE("admin/workouts/{id}")
     suspend fun deleteWorkout(@Path("id") workoutId: Int)
 
+    // workout splits
+    @POST("admin/workouts/splits")
+    suspend fun addWorkoutSplit(@Body split: SplitRequest): SplitResponse
+
+    @PUT("admin/workouts/splits/{id}")
+    suspend fun updateWorkoutSplit(@Path("id") splitId: Int, @Body split: SplitRequest): SplitResponse
+
+    @DELETE("admin/workouts/splits/{id}")
+    suspend fun deleteWorkoutSplit(@Path("id") splitId: Int)
+
     // Exercises
-    @POST("admin/exercises")
+    @POST("admin/workouts/splits/exercises")
     suspend fun addExercise(@Body exercise: ExerciseRequest): ExerciseResponse
 
-    @PUT("admin/exercises/{id}")
+    @PUT("admin/workouts/splits/exercises/{id}")
     suspend fun updateExercise(@Path("id") exerciseId: Int, @Body exercise: ExerciseRequest): ExerciseResponse
 
-    @DELETE("admin/exercises/{id}")
+    @DELETE("admin/workouts/splits/exercises/{id}")
     suspend fun deleteExercise(@Path("id") exerciseId: Int)
 
     @PUT("admin/trainers/{id}")

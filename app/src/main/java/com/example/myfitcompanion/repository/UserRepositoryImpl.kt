@@ -90,9 +90,9 @@ class UserRepositoryImpl @Inject constructor(
             ResultWrapper.Error(e.message)
         }
 
-    override suspend fun addRecentExercise(workoutId: Int) {
+    override suspend fun addRecentExercise(splitId: Int) {
         try {
-            apiService.addRecentExercise(workoutId, getUserId())
+            apiService.addRecentExercise(splitId, getUserId())
         } catch (e: Exception) {
             Log.d("UserRepositoryImpl", "addRecentExercise: ${e.message}")
         }
@@ -100,6 +100,20 @@ class UserRepositoryImpl @Inject constructor(
 
     override suspend fun getWorkouts(): ResultWrapper<List<WorkoutResponse>> = try {
         val response = apiService.getWorkouts()
+        ResultWrapper.Success(response)
+    } catch (e: Exception) {
+        ResultWrapper.Error(e.message)
+    }
+
+    override suspend fun getSplits(workoutId: Int): ResultWrapper<List<com.example.myfitcompanion.api.model.SplitResponse>> = try {
+        val response = apiService.getWorkoutSplits(workoutId)
+        ResultWrapper.Success(response)
+    } catch (e: Exception) {
+        ResultWrapper.Error(e.message)
+    }
+
+    override suspend fun getExercises(splitId: Int): ResultWrapper<List<ExerciseResponse>> = try {
+        val response = apiService.getExercises(splitId)
         ResultWrapper.Success(response)
     } catch (e: Exception) {
         ResultWrapper.Error(e.message)

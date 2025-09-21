@@ -1,4 +1,4 @@
-package com.example.myfitcompanion.admin.screen
+package com.example.myfitcompanion.admin.screen.workout
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -31,7 +31,7 @@ import com.example.myfitcompanion.utils.ResultWrapper
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AdminExerciseScreen(
-    workoutId: Int = 0,
+    splitId: Int,
     viewModel: AdminViewModel = hiltViewModel(),
     onBack: () -> Unit = {}
 ) {
@@ -74,7 +74,7 @@ fun AdminExerciseScreen(
         ) {
             when (val state = exercisesState) {
                 is ResultWrapper.Initial -> {
-                    LaunchedEffect(Unit) { viewModel.loadExercises() }
+                    LaunchedEffect(Unit) { viewModel.loadExercises(splitId) }
                 }
                 is ResultWrapper.Loading -> {
                     CircularProgressIndicator(color = myFitColors.current.gold)

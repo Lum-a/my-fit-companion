@@ -8,6 +8,7 @@ import com.example.myfitcompanion.api.model.LoginResponse
 import com.example.myfitcompanion.api.model.MealsResponse
 import com.example.myfitcompanion.api.model.RegisterRequest
 import com.example.myfitcompanion.api.model.RegisterResponse
+import com.example.myfitcompanion.api.model.SplitResponse
 import com.example.myfitcompanion.api.model.WorkoutResponse
 import com.example.myfitcompanion.api.model.TrainerResponse
 import retrofit2.http.Body
@@ -30,11 +31,15 @@ interface ApiService {
     @GET("workouts") //to be changed to "workouts" in the backend
     suspend fun getWorkouts(): List<WorkoutResponse>
 
+    @GET("workouts/{workoutId}/splits")
+    suspend fun getWorkoutSplits(@Path("workoutId") workoutId: Int): List<SplitResponse>
+
+    @GET("workouts/splits/{splitId}/exercises")
+    suspend fun getExercises(@Path("splitId") splitId: Int): List<ExerciseResponse>
+
     @GET("meals")
     suspend fun getMeals(): List<MealsResponse>
 
-    @GET("exercises")
-    suspend fun getExercises(): List<ExerciseResponse>
 
     @PUT("users/{userId}")
     suspend fun updateProfile(

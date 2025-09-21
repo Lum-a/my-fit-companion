@@ -1,4 +1,4 @@
-package com.example.myfitcompanion.admin.screen
+package com.example.myfitcompanion.admin.screen.workout
 
 import android.util.Log
 import androidx.compose.foundation.clickable
@@ -37,7 +37,7 @@ private const val TAG = "AdminWorkoutScreen"
 fun AdminWorkoutScreen(
     viewModel: AdminViewModel = hiltViewModel(),
     onBack: () -> Unit = {},
-    onWorkoutClick: (WorkoutResponse) -> Unit = {}
+    onWorkoutClick: (workoutId: Int) -> Unit = {}
 ) {
     val workoutState by viewModel.workouts.collectAsState()
     var showDialog by remember { mutableStateOf(false) }
@@ -110,7 +110,7 @@ fun AdminWorkoutScreen(
                         items(state.data) { workout ->
                             WorkoutCard(
                                 workout = workout,
-                                onClick = { onWorkoutClick(workout) },
+                                onClick = { onWorkoutClick(workout.id) },
                                 onEdit = { /* TODO: open edit dialog */ },
                                 onDelete = { viewModel.deleteWorkout(workout.id) }
                             )

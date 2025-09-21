@@ -9,6 +9,8 @@ import com.example.myfitcompanion.api.model.WorkoutResponse
 import com.example.myfitcompanion.api.model.WorkoutRequest
 import com.example.myfitcompanion.api.model.ExerciseResponse
 import com.example.myfitcompanion.api.model.ExerciseRequest
+import com.example.myfitcompanion.api.model.SplitRequest
+import com.example.myfitcompanion.api.model.SplitResponse
 import com.example.myfitcompanion.api.model.TrainerResponse
 import com.example.myfitcompanion.api.model.UpdateTrainerRequest
 import com.example.myfitcompanion.utils.ResultWrapper
@@ -35,8 +37,14 @@ interface AdminRepository {
     suspend fun updateWorkout(workoutId: Int, workout: WorkoutRequest): ResultWrapper<WorkoutResponse>
     suspend fun deleteWorkout(workoutId: Int): ResultWrapper<Unit>
 
+    //splits
+    suspend fun getWorkoutSplits(workoutId: Int): ResultWrapper<List<SplitResponse>>
+    suspend fun addWorkoutSplit(split: SplitRequest): ResultWrapper<SplitResponse>
+    suspend fun updateWorkoutSplit(splitId: Int, split: SplitRequest): ResultWrapper<SplitResponse>
+    suspend fun deleteWorkoutSplit(splitId: Int): ResultWrapper<Unit>
+
     //exercises
-    suspend fun getExercises(): ResultWrapper<List<ExerciseResponse>>
+    suspend fun getExercises(splitId: Int): ResultWrapper<List<ExerciseResponse>>
     suspend fun addExercise(exercise: ExerciseRequest): ResultWrapper<ExerciseResponse>
     suspend fun updateExercise(exerciseId: Int, exercise: ExerciseRequest): ResultWrapper<ExerciseResponse>
     suspend fun deleteExercise(exerciseId: Int): ResultWrapper<Unit>

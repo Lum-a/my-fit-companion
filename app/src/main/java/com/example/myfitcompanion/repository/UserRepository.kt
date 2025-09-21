@@ -8,6 +8,7 @@ import com.example.myfitcompanion.api.model.LoginResponse
 import com.example.myfitcompanion.api.model.RegisterRequest
 import com.example.myfitcompanion.model.entities.User
 import com.example.myfitcompanion.api.model.RegisterResponse
+import com.example.myfitcompanion.api.model.SplitResponse
 import com.example.myfitcompanion.api.model.WorkoutResponse
 import com.example.myfitcompanion.utils.ResultWrapper
 import kotlinx.coroutines.flow.Flow
@@ -25,6 +26,8 @@ interface UserRepository {
     fun isLoggedIn(): Flow<Boolean>
 
     suspend fun getRecentExercise(): ResultWrapper<ExerciseResponse>
-    suspend fun addRecentExercise(workoutId: Int)
+    suspend fun addRecentExercise(splitId: Int)
     suspend fun getWorkouts(): ResultWrapper<List<WorkoutResponse>>
+    suspend fun getSplits(workoutId: Int): ResultWrapper<List<SplitResponse>>
+    suspend fun getExercises(splitId: Int): ResultWrapper<List<ExerciseResponse>>
 }

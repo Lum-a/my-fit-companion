@@ -1,0 +1,14 @@
+package com.example.myfitcompanion.api.model
+
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
+
+@JsonClass(generateAdapter = true)
+data class SplitResponse(
+    @Json(name = "id")
+    val splitId: Int,
+    @Json(name = "name")
+    val name: String,
+    @Json(name = "description")
+    val description: String
+)

@@ -45,7 +45,7 @@ import com.example.myfitcompanion.utils.ResultWrapper
 @Composable
 fun WorkoutScreen(
     viewModel: WorkoutViewModel = hiltViewModel(),
-    onWorkoutClick: (WorkoutResponse) -> Unit = {}
+    onWorkoutClick: (Int) -> Unit = {}
 ) {
     val workoutState by viewModel.workoutState.collectAsStateWithLifecycle()
 
@@ -85,7 +85,7 @@ fun WorkoutScreen(
                             WorkoutCard(
                                 workout = workout,
                                 onClick = {
-                                    onWorkoutClick(workout)
+                                    onWorkoutClick(workout.id)
                                     viewModel.addRecentExercise(workout.id)
                                 }
                             )
