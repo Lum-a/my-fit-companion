@@ -24,6 +24,7 @@ import com.example.myfitcompanion.screen.splash.SplashScreen
 import com.example.myfitcompanion.screen.home.HomeScreen
 import com.example.myfitcompanion.screen.login.LoginScreen
 import com.example.myfitcompanion.screen.meal.MealScreen
+import com.example.myfitcompanion.screen.profile.ChangePasswordScreen
 import com.example.myfitcompanion.screen.profile.ProfileScreen
 import com.example.myfitcompanion.screen.signup.RegisterScreen
 import com.example.myfitcompanion.screen.trainer.TrainerScreen
@@ -79,7 +80,17 @@ fun MyFitNavigation(navController: NavHostController, padding: PaddingValues, is
                 }
             )
         }
-        composable<Screen.Profile> { ProfileScreen() }
+        composable<Screen.Profile> {
+            ProfileScreen(
+                onChangePassword = { navigate(Screen.ChangePassword) }
+            )
+        }
+        composable<Screen.ChangePassword> {
+            ChangePasswordScreen(
+                onPasswordChanged = { navController.popBackStack() },
+                onBack = { navController.popBackStack() }
+            )
+        }
         composable<Screen.Home> {
             HomeScreen(
                 onLogout = { logout() },
