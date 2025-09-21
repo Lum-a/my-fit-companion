@@ -180,10 +180,10 @@ fun SubmitButton(
 }
 
 @Composable
-fun SubmitResponse(
+fun UserResponse(
     state: ResultWrapper<UserResponse>,
     delay: Long,
-    onSucceed: () -> Unit = {}
+    onSucceed: (isAdmin: Boolean) -> Unit = {}
 ) {
     when (state) {
         is ResultWrapper.Initial -> {}
@@ -191,7 +191,7 @@ fun SubmitResponse(
         is ResultWrapper.Success -> {
             LaunchedEffect(state) {
                 delay(delay)
-                onSucceed()
+                onSucceed(state.data.role == "admin".uppercase())
             }
         }
 

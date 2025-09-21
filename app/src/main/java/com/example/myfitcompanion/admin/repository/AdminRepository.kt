@@ -5,8 +5,8 @@ import com.example.myfitcompanion.api.model.MealRequest
 import com.example.myfitcompanion.api.model.UserResponse
 import com.example.myfitcompanion.api.model.CreateUserRequest
 import com.example.myfitcompanion.api.model.UpdateUserRequest
-import com.example.myfitcompanion.api.model.SessionResponse
-import com.example.myfitcompanion.api.model.SessionRequest
+import com.example.myfitcompanion.api.model.WorkoutResponse
+import com.example.myfitcompanion.api.model.WorkoutRequest
 import com.example.myfitcompanion.api.model.ExerciseResponse
 import com.example.myfitcompanion.api.model.ExerciseRequest
 import com.example.myfitcompanion.api.model.TrainerResponse
@@ -29,11 +29,11 @@ interface AdminRepository {
     suspend fun updateMeal(mealId: Int, meal: MealRequest): ResultWrapper<MealsResponse>
     suspend fun deleteMeal(mealId: Int): ResultWrapper<Unit>
 
-    //sessions
-    suspend fun getSessions(): ResultWrapper<List<SessionResponse>>
-    suspend fun addSession(session: SessionRequest): ResultWrapper<SessionResponse>
-    suspend fun updateSession(sessionId: Int, session: SessionRequest): ResultWrapper<SessionResponse>
-    suspend fun deleteSession(sessionId: Int): ResultWrapper<Unit>
+    //workouts
+    suspend fun getWorkouts(): ResultWrapper<List<WorkoutResponse>>
+    suspend fun addWorkout(workout: WorkoutRequest): ResultWrapper<WorkoutResponse>
+    suspend fun updateWorkout(workoutId: Int, workout: WorkoutRequest): ResultWrapper<WorkoutResponse>
+    suspend fun deleteWorkout(workoutId: Int): ResultWrapper<Unit>
 
     //exercises
     suspend fun getExercises(): ResultWrapper<List<ExerciseResponse>>

@@ -11,13 +11,13 @@ import androidx.navigation.compose.composable
 import com.example.myfitcompanion.admin.screen.AdminExerciseScreen
 import com.example.myfitcompanion.admin.screen.AdminMealScreen
 import com.example.myfitcompanion.admin.screen.AdminScreen
-import com.example.myfitcompanion.admin.screen.AdminSessionScreen
+import com.example.myfitcompanion.admin.screen.AdminWorkoutScreen
 import com.example.myfitcompanion.admin.screen.AdminTrainerScreen
 import com.example.myfitcompanion.admin.screen.AdminUserScreen
 import com.example.myfitcompanion.screen.AdminScreen
 import com.example.myfitcompanion.screen.Screen
 import com.example.myfitcompanion.screen.exercise.ExerciseScreen
-import com.example.myfitcompanion.screen.session.SessionScreen
+import com.example.myfitcompanion.screen.workout.WorkoutScreen
 import com.example.myfitcompanion.screen.splash.SplashScreen
 import com.example.myfitcompanion.screen.home.HomeScreen
 import com.example.myfitcompanion.screen.login.LoginScreen
@@ -28,7 +28,7 @@ import com.example.myfitcompanion.screen.trainer.TrainerScreen
 import com.example.myfitcompanion.utils.AuthViewModel
 
 @Composable
-fun MyFitNavigation(navController: NavHostController, padding: PaddingValues, isAdmin: Boolean = false) {
+fun MyFitNavigation(navController: NavHostController, padding: PaddingValues, isAdmin: Boolean) {
 
     fun navigate(route: Any) {
         return navController.navigate(route)
@@ -61,14 +61,19 @@ fun MyFitNavigation(navController: NavHostController, padding: PaddingValues, is
             )
         }
         composable<Screen.Login> {
-            val screen = if(isAdmin) AdminScreen.Admin else Screen.Home
             LoginScreen(
-                onLoginSucceed = { navigate(screen) }
+                onLoginSucceed = { isAdmin ->
+                    val screen = if (isAdmin) AdminScreen.Admin else Screen.Home
+                    navigate(screen)
+                }
             )
         }
         composable<Screen.Register> {
             RegisterScreen(
-                onRegisterSucceed = { navigate(Screen.Home) }
+                onRegisterSucceed = {
+                    val screen = if (isAdmin) AdminScreen.Admin else Screen.Home
+                    navigate(screen)
+                }
             )
         }
         composable<Screen.Profile> { ProfileScreen() }
@@ -76,11 +81,11 @@ fun MyFitNavigation(navController: NavHostController, padding: PaddingValues, is
             HomeScreen(
                 onLogout = { logout() },
                 onTrainersClick = { navigate(Screen.Trainer) },
-                onSessionsClick = { navigate(Screen.Session) },
+                onWorkoutClick = { navigate(Screen.Workout) },
                 onMealsClick = { navigate(Screen.Meal) },
             )
         }
-        composable<Screen.Session> { SessionScreen(onSessionClick = { navigate(Screen.Exercise) }) }
+        composable<Screen.Workout> { WorkoutScreen(onWorkoutClick = { navigate(Screen.Exercise) }) }
         composable<Screen.Exercise> { ExerciseScreen() }
         composable<Screen.Meal> { MealScreen() }
         composable<Screen.Trainer> { TrainerScreen(onTrainerClick = { navigate(Screen.Profile) }) }
@@ -90,7 +95,7 @@ fun MyFitNavigation(navController: NavHostController, padding: PaddingValues, is
             AdminScreen(
                 onNavigateToUsers = { navigate(AdminScreen.User) },
                 onNavigateToMeals = { navigate(AdminScreen.Meals) },
-                onNavigateToSessions = { navigate(AdminScreen.Session) },
+                onNavigateToWorkouts = { navigate(AdminScreen.Workout) },
                 onNavigateToTrainers = { navigate(AdminScreen.Trainer) },
                 onLogout = { logout() }
             )
@@ -99,10 +104,10 @@ fun MyFitNavigation(navController: NavHostController, padding: PaddingValues, is
         //admin screens
         composable<AdminScreen.User> { AdminUserScreen(onBack = { navController.popBackStack() }) }
         composable<AdminScreen.Meals> { AdminMealScreen(onBack = { navController.popBackStack() }) }
-        composable<AdminScreen.Session> {
-            AdminSessionScreen(
+        composable<AdminScreen.Workout> {
+            AdminWorkoutScreen(
                 onBack = { navController.popBackStack() },
-                onSessionClick = { navController.navigate(AdminScreen.Exercise) }
+                onWorkoutClick = { navController.navigate(AdminScreen.Exercise) }
             )
         }
         composable<AdminScreen.Exercise> { AdminExerciseScreen(onBack = { navController.popBackStack() }) }

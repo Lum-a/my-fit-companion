@@ -25,20 +25,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.myfitcompanion.admin.viewmodel.AdminViewModel
-import com.example.myfitcompanion.api.model.SessionRequest
-import com.example.myfitcompanion.api.model.SessionResponse
+import com.example.myfitcompanion.api.model.WorkoutRequest
+import com.example.myfitcompanion.api.model.WorkoutResponse
 import com.example.myfitcompanion.ui.theme.myFitColors
 import com.example.myfitcompanion.utils.ResultWrapper
 import kotlinx.coroutines.launch
 
+private const val TAG = "AdminWorkoutScreen"
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AdminSessionScreen(
+fun AdminWorkoutScreen(
     viewModel: AdminViewModel = hiltViewModel(),
     onBack: () -> Unit = {},
-    onSessionClick: (SessionResponse) -> Unit = {}
+    onWorkoutClick: (WorkoutResponse) -> Unit = {}
 ) {
-    val sessionsState by viewModel.sessions.collectAsState()
+    val workoutState by viewModel.workouts.collectAsState()
     var showDialog by remember { mutableStateOf(false) }
     var name by remember { mutableStateOf("") }
     var duration by remember { mutableStateOf("") }
@@ -48,7 +49,7 @@ fun AdminSessionScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Manage Sessions") },
+                title = { Text("Manage Workouts") },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
@@ -65,7 +66,7 @@ fun AdminSessionScreen(
                 onClick = { showDialog = true },
                 containerColor = myFitColors.current.gold
             ) {
-                Icon(Icons.Default.Add, contentDescription = "Add Session")
+                Icon(Icons.Default.Add, contentDescription = "Add Workout")
             }
         }
     ) { paddingValues ->
@@ -75,19 +76,19 @@ fun AdminSessionScreen(
                 .padding(paddingValues),
             contentAlignment = Alignment.Center
         ) {
-            when (val state = sessionsState) {
+            when (val state = workoutState) {
                 is ResultWrapper.Initial -> {
-                    Log.d("AdminSessionScreen", "Initial state, loading sessions...")
-                    LaunchedEffect(Unit) { viewModel.loadSessions() }
+                    Log.d(TAG, "Initial state, loading workouts...")
+                    LaunchedEffect(Unit) { viewModel.loadWorkouts() }
                 }
                 is ResultWrapper.Loading -> {
-                    Log.d("AdminSessionScreen", "Loading sessions...")
+                    Log.d(TAG, "Loading workouts...")
                     CircularProgressIndicator(color = myFitColors.current.gold)
                 }
                 is ResultWrapper.Error -> {
-                    Log.d("AdminSessionScreen", "Error loading sessions: ${state.message}")
+                    Log.d(TAG, "Error loading workouts: ${state.message}")
                     Text(
-                        "Failed to load sessions",
+                        "Failed to load workouts",
                         color = Color.Red,
                         modifier = Modifier.padding(16.dp)
                     )
@@ -95,7 +96,7 @@ fun AdminSessionScreen(
                 is ResultWrapper.Success -> {
                     if(state.data.isEmpty()) {
                         Text(
-                            "No sessions available. Click the + button to add a new session.",
+                            "No workouts available. Click the + button to add a new workout.",
                             color = Color.Gray,
                             modifier = Modifier.padding(16.dp)
                         )
@@ -106,12 +107,12 @@ fun AdminSessionScreen(
                         contentPadding = PaddingValues(16.dp),
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        items(state.data) { session ->
-                            SessionCard(
-                                session = session,
-                                onClick = { onSessionClick(session) },
+                        items(state.data) { workout ->
+                            WorkoutCard(
+                                workout = workout,
+                                onClick = { onWorkoutClick(workout) },
                                 onEdit = { /* TODO: open edit dialog */ },
-                                onDelete = { viewModel.deleteSession(session.id) }
+                                onDelete = { viewModel.deleteWorkout(workout.id) }
                             )
                         }
                     }
@@ -127,8 +128,8 @@ fun AdminSessionScreen(
                         scope.launch {
                             val userId = viewModel.getUserId()
                             if (name.isNotBlank() && durationInt != null && userId != null) {
-                                viewModel.addSession(
-                                    SessionRequest(
+                                viewModel.addWorkout(
+                                    WorkoutRequest(
                                         name = name,
                                         date = System.currentTimeMillis(),
                                         duration = durationInt,
@@ -151,7 +152,7 @@ fun AdminSessionScreen(
                         Text("Cancel")
                     }
                 },
-                title = { Text("Create Session") },
+                title = { Text("Create Workout") },
                 text = {
                     Column {
                         OutlinedTextField(
@@ -180,8 +181,8 @@ fun AdminSessionScreen(
 }
 
 @Composable
-fun SessionCard(
-    session: SessionResponse,
+fun WorkoutCard(
+    workout: WorkoutResponse,
     onClick: () -> Unit,
     onEdit: () -> Unit,
     onDelete: () -> Unit
@@ -201,9 +202,9 @@ fun SessionCard(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column {
-                Text(session.name, color = Color.White, style = MaterialTheme.typography.titleMedium)
-                Text(session.date ?: "", color = Color.Gray, style = MaterialTheme.typography.bodySmall)
-                Text("Duration: ${session.duration} min", color = myFitColors.current.gold, style = MaterialTheme.typography.bodySmall)
+                Text(workout.name, color = Color.White, style = MaterialTheme.typography.titleMedium)
+                Text(workout.date ?: "", color = Color.Gray, style = MaterialTheme.typography.bodySmall)
+                Text("Duration: ${workout.duration} min", color = myFitColors.current.gold, style = MaterialTheme.typography.bodySmall)
             }
             Row {
                 IconButton(onClick = onEdit) {

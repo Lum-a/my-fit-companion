@@ -8,8 +8,8 @@ import com.example.myfitcompanion.api.model.CreateUserRequest
 import com.example.myfitcompanion.api.model.UpdateUserRequest
 import com.example.myfitcompanion.api.model.MealsResponse
 import com.example.myfitcompanion.api.model.MealRequest
-import com.example.myfitcompanion.api.model.SessionResponse
-import com.example.myfitcompanion.api.model.SessionRequest
+import com.example.myfitcompanion.api.model.WorkoutResponse
+import com.example.myfitcompanion.api.model.WorkoutRequest
 import com.example.myfitcompanion.api.model.ExerciseResponse
 import com.example.myfitcompanion.api.model.ExerciseRequest
 import com.example.myfitcompanion.api.model.TrainerResponse
@@ -61,35 +61,35 @@ class AdminViewModel @Inject constructor(
         }
     }
 
-    // Sessions
-    private val _sessions = MutableStateFlow<ResultWrapper<List<SessionResponse>>>(ResultWrapper.Initial)
-    val sessions = _sessions.asStateFlow()
+    //Workouts
+    private val _workouts = MutableStateFlow<ResultWrapper<List<WorkoutResponse>>>(ResultWrapper.Initial)
+    val workouts = _workouts.asStateFlow()
 
-    fun loadSessions() {
+    fun loadWorkouts() {
         viewModelScope.launch {
-            _sessions.value = ResultWrapper.Loading
-            _sessions.value = adminRepository.getSessions()
+            _workouts.value = ResultWrapper.Loading
+            _workouts.value = adminRepository.getWorkouts()
         }
     }
 
-    fun addSession(session: SessionRequest) {
+    fun addWorkout(workout: WorkoutRequest) {
         viewModelScope.launch {
-            adminRepository.addSession(session)
-            loadSessions()
+            adminRepository.addWorkout(workout)
+            loadWorkouts()
         }
     }
 
-    fun updateSession(sessionId: Int, session: SessionRequest) {
+    fun updateWorkout(workoutId: Int, workout: WorkoutRequest) {
         viewModelScope.launch {
-            adminRepository.updateSession(sessionId, session)
-            loadSessions()
+            adminRepository.updateWorkout(workoutId, workout)
+            loadWorkouts()
         }
     }
 
-    fun deleteSession(sessionId: Int) {
+    fun deleteWorkout(workoutId: Int) {
         viewModelScope.launch {
-            adminRepository.deleteSession(sessionId)
-            loadSessions()
+            adminRepository.deleteWorkout(workoutId)
+            loadWorkouts()
         }
     }
 

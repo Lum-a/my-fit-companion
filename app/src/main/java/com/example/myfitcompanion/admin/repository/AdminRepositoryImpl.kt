@@ -5,8 +5,8 @@ import com.example.myfitcompanion.api.ApiService
 import com.example.myfitcompanion.api.model.UserResponse
 import com.example.myfitcompanion.api.model.MealsResponse
 import com.example.myfitcompanion.api.model.MealRequest
-import com.example.myfitcompanion.api.model.SessionResponse
-import com.example.myfitcompanion.api.model.SessionRequest
+import com.example.myfitcompanion.api.model.WorkoutResponse
+import com.example.myfitcompanion.api.model.WorkoutRequest
 import com.example.myfitcompanion.api.model.ExerciseResponse
 import com.example.myfitcompanion.api.model.ExerciseRequest
 import com.example.myfitcompanion.api.model.TrainerResponse
@@ -87,30 +87,30 @@ class AdminRepositoryImpl @Inject constructor(
         ResultWrapper.Error(e.message)
     }
 
-    // Sessions
-    override suspend fun addSession(session: SessionRequest): ResultWrapper<SessionResponse> = try {
-        val response = adminApiService.addSession(session)
+    // Workouts
+    override suspend fun addWorkout(workout: WorkoutRequest): ResultWrapper<WorkoutResponse> = try {
+        val response = adminApiService.addWorkout(workout)
         ResultWrapper.Success(response)
     } catch (e: Exception) {
         ResultWrapper.Error(e.message)
     }
 
-    override suspend fun getSessions(): ResultWrapper<List<SessionResponse>> = try {
-        val response = apiService.getSessions()
+    override suspend fun getWorkouts(): ResultWrapper<List<WorkoutResponse>> = try {
+        val response = apiService.getWorkouts()
         ResultWrapper.Success(response)
     } catch (e: Exception) {
         ResultWrapper.Error(e.message)
     }
 
-    override suspend fun updateSession(sessionId: Int, session: SessionRequest): ResultWrapper<SessionResponse> = try {
-        val response = adminApiService.updateSession(sessionId, session)
+    override suspend fun updateWorkout(workoutId: Int, workout: WorkoutRequest): ResultWrapper<WorkoutResponse> = try {
+        val response = adminApiService.updateWorkout(workoutId, workout)
         ResultWrapper.Success(response)
     } catch (e: Exception) {
         ResultWrapper.Error(e.message)
     }
 
-    override suspend fun deleteSession(sessionId: Int): ResultWrapper<Unit> = try {
-        adminApiService.deleteSession(sessionId)
+    override suspend fun deleteWorkout(workoutId: Int): ResultWrapper<Unit> = try {
+        adminApiService.deleteWorkout(workoutId)
         ResultWrapper.Success(Unit)
     } catch (e: Exception) {
         ResultWrapper.Error(e.message)
@@ -118,7 +118,7 @@ class AdminRepositoryImpl @Inject constructor(
 
     // Exercises
     override suspend fun getExercises(): ResultWrapper<List<ExerciseResponse>> = try {
-        val response = adminApiService.getExercises()
+        val response = apiService.getExercises()
         ResultWrapper.Success(response)
     } catch (e: Exception) {
         ResultWrapper.Error(e.message)
