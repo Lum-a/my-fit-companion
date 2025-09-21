@@ -34,6 +34,7 @@ sealed class Screen {
     @Serializable
     data object ChangePassword: Screen()
 
+    @Serializable
     data object Meal: Screen()
 
 }
