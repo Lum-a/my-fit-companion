@@ -12,6 +12,8 @@ import com.example.myfitcompanion.api.model.ExerciseRequest
 import com.example.myfitcompanion.api.model.TrainerResponse
 import com.example.myfitcompanion.api.model.UpdateTrainerRequest
 import com.example.myfitcompanion.api.model.CreateUserRequest
+import com.example.myfitcompanion.api.model.SplitRequest
+import com.example.myfitcompanion.api.model.SplitResponse
 import com.example.myfitcompanion.api.model.UpdateUserRequest
 import com.example.myfitcompanion.db.room.dao.UserDao
 import com.example.myfitcompanion.utils.ResultWrapper
@@ -116,9 +118,37 @@ class AdminRepositoryImpl @Inject constructor(
         ResultWrapper.Error(e.message)
     }
 
+    override suspend fun getWorkoutSplits(workoutId: Int): ResultWrapper<List<SplitResponse>> = try {
+        val response = apiService.getWorkoutSplits(workoutId)
+        ResultWrapper.Success(response)
+    } catch (e: Exception) {
+        ResultWrapper.Error(e.message)
+    }
+
+    override suspend fun addWorkoutSplit(split: SplitRequest): ResultWrapper<SplitResponse> = try {
+        val response = adminApiService.addWorkoutSplit(split)
+        ResultWrapper.Success(response)
+    } catch (e: Exception) {
+        ResultWrapper.Error(e.message)
+    }
+
+    override suspend fun updateWorkoutSplit(splitId: Int, split: SplitRequest): ResultWrapper<SplitResponse> = try {
+        val response = adminApiService.updateWorkoutSplit(splitId, split)
+        ResultWrapper.Success(response)
+    } catch (e: Exception) {
+        ResultWrapper.Error(e.message)
+    }
+
+    override suspend fun deleteWorkoutSplit(splitId: Int): ResultWrapper<Unit> = try {
+        adminApiService.deleteWorkoutSplit(splitId)
+        ResultWrapper.Success(Unit)
+    } catch (e: Exception) {
+        ResultWrapper.Error(e.message)
+    }
+
     // Exercises
-    override suspend fun getExercises(): ResultWrapper<List<ExerciseResponse>> = try {
-        val response = apiService.getExercises()
+    override suspend fun getExercises(splitId: Int): ResultWrapper<List<ExerciseResponse>> = try {
+        val response = apiService.getExercises(splitId)
         ResultWrapper.Success(response)
     } catch (e: Exception) {
         ResultWrapper.Error(e.message)

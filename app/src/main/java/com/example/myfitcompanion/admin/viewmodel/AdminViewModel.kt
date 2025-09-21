@@ -12,6 +12,8 @@ import com.example.myfitcompanion.api.model.WorkoutResponse
 import com.example.myfitcompanion.api.model.WorkoutRequest
 import com.example.myfitcompanion.api.model.ExerciseResponse
 import com.example.myfitcompanion.api.model.ExerciseRequest
+import com.example.myfitcompanion.api.model.SplitRequest
+import com.example.myfitcompanion.api.model.SplitResponse
 import com.example.myfitcompanion.api.model.TrainerResponse
 import com.example.myfitcompanion.api.model.UpdateTrainerRequest
 import com.example.myfitcompanion.utils.ResultWrapper
@@ -93,35 +95,69 @@ class AdminViewModel @Inject constructor(
         }
     }
 
+    // Splits
+    private val _splits = MutableStateFlow<ResultWrapper<List<SplitResponse>>>(ResultWrapper.Initial)
+    val splits = _splits.asStateFlow()
+    private val workoutId = 0
+
+    fun loadSplits(id:  Int) {
+        viewModelScope.launch {
+            _splits.value = ResultWrapper.Loading
+            _splits.value = adminRepository.getWorkoutSplits(id)
+        }
+    }
+
+    fun addSplit(split: SplitRequest) {
+        viewModelScope.launch {
+            adminRepository.addWorkoutSplit(split)
+            loadSplits(workoutId)
+        }
+    }
+
+    fun updateSplit(splitId: Int, split: SplitRequest) {
+        viewModelScope.launch {
+            adminRepository.updateWorkoutSplit(splitId, split)
+            loadSplits(workoutId)
+        }
+    }
+
+    fun deleteSplit(splitId: Int) {
+        viewModelScope.launch {
+            adminRepository.deleteWorkoutSplit(splitId)
+            loadSplits(workoutId)
+        }
+    }
+
     // Exercises
     private val _exercises = MutableStateFlow<ResultWrapper<List<ExerciseResponse>>>(ResultWrapper.Initial)
     val exercises = _exercises.asStateFlow()
-
-    fun loadExercises() {
+    private var splitId = 0
+    fun loadExercises(id: Int) {
         viewModelScope.launch {
             _exercises.value = ResultWrapper.Loading
-            _exercises.value = adminRepository.getExercises()
+            _exercises.value = adminRepository.getExercises(id)
+            splitId = id
         }
     }
 
     fun addExercise(exercise: ExerciseRequest) {
         viewModelScope.launch {
             adminRepository.addExercise(exercise)
-            loadExercises()
+            loadExercises(splitId)
         }
     }
 
     fun updateExercise(exerciseId: Int, exercise: ExerciseRequest) {
         viewModelScope.launch {
             adminRepository.updateExercise(exerciseId, exercise)
-            loadExercises()
+            loadExercises(splitId)
         }
     }
 
     fun deleteExercise(exerciseId: Int) {
         viewModelScope.launch {
             adminRepository.deleteExercise(exerciseId)
-            loadExercises()
+            loadExercises(splitId)
         }
     }
 

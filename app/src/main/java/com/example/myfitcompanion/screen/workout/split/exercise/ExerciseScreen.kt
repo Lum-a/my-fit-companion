@@ -1,4 +1,4 @@
-package com.example.myfitcompanion.screen.exercise
+package com.example.myfitcompanion.screen.workout.split.exercise
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -9,6 +9,8 @@ import androidx.compose.ui.Modifier
 
 @Composable
 fun ExerciseScreen(
+    splitId: Int,
+    onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
 

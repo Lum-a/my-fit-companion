@@ -23,13 +23,17 @@ sealed class Screen {
     data object Workout: Screen()
 
     @Serializable
+    data class Split(val workoutId: Int): Screen()
+
+    @Serializable
+    data class Exercise(val splitId: Int): Screen()
+
+    @Serializable
     data object Trainer: Screen()
 
     @Serializable
     data object Meal: Screen()
 
-    @Serializable
-    data object Exercise: Screen()
 }
 
 @Serializable
@@ -45,10 +49,13 @@ sealed class AdminScreen {
     data object Workout: Screen()
 
     @Serializable
-    data object Meals: Screen()
+    data class Split(val workoutId: Int): Screen()
 
     @Serializable
-    data object Exercise: Screen()
+    data class Exercise(val splitId: Int): Screen()
+
+    @Serializable
+    data object Meals: Screen()
 
     @Serializable
     data object Trainer: Screen()

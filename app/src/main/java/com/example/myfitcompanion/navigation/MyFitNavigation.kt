@@ -8,15 +8,17 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.myfitcompanion.admin.screen.AdminExerciseScreen
+import androidx.navigation.toRoute
+import com.example.myfitcompanion.admin.screen.workout.AdminExerciseScreen
 import com.example.myfitcompanion.admin.screen.AdminMealScreen
 import com.example.myfitcompanion.admin.screen.AdminScreen
-import com.example.myfitcompanion.admin.screen.AdminWorkoutScreen
+import com.example.myfitcompanion.admin.screen.workout.AdminWorkoutScreen
 import com.example.myfitcompanion.admin.screen.AdminTrainerScreen
 import com.example.myfitcompanion.admin.screen.AdminUserScreen
+import com.example.myfitcompanion.admin.screen.workout.AdminSplitScreen
 import com.example.myfitcompanion.screen.AdminScreen
 import com.example.myfitcompanion.screen.Screen
-import com.example.myfitcompanion.screen.exercise.ExerciseScreen
+import com.example.myfitcompanion.screen.workout.split.exercise.ExerciseScreen
 import com.example.myfitcompanion.screen.workout.WorkoutScreen
 import com.example.myfitcompanion.screen.splash.SplashScreen
 import com.example.myfitcompanion.screen.home.HomeScreen
@@ -25,6 +27,7 @@ import com.example.myfitcompanion.screen.meal.MealScreen
 import com.example.myfitcompanion.screen.profile.ProfileScreen
 import com.example.myfitcompanion.screen.signup.RegisterScreen
 import com.example.myfitcompanion.screen.trainer.TrainerScreen
+import com.example.myfitcompanion.screen.workout.split.SplitScreen
 import com.example.myfitcompanion.utils.AuthViewModel
 
 @Composable
@@ -85,8 +88,30 @@ fun MyFitNavigation(navController: NavHostController, padding: PaddingValues, is
                 onMealsClick = { navigate(Screen.Meal) },
             )
         }
-        composable<Screen.Workout> { WorkoutScreen(onWorkoutClick = { navigate(Screen.Exercise) }) }
-        composable<Screen.Exercise> { ExerciseScreen() }
+        composable<Screen.Workout> {
+            WorkoutScreen(
+                onWorkoutClick = { workoutId ->
+                    navigate(Screen.Split(workoutId))
+                }
+            )
+        }
+        composable<Screen.Split> {
+            val workout = it.toRoute<Screen.Split>()
+            SplitScreen(
+                workoutId = workout.workoutId,
+                onSplitClick = { splitId ->
+                    navigate(Screen.Exercise(splitId))
+                },
+                onBack = { navController.popBackStack() }
+            )
+        }
+        composable<Screen.Exercise> {
+            val split = it.toRoute<Screen.Exercise>()
+            ExerciseScreen(
+                splitId = split.splitId,
+                onBack = { navController.popBackStack() }
+            )
+        }
         composable<Screen.Meal> { MealScreen() }
         composable<Screen.Trainer> { TrainerScreen(onTrainerClick = { navigate(Screen.Profile) }) }
 
@@ -107,11 +132,30 @@ fun MyFitNavigation(navController: NavHostController, padding: PaddingValues, is
         composable<AdminScreen.Workout> {
             AdminWorkoutScreen(
                 onBack = { navController.popBackStack() },
-                onWorkoutClick = { navController.navigate(AdminScreen.Exercise) }
+                onWorkoutClick = { workoutId ->
+                    navController.navigate(AdminScreen.Split(workoutId)) }
             )
         }
-        composable<AdminScreen.Exercise> { AdminExerciseScreen(onBack = { navController.popBackStack() }) }
-        composable<AdminScreen.Trainer> { AdminTrainerScreen(onBack = { navController.popBackStack() }) }
-
+        composable<AdminScreen.Split> {
+            val workout = it.toRoute<AdminScreen.Split>()
+            AdminSplitScreen(
+                workoutId = workout.workoutId,
+                onSplitClick = { splitId ->
+                    navController.navigate(AdminScreen.Exercise(splitId)) },
+                onBack = { navController.popBackStack() }
+            )
+        }
+        composable<AdminScreen.Exercise> {
+            val split = it.toRoute<AdminScreen.Exercise>()
+            AdminExerciseScreen(
+                splitId = split.splitId,
+                onBack = { navController.popBackStack() }
+            )
+        }
+        composable<AdminScreen.Trainer> {
+            AdminTrainerScreen(
+                onBack = { navController.popBackStack() }
+            )
+        }
     }
 }
