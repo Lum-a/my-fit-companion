@@ -1,6 +1,5 @@
 package com.example.myfitcompanion.api.model
 
-import com.example.myfitcompanion.model.entities.User
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 

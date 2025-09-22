@@ -31,6 +31,9 @@ class WorkoutViewModel @Inject constructor(
         viewModelScope.launch {
             _workoutState.value = ResultWrapper.Loading
             when (val result = userRepository.getWorkouts()) {
+                is ResultWrapper.Initial -> {
+                    _workoutState.value = ResultWrapper.Initial
+                }
                 is ResultWrapper.Success -> {
                     _workoutState.value = ResultWrapper.Success(result.data)
                 }
@@ -39,9 +42,6 @@ class WorkoutViewModel @Inject constructor(
                 }
                 is ResultWrapper.Loading -> {
                     // Already set to loading above
-                }
-                is ResultWrapper.Initial -> {
-                    _workoutState.value = ResultWrapper.Error("Unexpected initial state")
                 }
             }
         }

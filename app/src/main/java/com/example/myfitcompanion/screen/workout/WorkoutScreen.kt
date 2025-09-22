@@ -49,11 +49,6 @@ fun WorkoutScreen(
 ) {
     val workoutState by viewModel.workoutState.collectAsStateWithLifecycle()
 
-    // Load workouts when screen opens
-    LaunchedEffect(Unit) {
-        viewModel.loadWorkouts()
-    }
-
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -61,6 +56,11 @@ fun WorkoutScreen(
             .padding(16.dp)
     ) {
         when (val workouts = workoutState) {
+            is ResultWrapper.Initial -> {
+                LaunchedEffect(Unit) {
+                    viewModel.loadWorkouts()
+                }
+            }
             is ResultWrapper.Loading -> {
                 CircularProgressIndicator(
                     modifier = Modifier.align(Alignment.Center),
@@ -108,9 +108,6 @@ fun WorkoutScreen(
                         style = MaterialTheme.typography.bodyMedium.copy(color = Color.Gray)
                     )
                 }
-            }
-            is ResultWrapper.Initial -> {
-                // Initial state - show nothing or placeholder
             }
         }
     }
@@ -210,17 +207,11 @@ fun WorkoutCard(
                 )
 
                 Column {
-                    workout.date?.let { date ->
+                    workout.description?.let { description ->
                         Text(
-                            text = "Date: $date",
+                            text = description,
                             style = MaterialTheme.typography.bodySmall.copy(color = Color.White),
                             modifier = Modifier.padding(bottom = 4.dp)
-                        )
-                    }
-                    workout.duration?.let { duration ->
-                        Text(
-                            text = "Duration: $duration min",
-                            style = MaterialTheme.typography.bodySmall.copy(color = Color.White)
                         )
                     }
                 }
@@ -238,18 +229,14 @@ fun WorkoutScreenTest() {
         WorkoutResponse(
             id = 1,
             name = "Morning Cardio",
-            date = "2025-09-19",
-            duration = 45,
+            description = "A quick cardio session to start your day.",
             imageUrl = "https://images.pexels.com/photos/1552249/pexels-photo-1552249.jpeg",
-            userId = 1
         ),
         WorkoutResponse(
             id = 2,
             name = "Strength Training",
-            date = "2025-09-18",
-            duration = 60,
+            description = "Build muscle and strength with this workout.",
             imageUrl = "https://images.pexels.com/photos/2261485/pexels-photo-2261485.jpeg",
-            userId = 2
         )
     )
 

@@ -3,7 +3,7 @@ package com.example.myfitcompanion.screen.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myfitcompanion.api.model.ExerciseResponse
-import com.example.myfitcompanion.model.entities.User
+import com.example.myfitcompanion.db.room.entities.User
 import com.example.myfitcompanion.repository.UserRepository
 import com.example.myfitcompanion.utils.ResultWrapper
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -41,6 +41,9 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             _recentExercise.value = ResultWrapper.Loading
             when (val result = repository.getRecentExercise()) {
+                is ResultWrapper.Initial -> {
+                    _recentExercise.value = ResultWrapper.Initial
+                }
                 is ResultWrapper.Success -> {
                     _recentExercise.value = ResultWrapper.Success(result.data)
                 }
@@ -49,9 +52,6 @@ class HomeViewModel @Inject constructor(
                 }
                 is ResultWrapper.Loading -> {
                     // Already set to loading above
-                }
-                is ResultWrapper.Initial -> {
-                    _recentExercise.value = ResultWrapper.Error("Unexpected initial state")
                 }
             }
         }

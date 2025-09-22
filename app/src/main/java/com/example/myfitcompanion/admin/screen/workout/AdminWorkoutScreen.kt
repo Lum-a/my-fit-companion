@@ -42,7 +42,7 @@ fun AdminWorkoutScreen(
     val workoutState by viewModel.workouts.collectAsState()
     var showDialog by remember { mutableStateOf(false) }
     var name by remember { mutableStateOf("") }
-    var duration by remember { mutableStateOf("") }
+    var description by remember { mutableStateOf("") }
     var imageUrl by remember { mutableStateOf("") }
     val scope = rememberCoroutineScope()
 
@@ -124,23 +124,20 @@ fun AdminWorkoutScreen(
                 onDismissRequest = { showDialog = false },
                 confirmButton = {
                     TextButton(onClick = {
-                        val durationInt = duration.toIntOrNull()
                         scope.launch {
                             val userId = viewModel.getUserId()
-                            if (name.isNotBlank() && durationInt != null && userId != null) {
+                            if (name.isNotBlank() && userId != null) {
                                 viewModel.addWorkout(
                                     WorkoutRequest(
                                         name = name,
-                                        date = System.currentTimeMillis(),
-                                        duration = durationInt,
-                                        userId = userId,
+                                        description = description,
                                         imageUrl = imageUrl
                                     )
                                 )
                             }
                             showDialog = false
                             name = ""
-                            duration = ""
+                            description = ""
                             imageUrl = ""
                         }
                     }) {
@@ -162,9 +159,9 @@ fun AdminWorkoutScreen(
                             modifier = Modifier.fillMaxWidth()
                         )
                         OutlinedTextField(
-                            value = duration,
-                            onValueChange = { duration = it },
-                            label = { Text("Duration (min)") },
+                            value = description,
+                            onValueChange = { description = it },
+                            label = { Text("Description") },
                             modifier = Modifier.fillMaxWidth()
                         )
                         OutlinedTextField(
@@ -203,8 +200,7 @@ fun WorkoutCard(
         ) {
             Column {
                 Text(workout.name, color = Color.White, style = MaterialTheme.typography.titleMedium)
-                Text(workout.date ?: "", color = Color.Gray, style = MaterialTheme.typography.bodySmall)
-                Text("Duration: ${workout.duration} min", color = myFitColors.current.gold, style = MaterialTheme.typography.bodySmall)
+                Text(workout.description ?: "", color = Color.Gray, style = MaterialTheme.typography.bodySmall)
             }
             Row {
                 IconButton(onClick = onEdit) {

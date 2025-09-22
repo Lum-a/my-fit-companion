@@ -4,7 +4,7 @@ import android.util.Log
 import com.example.myfitcompanion.api.ApiService
 import com.example.myfitcompanion.api.model.TrainerResponse
 import com.example.myfitcompanion.db.room.dao.TrainerDao
-import com.example.myfitcompanion.model.entities.Trainer
+import com.example.myfitcompanion.db.room.entities.Trainer
 import com.example.myfitcompanion.utils.ResultWrapper
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
