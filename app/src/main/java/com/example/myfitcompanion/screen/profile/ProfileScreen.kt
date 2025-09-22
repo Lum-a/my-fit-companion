@@ -39,6 +39,17 @@ fun ProfileScreen(
     var bodyFat by remember { mutableStateOf("") }
     var goal by remember { mutableStateOf("") }
 
+    val hasChanges = user?.let { safeUser ->
+        firstName != (safeUser.firstName ?: "") ||
+                lastName != (safeUser.lastName ?: "") ||
+                height != (safeUser.height?.toString() ?: "") ||
+                weight != (safeUser.weight?.toString() ?: "") ||
+                bodyFat != (safeUser.bodyFat?.toString() ?: "") ||
+                goal != (safeUser.goal ?: "") ||
+                uri != null
+    } == true
+
+
     // Initialize fields when user data loads
     LaunchedEffect(user) {
         user?.let {
@@ -204,7 +215,7 @@ fun ProfileScreen(
                 }
 
             },
-            enabled = updateState !is ResultWrapper.Loading,
+            enabled = hasChanges && updateState !is ResultWrapper.Loading,
             colors = ButtonDefaults.buttonColors(
                 containerColor = myFitColors.current.gold,
                 contentColor = Color.Black,
