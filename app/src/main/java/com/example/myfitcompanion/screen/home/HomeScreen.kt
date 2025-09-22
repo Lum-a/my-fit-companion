@@ -76,7 +76,7 @@ fun HomeScreen(
 
         // Welcome message
         Text(
-            text = "Welcome back, ${userData?.name ?: "User"} 👋",
+            text = "Welcome back, ${userData?.firstName ?: "User"} 👋",
             style = MaterialTheme.typography.headlineSmall.copy(color = Color.White),
             modifier = Modifier.padding(bottom = 12.dp, top = 8.dp)
         )

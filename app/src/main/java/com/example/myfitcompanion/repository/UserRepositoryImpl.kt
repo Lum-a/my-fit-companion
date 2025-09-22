@@ -16,6 +16,7 @@ import com.example.myfitcompanion.api.model.WorkoutResponse
 import com.example.myfitcompanion.utils.ResultWrapper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -55,7 +56,22 @@ class UserRepositoryImpl @Inject constructor(
     }
 
     override suspend fun updateUser(request: UpdateProfileRequest): ResultWrapper<UpdateProfileResponse> = try {
-        val response = apiService.updateProfile(getUserId(), request)
+        // 1. Get current user
+        val currentUser = userDao.getAllUsers().first().firstOrNull() ?: throw Exception("User not found")
+
+        // 2. Call API
+        val response = apiService.updateProfile(currentUser.id, request)
+
+        // 3. Update local user with new data
+        val updatedUser = currentUser.copy(
+            height = request.height ?: currentUser.height,
+            weight = request.weight ?: currentUser.weight,
+            bodyFat = request.bodyFat ?: currentUser.bodyFat,
+            goal = request.goal ?: currentUser.goal,
+            imageUrl = request.imageUrl ?: currentUser.imageUrl
+        )
+
+        userDao.updateUserDetails(updatedUser)
         ResultWrapper.Success(response)
     } catch (e: Exception) {
         ResultWrapper.Error(e.message)

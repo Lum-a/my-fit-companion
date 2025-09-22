@@ -14,9 +14,9 @@ data class UserResponse(
     @Json(name = "name")
     val name: String,
     @Json(name = "firstName")
-    val firstName: String? = null,
+    val firstName: String?,
     @Json(name = "lastName")
-    val lastName: String? = null,
+    val lastName: String?,
     @Json(name = "email")
     val email: String,
     @Json(name = "role")
@@ -30,19 +30,24 @@ data class UserResponse(
     @Json(name = "goal")
     val goal: String? = null,
     @Json(name = "createdAt")
-    val createdAt: String
+    val createdAt: String,
+    @Json(name = "imageUrl")
+    val imageUrl: String? = null
 ) {
     fun asUser(): User {
         return User(
             id = id,
             name = name,
+            firstName = name,
+            lastName = lastName,
             email = email,
             height = height,
             weight = weight,
             bodyFat = bodyFat,
             goal = goal,
             role = role,
-            createdAt = createdAt
+            createdAt = createdAt,
+            imageUrl = imageUrl
         )
     }
 }

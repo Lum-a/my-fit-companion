@@ -1,5 +1,6 @@
 package com.example.myfitcompanion.screen.profile
 
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -10,54 +11,58 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import android.net.Uri
-import androidx.core.content.FileProvider
-import java.io.File
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.layout.ContentScale
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.example.myfitcompanion.R
+import com.example.myfitcompanion.api.model.UpdateProfileRequest
+import com.example.myfitcompanion.components.ImagePickerHandler
 import com.example.myfitcompanion.ui.theme.myFitColors
 import com.example.myfitcompanion.utils.ResultWrapper
-import com.example.myfitcompanion.utils.isValidPassword
 
 @Composable
 fun ProfileScreen(
     modifier: Modifier = Modifier,
     viewModel: ProfileViewModel = hiltViewModel(),
-    onChangePassword: (() -> Unit)? = null // Add navigation lambda
+    onChangePassword: () -> Unit = {}
 ) {
     val user by viewModel.user.collectAsStateWithLifecycle()
     val updateState by viewModel.updateState.collectAsStateWithLifecycle()
+    val imageUploadState by viewModel.imageUploadState.collectAsStateWithLifecycle()
 
-    var photoUrl by remember { mutableStateOf(user?.photoUrl ?: "") }
-    var height by remember { mutableStateOf(user?.height?.toString() ?: "") }
-    var weight by remember { mutableStateOf(user?.weight?.toString() ?: "") }
-    var bodyFat by remember { mutableStateOf(user?.bodyFat?.toString() ?: "") }
-    var goal by remember { mutableStateOf(user?.goal ?: "") }
-    var password by remember { mutableStateOf("") }
-    var passwordError by remember { mutableStateOf(false) }
+    var uploadedImageUrl by remember { mutableStateOf<String?>(null) }
+    var uri by remember { mutableStateOf<Uri?>(null) }
+    var firstName by remember { mutableStateOf("") }
+    var lastName by remember { mutableStateOf("") }
+    var height by remember { mutableStateOf("") }
+    var weight by remember { mutableStateOf("") }
+    var bodyFat by remember { mutableStateOf("") }
+    var goal by remember { mutableStateOf("") }
 
-    // Update fields when user changes (e.g. after update)
+    // Initialize fields when user data loads
     LaunchedEffect(user) {
-        photoUrl = user?.photoUrl ?: ""
-        height = user?.height?.toString() ?: ""
-        weight = user?.weight?.toString() ?: ""
-        bodyFat = user?.bodyFat?.toString() ?: ""
-        goal = user?.goal ?: ""
+        user?.let {
+            firstName = it.firstName ?: ""
+            lastName = it.lastName ?: ""
+            height = it.height?.toString() ?: ""
+            weight = it.weight?.toString() ?: ""
+            bodyFat = it.bodyFat?.toString() ?: ""
+            goal = it.goal ?: ""
+        }
     }
 
-    val context = LocalContext.current
-    var cameraImageUri by remember { mutableStateOf<Uri?>(null) }
-    val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { success ->
-        if (success && cameraImageUri != null) {
-            // TODO: Upload to blob and update photoUrl
-            viewModel.uploadProfilePhoto(cameraImageUri!!, context)
+    // Handle image upload result
+    LaunchedEffect(imageUploadState) {
+        when (val imageState = imageUploadState) {
+            is ResultWrapper.Success -> {
+                uploadedImageUrl = imageState.data
+            }
+            is ResultWrapper.Error -> {
+                // Handle error
+            }
+            else -> { /* Handle other states */ }
         }
     }
 
@@ -71,46 +76,81 @@ fun ProfileScreen(
     ) {
         Text("Profile", style = MaterialTheme.typography.headlineMedium.copy(color = myFitColors.current.gold))
         Spacer(modifier = Modifier.height(16.dp))
-        // Profile photo with camera button overlay
-        Box(modifier = Modifier.size(120.dp)) {
-            AsyncImage(
-                model = photoUrl,
-                contentDescription = "Profile Photo",
-                modifier = Modifier
-                    .size(120.dp)
-                    .clip(CircleShape)
-                    .background(Color.Gray),
-                onError = { /* Optionally handle error, e.g. show a placeholder */ },
-                onSuccess = { /* Optionally handle success */ }
-            )
-            IconButton(
-                onClick = {
-                    // Create a temp file for the camera image
-                    val photoFile = File.createTempFile("profile_photo", ".jpg", context.cacheDir)
-                    val uri = FileProvider.getUriForFile(context, "${context.packageName}.provider", photoFile)
-                    cameraImageUri = uri
-                    cameraLauncher.launch(uri)
-                },
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .size(36.dp)
-                    .background(Color.Black.copy(alpha = 0.6f), shape = CircleShape)
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_camera),
-                    contentDescription = "Take Photo",
-                    tint = myFitColors.current.gold
+
+        // Profile photo with image picker - SIMPLIFIED
+        ImagePickerHandler(
+            onImageSelected = { newUri ->
+                uri = newUri
+            }
+        ) { onClick ->
+            Box(modifier = Modifier.size(120.dp)) {
+                AsyncImage(
+                    model = uri ?: user?.imageUrl,
+                    contentDescription = "Profile Photo",
+                    modifier = Modifier
+                        .size(120.dp)
+                        .clip(CircleShape)
+                        .background(Color.Gray),
+                    contentScale = ContentScale.Crop
                 )
+
+                // Show loading indicator during image upload
+                if (imageUploadState is ResultWrapper.Loading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.align(Alignment.Center),
+                        color = myFitColors.current.gold
+                    )
+                }
+
+                IconButton(
+                    onClick = onClick,
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .size(36.dp)
+                        .background(Color.Black.copy(alpha = 0.6f), shape = CircleShape),
+                    enabled = imageUploadState !is ResultWrapper.Loading
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_camera),
+                        contentDescription = "Change Photo",
+                        tint = myFitColors.current.gold
+                    )
+                }
             }
         }
+
+        // Show image upload error if exists
+        if (imageUploadState is ResultWrapper.Error) {
+            Text(
+                text = "Image upload failed: ${(imageUploadState as ResultWrapper.Error).message}",
+                color = Color.Red,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(top = 4.dp)
+            )
+        }
+
         Spacer(modifier = Modifier.height(8.dp))
+
         OutlinedTextField(
-            value = photoUrl,
-            onValueChange = {
-                photoUrl = it
-                viewModel.updatePhotoUrl(it)
-            },
-            label = { Text("Photo URL", color = Color.Gray) },
+            value = firstName,
+            onValueChange = { firstName = it },
+            label = { Text("First Name", color = Color.Gray) },
+            singleLine = true,
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = myFitColors.current.gold,
+                unfocusedBorderColor = Color.Gray,
+                cursorColor = myFitColors.current.gold,
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.White
+            ),
+            modifier = Modifier.fillMaxWidth()
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+
+        OutlinedTextField(
+            value = lastName,
+            onValueChange = { lastName = it },
+            label = { Text("Last Name", color = Color.Gray) },
             singleLine = true,
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = myFitColors.current.gold,
@@ -182,55 +222,42 @@ fun ProfileScreen(
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(8.dp))
-        OutlinedTextField(
-            value = password,
-            onValueChange = {
-                password = it
-                passwordError = it.isNotEmpty() && !isValidPassword(it)
-            },
-            label = { Text("New Password", color = Color.Gray) },
-            singleLine = true,
-            visualTransformation = PasswordVisualTransformation(),
-            isError = passwordError,
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = if (passwordError) Color.Red else myFitColors.current.gold,
-                unfocusedBorderColor = if (passwordError) Color.Red else Color.Gray,
-                cursorColor = myFitColors.current.gold,
-                focusedTextColor = Color.White,
-                unfocusedTextColor = Color.White
-            ),
-            modifier = Modifier.fillMaxWidth()
-        )
-        if (passwordError && password.isNotEmpty()) {
-            Text(
-                text = "Password must be at least 8 characters, include uppercase, lowercase, and a number",
-                color = Color.Red,
-                style = MaterialTheme.typography.bodySmall,
-                modifier = Modifier.align(Alignment.Start).padding(start = 16.dp, top = 2.dp)
-            )
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-        when (val state = updateState) {
-            is ResultWrapper.Initial -> {}
-            is ResultWrapper.Loading -> CircularProgressIndicator(color = myFitColors.current.gold)
-            is ResultWrapper.Error -> Text(text = "Error: ${state.message}", color = Color.Red)
-            is ResultWrapper.Success<*> -> Text(text = "Profile updated!", color = myFitColors.current.gold)
-        }
-        Spacer(modifier = Modifier.height(8.dp))
+//        OutlinedTextField(
+//            value = password,
+//            onValueChange = {
+//                password = it
+//                passwordError = it.isNotEmpty() && !isValidPassword(it)
+//            },
+//            label = { Text("New Password", color = Color.Gray) },
+//            singleLine = true,
+//            visualTransformation = PasswordVisualTransformation(),
+//            isError = passwordError,
+//            colors = OutlinedTextFieldDefaults.colors(
+//                focusedBorderColor = if (passwordError) Color.Red else myFitColors.current.gold,
+//                unfocusedBorderColor = if (passwordError) Color.Red else Color.Gray,
+//                cursorColor = myFitColors.current.gold,
+//                focusedTextColor = Color.White,
+//                unfocusedTextColor = Color.White
+//            ),
+//            modifier = Modifier.fillMaxWidth()
+//        )
+
         Button(
             onClick = {
-                viewModel.updateUserInfo(
-                    com.example.myfitcompanion.api.model.UpdateProfileRequest(
+                viewModel.updateProfile(
+                    UpdateProfileRequest(
+                        firstName = firstName.ifBlank { null },
+                        lastName = lastName.ifBlank { null },
                         height = height.toFloatOrNull(),
                         weight = weight.toFloatOrNull(),
                         bodyFat = bodyFat.toFloatOrNull(),
                         goal = goal.ifBlank { null },
-//                        password = if (password.isNotBlank()) password else null,
-                        photoUrl = photoUrl
+                        imageUrl = uploadedImageUrl
                     )
                 )
+                uri?.let { viewModel.uploadProfileImage(it) }
             },
-            enabled = !passwordError && (height.isNotBlank() || weight.isNotBlank() || bodyFat.isNotBlank() || goal.isNotBlank() || password.isNotBlank() || photoUrl.isNotBlank()),
+            enabled = updateState !is ResultWrapper.Loading,
             colors = ButtonDefaults.buttonColors(
                 containerColor = myFitColors.current.gold,
                 contentColor = Color.Black,
@@ -241,17 +268,6 @@ fun ProfileScreen(
         ) {
             Text("Save Changes")
         }
-        Spacer(modifier = Modifier.height(8.dp))
-        // Add Change Password button
-        Button(
-            onClick = { onChangePassword?.invoke() },
-            colors = ButtonDefaults.buttonColors(
-                containerColor = myFitColors.current.gold,
-                contentColor = Color.Black
-            ),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Change Password")
-        }
+
     }
 }
