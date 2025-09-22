@@ -40,12 +40,8 @@ interface ApiService {
     @GET("meals")
     suspend fun getMeals(): List<MealsResponse>
 
-
-    @PUT("users/{userId}")
-    suspend fun updateProfile(
-        @Path("userId") userId: Int?,
-        @Body request: UpdateProfileRequest
-    ): UpdateProfileResponse
+    @PUT("users")
+    suspend fun updateProfile(@Body request: UpdateProfileRequest): UpdateProfileResponse
 
     @GET("/exercises/recent/{userId}")
     suspend fun getRecentExercise(@Path("userId") userId: Int?): ExerciseResponse

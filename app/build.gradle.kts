@@ -5,7 +5,6 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.gms.google.services)
 }
 
 android {
@@ -95,9 +94,6 @@ dependencies {
     implementation(libs.okhttp)
     implementation(libs.logging.interceptor)
 
-    // Firebase
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.storage.ktx)
-    implementation(libs.firebase.auth.ktx)
-    implementation(libs.firebase.common.ktx)
+    //AppWrite
+    implementation("io.appwrite:sdk-for-android:8.1.0")
 }

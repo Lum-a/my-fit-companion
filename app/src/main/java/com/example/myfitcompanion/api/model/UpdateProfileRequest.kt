@@ -5,8 +5,14 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 data class UpdateProfileRequest(
+    @Json(name = "userId")
+    val userId: Int,
     @Json(name = "name")
     val name: String? = null,
+    @Json(name = "firstName")
+    val firstName: String? = null,
+    @Json(name = "lastName")
+    val lastName: String? = null,
     @Json(name = "email")
     val email: String? = null,
     @Json(name = "height")
@@ -18,7 +24,7 @@ data class UpdateProfileRequest(
     @Json(name = "goal")
     val goal: String? = null,
     @Json(name = "photoUrl")
-    val photoUrl: String? = null
+    val imageUrl: String? = null
 )
 
 @JsonClass(generateAdapter = true)
@@ -38,5 +44,5 @@ data class UpdateProfileResponse(
     @Json(name = "goal")
     val goal: String?,
     @Json(name = "photoUrl")
-    val photoUrl: String?
+    val imageUrl: String?
 )
