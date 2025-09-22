@@ -26,7 +26,8 @@ import com.example.myfitcompanion.utils.ResultWrapper
 fun ProfileScreen(
     modifier: Modifier = Modifier,
     viewModel: ProfileViewModel = hiltViewModel(),
-    onChangePassword: () -> Unit = {}
+    onChangePassword: () -> Unit = {},
+    onNavigateToSettings: () -> Unit = {}
 ) {
     val user by viewModel.user.collectAsStateWithLifecycle()
     val updateState by viewModel.updateState.collectAsStateWithLifecycle()
@@ -70,7 +71,26 @@ fun ProfileScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Profile", style = MaterialTheme.typography.headlineMedium.copy(color = myFitColors.current.gold))
+        // Add settings button in the top row
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text("Profile", style = MaterialTheme.typography.headlineMedium.copy(color = myFitColors.current.gold))
+            IconButton(
+                onClick = onNavigateToSettings,
+                modifier = Modifier
+                    .size(40.dp)
+                    .background(Color.Black.copy(alpha = 0.6f), shape = CircleShape)
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_settings),
+                    contentDescription = "Settings",
+                    tint = myFitColors.current.gold
+                )
+            }
+        }
         Spacer(modifier = Modifier.height(16.dp))
 
         ImagePickerHandler(onImageSelected = { uri = it }) { onClick ->

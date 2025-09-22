@@ -24,8 +24,10 @@ import com.example.myfitcompanion.screen.splash.SplashScreen
 import com.example.myfitcompanion.screen.home.HomeScreen
 import com.example.myfitcompanion.screen.login.LoginScreen
 import com.example.myfitcompanion.screen.meal.MealScreen
+import com.example.myfitcompanion.screen.profile.ChangeEmailScreen
 import com.example.myfitcompanion.screen.profile.ChangePasswordScreen
 import com.example.myfitcompanion.screen.profile.ProfileScreen
+import com.example.myfitcompanion.screen.profile.SettingsScreen
 import com.example.myfitcompanion.screen.signup.RegisterScreen
 import com.example.myfitcompanion.screen.trainer.TrainerScreen
 import com.example.myfitcompanion.screen.workout.split.SplitScreen
@@ -82,7 +84,21 @@ fun MyFitNavigation(navController: NavHostController, padding: PaddingValues, is
         }
         composable<Screen.Profile> {
             ProfileScreen(
-                onChangePassword = { navigate(Screen.ChangePassword) }
+                onChangePassword = { navigate(Screen.ChangePassword) },
+                onNavigateToSettings = { navigate(Screen.Settings) }
+            )
+        }
+        composable<Screen.Settings> {
+            SettingsScreen(
+                onChangeEmail = { navigate(Screen.ChangeEmail) },
+                onChangePassword = { navigate(Screen.ChangePassword) },
+                onBack = { navController.popBackStack() }
+            )
+        }
+        composable<Screen.ChangeEmail> {
+            ChangeEmailScreen(
+                onEmailChanged = { navController.popBackStack() },
+                onBack = { navController.popBackStack() }
             )
         }
         composable<Screen.ChangePassword> {
