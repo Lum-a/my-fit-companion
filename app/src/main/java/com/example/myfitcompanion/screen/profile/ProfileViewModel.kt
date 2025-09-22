@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.myfitcompanion.api.model.UpdateProfileRequest
 import com.example.myfitcompanion.api.model.UpdateProfileResponse
 import com.example.myfitcompanion.db.room.dao.UserDao
-import com.example.myfitcompanion.model.entities.User
+import com.example.myfitcompanion.db.room.entities.User
 import com.example.myfitcompanion.repository.UserRepository
 import com.example.myfitcompanion.utils.ResultWrapper
 import dagger.hilt.android.lifecycle.HiltViewModel

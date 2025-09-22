@@ -1,4 +1,4 @@
-package com.example.myfitcompanion.model.entities
+package com.example.myfitcompanion.db.room.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

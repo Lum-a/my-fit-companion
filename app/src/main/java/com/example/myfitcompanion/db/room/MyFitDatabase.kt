@@ -4,28 +4,29 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import androidx.room.migration.Migration
-import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.myfitcompanion.db.room.dao.ExerciseDao
 import com.example.myfitcompanion.db.room.dao.MealDao
+import com.example.myfitcompanion.db.room.dao.SplitDao
 import com.example.myfitcompanion.db.room.dao.TrainerDao
 import com.example.myfitcompanion.db.room.dao.UserDao
 import com.example.myfitcompanion.db.room.dao.WorkoutsDao
-import com.example.myfitcompanion.model.entities.Exercise
-import com.example.myfitcompanion.model.entities.Meal
-import com.example.myfitcompanion.model.entities.Workout
-import com.example.myfitcompanion.model.entities.Trainer
-import com.example.myfitcompanion.model.entities.User
+import com.example.myfitcompanion.db.room.entities.Exercise
+import com.example.myfitcompanion.db.room.entities.Meal
+import com.example.myfitcompanion.db.room.entities.Split
+import com.example.myfitcompanion.db.room.entities.Workout
+import com.example.myfitcompanion.db.room.entities.Trainer
+import com.example.myfitcompanion.db.room.entities.User
 
 @Database(
     entities = [
         User::class,
         Trainer::class,
         Workout::class,
+        Split::class,
         Exercise::class,
         Meal::class
     ],
-    version = 7,
+    version = 8,
     exportSchema = false
 )
 abstract class MyFitDatabase: RoomDatabase() {
@@ -33,6 +34,7 @@ abstract class MyFitDatabase: RoomDatabase() {
     abstract fun mealDao(): MealDao
     abstract fun trainerDao(): TrainerDao
     abstract fun workoutDao(): WorkoutsDao
+    abstract fun splitDao(): SplitDao
     abstract fun exerciseDao(): ExerciseDao
 
     companion object {

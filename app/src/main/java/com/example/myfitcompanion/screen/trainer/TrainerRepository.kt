@@ -1,7 +1,7 @@
 package com.example.myfitcompanion.screen.trainer
 
 import com.example.myfitcompanion.api.model.TrainerResponse
-import com.example.myfitcompanion.model.entities.Trainer
+import com.example.myfitcompanion.db.room.entities.Trainer
 import com.example.myfitcompanion.utils.ResultWrapper
 import kotlinx.coroutines.flow.Flow
 

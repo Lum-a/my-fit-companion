@@ -4,7 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.example.myfitcompanion.model.entities.Trainer
+import com.example.myfitcompanion.db.room.entities.Trainer
 import kotlinx.coroutines.flow.Flow
 
 @Dao

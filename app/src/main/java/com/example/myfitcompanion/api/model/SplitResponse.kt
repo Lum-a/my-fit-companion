@@ -10,5 +10,7 @@ data class SplitResponse(
     @Json(name = "name")
     val name: String,
     @Json(name = "description")
-    val description: String
+    val description: String,
+    @Json(name = "imageUrl")
+    val imageUrl: String?,
 )

@@ -42,7 +42,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImagePainter
 import coil.compose.SubcomposeAsyncImage
 import coil.compose.SubcomposeAsyncImageContent
-import com.example.myfitcompanion.model.entities.Trainer
+import com.example.myfitcompanion.db.room.entities.Trainer
 import com.example.myfitcompanion.ui.theme.MyFitCompanionTheme
 import com.example.myfitcompanion.ui.theme.myFitColors
 

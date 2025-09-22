@@ -4,7 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.example.myfitcompanion.model.entities.Meal
+import com.example.myfitcompanion.db.room.entities.Meal
 
 @Dao
 interface MealDao {

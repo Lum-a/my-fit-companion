@@ -10,7 +10,7 @@ import com.example.myfitcompanion.db.room.dao.UserDao
 import com.example.myfitcompanion.api.model.LoginRequest
 import com.example.myfitcompanion.api.model.LoginResponse
 import com.example.myfitcompanion.api.model.RegisterRequest
-import com.example.myfitcompanion.model.entities.User
+import com.example.myfitcompanion.db.room.entities.User
 import com.example.myfitcompanion.api.model.RegisterResponse
 import com.example.myfitcompanion.api.model.WorkoutResponse
 import com.example.myfitcompanion.utils.ResultWrapper

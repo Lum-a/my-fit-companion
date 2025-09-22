@@ -3,7 +3,7 @@ package com.example.myfitcompanion.screen.trainer
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.myfitcompanion.model.entities.Trainer
+import com.example.myfitcompanion.db.room.entities.Trainer
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
