@@ -60,7 +60,7 @@ class UserRepositoryImpl @Inject constructor(
         val currentUser = userDao.getAllUsers().first().firstOrNull() ?: throw Exception("User not found")
 
         // 2. Call API
-        val response = apiService.updateProfile(currentUser.id, request)
+        val response = apiService.updateProfile(request)
 
         // 3. Update local user with new data
         val updatedUser = currentUser.copy(

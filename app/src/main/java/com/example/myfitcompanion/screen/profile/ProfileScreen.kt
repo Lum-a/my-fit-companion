@@ -30,9 +30,7 @@ fun ProfileScreen(
 ) {
     val user by viewModel.user.collectAsStateWithLifecycle()
     val updateState by viewModel.updateState.collectAsStateWithLifecycle()
-    val imageUploadState by viewModel.imageUploadState.collectAsStateWithLifecycle()
 
-    var uploadedImageUrl by remember { mutableStateOf<String?>(null) }
     var uri by remember { mutableStateOf<Uri?>(null) }
     var firstName by remember { mutableStateOf("") }
     var lastName by remember { mutableStateOf("") }
@@ -53,19 +51,6 @@ fun ProfileScreen(
         }
     }
 
-    // Handle image upload result
-    LaunchedEffect(imageUploadState) {
-        when (val imageState = imageUploadState) {
-            is ResultWrapper.Success -> {
-                uploadedImageUrl = imageState.data
-            }
-            is ResultWrapper.Error -> {
-                // Handle error
-            }
-            else -> { /* Handle other states */ }
-        }
-    }
-
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -77,12 +62,7 @@ fun ProfileScreen(
         Text("Profile", style = MaterialTheme.typography.headlineMedium.copy(color = myFitColors.current.gold))
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Profile photo with image picker - SIMPLIFIED
-        ImagePickerHandler(
-            onImageSelected = { newUri ->
-                uri = newUri
-            }
-        ) { onClick ->
+        ImagePickerHandler(onImageSelected = { uri = it }) { onClick ->
             Box(modifier = Modifier.size(120.dp)) {
                 AsyncImage(
                     model = uri ?: user?.imageUrl,
@@ -94,13 +74,6 @@ fun ProfileScreen(
                     contentScale = ContentScale.Crop
                 )
 
-                // Show loading indicator during image upload
-                if (imageUploadState is ResultWrapper.Loading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.align(Alignment.Center),
-                        color = myFitColors.current.gold
-                    )
-                }
 
                 IconButton(
                     onClick = onClick,
@@ -108,7 +81,7 @@ fun ProfileScreen(
                         .align(Alignment.BottomEnd)
                         .size(36.dp)
                         .background(Color.Black.copy(alpha = 0.6f), shape = CircleShape),
-                    enabled = imageUploadState !is ResultWrapper.Loading
+                    enabled = updateState !is ResultWrapper.Loading
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_camera),
@@ -117,16 +90,6 @@ fun ProfileScreen(
                     )
                 }
             }
-        }
-
-        // Show image upload error if exists
-        if (imageUploadState is ResultWrapper.Error) {
-            Text(
-                text = "Image upload failed: ${(imageUploadState as ResultWrapper.Error).message}",
-                color = Color.Red,
-                style = MaterialTheme.typography.bodySmall,
-                modifier = Modifier.padding(top = 4.dp)
-            )
         }
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -222,40 +185,24 @@ fun ProfileScreen(
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(8.dp))
-//        OutlinedTextField(
-//            value = password,
-//            onValueChange = {
-//                password = it
-//                passwordError = it.isNotEmpty() && !isValidPassword(it)
-//            },
-//            label = { Text("New Password", color = Color.Gray) },
-//            singleLine = true,
-//            visualTransformation = PasswordVisualTransformation(),
-//            isError = passwordError,
-//            colors = OutlinedTextFieldDefaults.colors(
-//                focusedBorderColor = if (passwordError) Color.Red else myFitColors.current.gold,
-//                unfocusedBorderColor = if (passwordError) Color.Red else Color.Gray,
-//                cursorColor = myFitColors.current.gold,
-//                focusedTextColor = Color.White,
-//                unfocusedTextColor = Color.White
-//            ),
-//            modifier = Modifier.fillMaxWidth()
-//        )
 
         Button(
             onClick = {
-                viewModel.updateProfile(
-                    UpdateProfileRequest(
-                        firstName = firstName.ifBlank { null },
-                        lastName = lastName.ifBlank { null },
-                        height = height.toFloatOrNull(),
-                        weight = weight.toFloatOrNull(),
-                        bodyFat = bodyFat.toFloatOrNull(),
-                        goal = goal.ifBlank { null },
-                        imageUrl = uploadedImageUrl
+                user?.let { user ->
+                    viewModel.updateProfile(
+                        UpdateProfileRequest(
+                            userId = user.id,
+                            firstName = firstName.ifBlank { null },
+                            lastName = lastName.ifBlank { null },
+                            height = height.toFloatOrNull(),
+                            weight = weight.toFloatOrNull(),
+                            bodyFat = bodyFat.toFloatOrNull(),
+                            goal = goal.ifBlank { null }
+                        ),
+                        imageUri = uri
                     )
-                )
-                uri?.let { viewModel.uploadProfileImage(it) }
+                }
+
             },
             enabled = updateState !is ResultWrapper.Loading,
             colors = ButtonDefaults.buttonColors(
@@ -266,8 +213,17 @@ fun ProfileScreen(
             ),
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Save Changes")
+            if(updateState is ResultWrapper.Loading) {
+                CircularProgressIndicator(
+                    color = Color.Black,
+                    modifier = Modifier
+                        .size(24.dp)
+                        .padding(2.dp),
+                    strokeWidth = 2.dp
+                )
+            } else {
+                Text("Save Changes")
+            }
         }
-
     }
 }

@@ -1,6 +1,9 @@
 package com.example.myfitcompanion.components
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -42,6 +45,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.example.myfitcompanion.api.model.UserResponse
 import com.example.myfitcompanion.ui.theme.myFitColors
@@ -221,19 +225,30 @@ fun UserResponse(
 @Composable
 fun ImagePickerHandler(
     onImageSelected: (Uri) -> Unit,
-    modifier: Modifier = Modifier,
     content: @Composable (onClick: () -> Unit) -> Unit
 ) {
     var showImageSourceDialog by remember { mutableStateOf(false) }
     val context = LocalContext.current
-    var cameraImageUri by remember { mutableStateOf<Uri?>(null) }
+    var cameraImageUri by remember { mutableStateOf<Uri>(Uri.EMPTY) }
 
-    // Camera launcher
     val cameraLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.TakePicture()
     ) { success ->
-        if (success && cameraImageUri != null) {
-            onImageSelected(cameraImageUri!!)
+        if (success) { onImageSelected(cameraImageUri) }
+    }
+
+    // ✅ Permission launcher
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            // Launch camera after permission granted
+            val photoFile = File.createTempFile("profile_photo", ".jpg", context.cacheDir)
+            val uri = FileProvider.getUriForFile(context, "${context.packageName}.provider", photoFile)
+            cameraImageUri = uri
+            cameraLauncher.launch(uri)
+        } else {
+            Toast.makeText(context, "Camera permission is required", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -267,10 +282,18 @@ fun ImagePickerHandler(
                 TextButton(
                     onClick = {
                         showImageSourceDialog = false
-                        val photoFile = File.createTempFile("profile_photo", ".jpg", context.cacheDir)
-                        val uri = FileProvider.getUriForFile(context, "${context.packageName}.provider", photoFile)
-                        cameraImageUri = uri
-                        cameraLauncher.launch(uri)
+                        // ✅ Check permission first
+                        when (PackageManager.PERMISSION_GRANTED) {
+                            ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) -> {
+                                val photoFile = File.createTempFile("profile_photo", ".jpg", context.cacheDir)
+                                val uri = FileProvider.getUriForFile(context, "${context.packageName}.provider", photoFile)
+                                cameraImageUri = uri
+                                cameraLauncher.launch(uri)
+                            }
+                            else -> {
+                                permissionLauncher.launch(Manifest.permission.CAMERA)
+                            }
+                        }
                     }
                 ) {
                     Text("Camera")
