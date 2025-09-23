@@ -188,9 +188,8 @@ fun ExerciseCard(
         ) {
             Column {
                 Text(exercise.name, color = Color.White, style = MaterialTheme.typography.titleMedium)
-                Text(exercise.type, color = Color.Gray, style = MaterialTheme.typography.bodySmall)
+                Text(exercise.type ?: "", color = Color.Gray, style = MaterialTheme.typography.bodySmall)
                 Text("Duration: ${exercise.duration} min", color = myFitColors.current.gold, style = MaterialTheme.typography.bodySmall)
-                Text("Calories: ${exercise.caloriesBurned}", color = myFitColors.current.lightOrange, style = MaterialTheme.typography.bodySmall)
             }
             Row {
                 IconButton(onClick = onEdit) {

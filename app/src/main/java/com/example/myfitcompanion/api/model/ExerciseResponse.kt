@@ -10,9 +10,13 @@ data class ExerciseResponse(
     @Json(name = "name")
     val name: String,
     @Json(name = "type")
-    val type: String,
+    val type: String? = null,
     @Json(name = "duration")
-    val duration: Int, // in minutes
-    @Json(name = "caloriesBurned")
-    val caloriesBurned: Int
+    val duration: Int? = null, // in minutes
+    @Json(name = "description")
+    val description: String? = null,
+    @Json(name = "videoUrl")
+    val videoUrl: String?,
+    @Json(name = "thumbnailUrl")
+    val thumbnailUrl: String? // Add this field for the thumbnail image
 )

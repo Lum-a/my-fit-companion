@@ -113,7 +113,7 @@ fun MyFitNavigation(navController: NavHostController, padding: PaddingValues, is
                 onSplitClick = { splitId ->
                     navigate(Screen.Exercise(splitId))
                 },
-                onBack = { navController.popBackStack() }
+                onBackClick = { navController.popBackStack() }
             )
         }
         composable<Screen.Exercise> {
