@@ -27,8 +27,10 @@ data class UserResponse(
     val weight: Float? = null,
     @Json(name = "bodyFat")
     val bodyFat: Float? = null,
-    @Json(name = "goal")
-    val goal: String? = null,
+    @Json(name = "goalBodyFatPct")
+    val goalBodyFat: Float? = null,
+    @Json(name = "goalWeightKg")
+    val goalWeight: Float? = null,
     @Json(name = "createdAt")
     val createdAt: String,
     @Json(name = "imageUrl")
@@ -44,7 +46,8 @@ data class UserResponse(
             height = height,
             weight = weight,
             bodyFat = bodyFat,
-            goal = goal,
+            goalBodyFat = goalBodyFat,
+            goalWeight = goalWeight,
             role = role,
             createdAt = createdAt,
             imageUrl = imageUrl

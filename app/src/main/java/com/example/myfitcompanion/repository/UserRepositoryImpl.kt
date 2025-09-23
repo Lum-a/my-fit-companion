@@ -57,21 +57,25 @@ class UserRepositoryImpl @Inject constructor(
 
     override suspend fun updateUser(request: UpdateProfileRequest): ResultWrapper<UpdateProfileResponse> = try {
         // 1. Get current user
-        val currentUser = userDao.getAllUsers().first().firstOrNull() ?: throw Exception("User not found")
+        val currentUser = userDao.getAllUsers().first().firstOrNull() ?: return ResultWrapper.Error("No user found")
 
         // 2. Call API
-        val response = apiService.updateProfile(request)
+        val response = apiService.updateProfile(request).apply {
+            //save changed user data to local db
+            val updatedUser = currentUser.copy(
+                name = name ?: currentUser.name,
+                firstName = firstName ?: currentUser.firstName,
+                lastName = lastName ?: currentUser.lastName,
+                height = height ?: currentUser.height,
+                weight = weight ?: currentUser.weight,
+                bodyFat = bodyFat ?: currentUser.bodyFat,
+                goalBodyFat = goalWeight ?: currentUser.goalBodyFat,
+                imageUrl = imageUrl ?: currentUser.imageUrl
+            )
+            Log.d("UserRepositoryImpl", "updateUser: $updatedUser")
+            userDao.updateUserDetails(updatedUser)
+        }
 
-        // 3. Update local user with new data
-        val updatedUser = currentUser.copy(
-            height = request.height ?: currentUser.height,
-            weight = request.weight ?: currentUser.weight,
-            bodyFat = request.bodyFat ?: currentUser.bodyFat,
-            goal = request.goal ?: currentUser.goal,
-            imageUrl = request.imageUrl ?: currentUser.imageUrl
-        )
-
-        userDao.updateUserDetails(updatedUser)
         ResultWrapper.Success(response)
     } catch (e: Exception) {
         ResultWrapper.Error(e.message)

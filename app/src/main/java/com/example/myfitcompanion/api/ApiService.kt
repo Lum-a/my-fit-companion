@@ -40,7 +40,7 @@ interface ApiService {
     @GET("meals")
     suspend fun getMeals(): List<MealsResponse>
 
-    @PUT("users")
+    @PUT("profile")
     suspend fun updateProfile(@Body request: UpdateProfileRequest): UpdateProfileResponse
 
     @GET("/exercises/recent/{userId}")

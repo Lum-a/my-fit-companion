@@ -26,7 +26,7 @@ import com.example.myfitcompanion.db.room.entities.User
         Exercise::class,
         Meal::class
     ],
-    version = 11,
+    version = 12,
     exportSchema = false
 )
 abstract class MyFitDatabase: RoomDatabase() {
