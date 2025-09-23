@@ -37,11 +37,9 @@ fun ChangePasswordScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(myFitColors.current.background)
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+            .padding(16.dp)
     ) {
-        // Header with back button
+        // Header with back button - moved to top
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -61,98 +59,94 @@ fun ChangePasswordScreen(
             Spacer(modifier = Modifier.width(48.dp)) // Balance the back button
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
-        OutlinedTextField(
-            value = oldPassword,
-            onValueChange = { oldPassword = it; resetErrors() },
-            label = { Text("Old Password", color = Color.Gray) },
-            singleLine = true,
-            visualTransformation = PasswordVisualTransformation(),
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = myFitColors.current.gold,
-                unfocusedBorderColor = Color.Gray,
-                cursorColor = myFitColors.current.gold,
-                focusedTextColor = Color.White,
-                unfocusedTextColor = Color.White
-            ),
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(modifier = Modifier.height(12.dp))
-        OutlinedTextField(
-            value = newPassword,
-            onValueChange = { newPassword = it; resetErrors() },
-            label = { Text("New Password", color = Color.Gray) },
-            singleLine = true,
-            visualTransformation = PasswordVisualTransformation(),
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = myFitColors.current.gold,
-                unfocusedBorderColor = Color.Gray,
-                cursorColor = myFitColors.current.gold,
-                focusedTextColor = Color.White,
-                unfocusedTextColor = Color.White
-            ),
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(modifier = Modifier.height(12.dp))
-        OutlinedTextField(
-            value = confirmPassword,
-            onValueChange = { confirmPassword = it; resetErrors() },
-            label = { Text("Confirm Password", color = Color.Gray) },
-            singleLine = true,
-            visualTransformation = PasswordVisualTransformation(),
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = myFitColors.current.gold,
-                unfocusedBorderColor = Color.Gray,
-                cursorColor = myFitColors.current.gold,
-                focusedTextColor = Color.White,
-                unfocusedTextColor = Color.White
-            ),
-            modifier = Modifier.fillMaxWidth()
-        )
-        if (errorText.isNotBlank()) {
-            Text(errorText, color = Color.Red, style = MaterialTheme.typography.bodySmall, modifier = Modifier.align(Alignment.Start).padding(top = 4.dp))
-        }
-        if (success) {
-            Text("Password changed successfully!", color = myFitColors.current.gold, style = MaterialTheme.typography.bodySmall, modifier = Modifier.align(Alignment.Start).padding(top = 4.dp))
-        }
-        Spacer(modifier = Modifier.height(24.dp))
-        Row(Modifier.fillMaxWidth()) {
-            Button(
-                onClick = onBack,
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Gray, contentColor = Color.White),
-                modifier = Modifier.weight(1f)
-            ) { Text("Back") }
-            Spacer(modifier = Modifier.width(16.dp))
-            Button(
-                onClick = {
-                    resetErrors()
-//                    if (oldPassword != (user?.password ?: "")) {
-//                        errorText = "Old password is incorrect"
-//                        return@Button
-//                    }
-                    if (!isValidPassword(newPassword)) {
-                        errorText = "Password must be at least 8 characters, include uppercase, lowercase, and a number"
-                        return@Button
-                    }
-                    if (newPassword != confirmPassword) {
-                        errorText = "Passwords do not match"
-                        return@Button
-                    }
-                    isLoading = true
-                    // Call update API
-//                    viewModel.updateUserInfo(
-//                        UpdateProfileRequest(
-//                            password = newPassword
-//                        )
-//                    )
-                    isLoading = false
-                    success = true
-                    onPasswordChanged()
-                },
-                enabled = oldPassword.isNotBlank() && newPassword.isNotBlank() && confirmPassword.isNotBlank(),
-                colors = ButtonDefaults.buttonColors(containerColor = myFitColors.current.gold, contentColor = Color.Black),
-                modifier = Modifier.weight(1f)
-            ) { Text("Change Password") }
+        // Center the form vertically in remaining space
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            OutlinedTextField(
+                value = oldPassword,
+                onValueChange = { oldPassword = it; resetErrors() },
+                label = { Text("Old Password", color = Color.Gray) },
+                singleLine = true,
+                visualTransformation = PasswordVisualTransformation(),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = myFitColors.current.gold,
+                    unfocusedBorderColor = Color.Gray,
+                    cursorColor = myFitColors.current.gold,
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White
+                ),
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            OutlinedTextField(
+                value = newPassword,
+                onValueChange = { newPassword = it; resetErrors() },
+                label = { Text("New Password", color = Color.Gray) },
+                singleLine = true,
+                visualTransformation = PasswordVisualTransformation(),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = myFitColors.current.gold,
+                    unfocusedBorderColor = Color.Gray,
+                    cursorColor = myFitColors.current.gold,
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White
+                ),
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            OutlinedTextField(
+                value = confirmPassword,
+                onValueChange = { confirmPassword = it; resetErrors() },
+                label = { Text("Confirm Password", color = Color.Gray) },
+                singleLine = true,
+                visualTransformation = PasswordVisualTransformation(),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = myFitColors.current.gold,
+                    unfocusedBorderColor = Color.Gray,
+                    cursorColor = myFitColors.current.gold,
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White
+                ),
+                modifier = Modifier.fillMaxWidth()
+            )
+            if (errorText.isNotBlank()) {
+                Text(errorText, color = Color.Red, style = MaterialTheme.typography.bodySmall, modifier = Modifier.align(Alignment.Start).padding(top = 4.dp))
+            }
+            if (success) {
+                Text("Password changed successfully!", color = myFitColors.current.gold, style = MaterialTheme.typography.bodySmall, modifier = Modifier.align(Alignment.Start).padding(top = 4.dp))
+            }
+            Spacer(modifier = Modifier.height(24.dp))
+            Row(Modifier.fillMaxWidth()) {
+                Button(
+                    onClick = onBack,
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Gray, contentColor = Color.White),
+                    modifier = Modifier.weight(1f)
+                ) { Text("Back") }
+                Spacer(modifier = Modifier.width(16.dp))
+                Button(
+                    onClick = {
+                        resetErrors()
+                        if (!isValidPassword(newPassword)) {
+                            errorText = "Password must be at least 8 characters, include uppercase, lowercase, and a number"
+                            return@Button
+                        }
+                        if (newPassword != confirmPassword) {
+                            errorText = "Passwords do not match"
+                            return@Button
+                        }
+                        isLoading = true
+                        isLoading = false
+                        success = true
+                        onPasswordChanged()
+                    },
+                    enabled = oldPassword.isNotBlank() && newPassword.isNotBlank() && confirmPassword.isNotBlank(),
+                    colors = ButtonDefaults.buttonColors(containerColor = myFitColors.current.gold, contentColor = Color.Black),
+                    modifier = Modifier.weight(1f)
+                ) { Text("Change Password") }
+            }
         }
     }
 }

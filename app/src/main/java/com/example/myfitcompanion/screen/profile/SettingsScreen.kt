@@ -23,11 +23,9 @@ fun SettingsScreen(
         modifier = modifier
             .fillMaxSize()
             .background(myFitColors.current.background)
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+            .padding(16.dp)
     ) {
-        // Header with back button
+        // Header with back button - moved to top
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -47,32 +45,37 @@ fun SettingsScreen(
             Spacer(modifier = Modifier.width(48.dp)) // Balance the back button
         }
 
-        Spacer(modifier = Modifier.height(40.dp))
-
-        // Change Email Button
-        Button(
-            onClick = onChangeEmail,
-            colors = ButtonDefaults.buttonColors(
-                containerColor = myFitColors.current.gold,
-                contentColor = Color.Black
-            ),
-            modifier = Modifier.fillMaxWidth()
+        // Center the buttons vertically in remaining space
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text("Change Email", style = MaterialTheme.typography.bodyLarge)
-        }
+            // Change Email Button
+            Button(
+                onClick = onChangeEmail,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = myFitColors.current.gold,
+                    contentColor = Color.Black
+                ),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Change Email", style = MaterialTheme.typography.bodyLarge)
+            }
 
-        Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-        // Change Password Button
-        Button(
-            onClick = onChangePassword,
-            colors = ButtonDefaults.buttonColors(
-                containerColor = myFitColors.current.gold,
-                contentColor = Color.Black
-            ),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Change Password", style = MaterialTheme.typography.bodyLarge)
+            // Change Password Button
+            Button(
+                onClick = onChangePassword,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = myFitColors.current.gold,
+                    contentColor = Color.Black
+                ),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Change Password", style = MaterialTheme.typography.bodyLarge)
+            }
         }
     }
 }

@@ -24,7 +24,6 @@ fun ChangeEmailScreen(
     val user by viewModel.user.collectAsStateWithLifecycle()
     var currentEmail by remember { mutableStateOf("") }
     var newEmail by remember { mutableStateOf("") }
-    var confirmEmail by remember { mutableStateOf("") }
     var errorText by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
     var success by remember { mutableStateOf(false) }
@@ -51,11 +50,9 @@ fun ChangeEmailScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(myFitColors.current.background)
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+            .padding(16.dp)
     ) {
-        // Header with back button
+        // Header with back button - moved to top
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -75,125 +72,109 @@ fun ChangeEmailScreen(
             Spacer(modifier = Modifier.width(48.dp)) // Balance the back button
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
-
-        OutlinedTextField(
-            value = currentEmail,
-            onValueChange = { /* Read-only */ },
-            label = { Text("Current Email", color = Color.Gray) },
-            singleLine = true,
-            enabled = false,
-            colors = OutlinedTextFieldDefaults.colors(
-                disabledBorderColor = Color.Gray,
-                disabledTextColor = Color.Gray
-            ),
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        OutlinedTextField(
-            value = newEmail,
-            onValueChange = { newEmail = it; resetErrors() },
-            label = { Text("New Email", color = Color.Gray) },
-            singleLine = true,
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = myFitColors.current.gold,
-                unfocusedBorderColor = Color.Gray,
-                cursorColor = myFitColors.current.gold,
-                focusedTextColor = Color.White,
-                unfocusedTextColor = Color.White
-            ),
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        OutlinedTextField(
-            value = confirmEmail,
-            onValueChange = { confirmEmail = it; resetErrors() },
-            label = { Text("Confirm New Email", color = Color.Gray) },
-            singleLine = true,
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = myFitColors.current.gold,
-                unfocusedBorderColor = Color.Gray,
-                cursorColor = myFitColors.current.gold,
-                focusedTextColor = Color.White,
-                unfocusedTextColor = Color.White
-            ),
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        if (errorText.isNotBlank()) {
-            Text(
-                errorText,
-                color = Color.Red,
-                style = MaterialTheme.typography.bodySmall,
-                modifier = Modifier.align(Alignment.Start).padding(top = 4.dp)
-            )
-        }
-        if (success) {
-            Text(
-                "Email changed successfully!",
-                color = myFitColors.current.gold,
-                style = MaterialTheme.typography.bodySmall,
-                modifier = Modifier.align(Alignment.Start).padding(top = 4.dp)
-            )
-        }
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Row(Modifier.fillMaxWidth()) {
-            Button(
-                onClick = onBack,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Gray,
-                    contentColor = Color.White
+        // Center the form vertically in remaining space
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            OutlinedTextField(
+                value = currentEmail,
+                onValueChange = { /* Read-only */ },
+                label = { Text("Current Email", color = Color.Gray) },
+                singleLine = true,
+                enabled = false,
+                colors = OutlinedTextFieldDefaults.colors(
+                    disabledBorderColor = Color.Gray,
+                    disabledTextColor = Color.Gray
                 ),
-                modifier = Modifier.weight(1f)
-            ) {
-                Text("Cancel")
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            OutlinedTextField(
+                value = newEmail,
+                onValueChange = { newEmail = it; resetErrors() },
+                label = { Text("New Email", color = Color.Gray) },
+                singleLine = true,
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = myFitColors.current.gold,
+                    unfocusedBorderColor = Color.Gray,
+                    cursorColor = myFitColors.current.gold,
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White
+                ),
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            if (errorText.isNotBlank()) {
+                Text(
+                    errorText,
+                    color = Color.Red,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.align(Alignment.Start).padding(top = 4.dp)
+                )
+            }
+            if (success) {
+                Text(
+                    "Email changed successfully!",
+                    color = myFitColors.current.gold,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.align(Alignment.Start).padding(top = 4.dp)
+                )
             }
 
-            Spacer(modifier = Modifier.width(16.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
-            Button(
-                onClick = {
-                    resetErrors()
-                    if (!isValidEmail(newEmail)) {
-                        errorText = "Please enter a valid email address"
-                        return@Button
-                    }
-                    if (newEmail != confirmEmail) {
-                        errorText = "Email addresses do not match"
-                        return@Button
-                    }
-                    if (newEmail == currentEmail) {
-                        errorText = "New email must be different from current email"
-                        return@Button
-                    }
+            Row(Modifier.fillMaxWidth()) {
+                Button(
+                    onClick = onBack,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.Gray,
+                        contentColor = Color.White
+                    ),
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("Cancel")
+                }
 
-                    isLoading = true
-                    // TODO: Call update email API here
-                    // For now, just show success
-                    isLoading = false
-                    success = true
-                },
-                enabled = newEmail.isNotBlank() && confirmEmail.isNotBlank() && !isLoading,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = myFitColors.current.gold,
-                    contentColor = Color.Black
-                ),
-                modifier = Modifier.weight(1f)
-            ) {
-                if (isLoading) {
-                    CircularProgressIndicator(
-                        color = Color.Black,
-                        modifier = Modifier.size(20.dp),
-                        strokeWidth = 2.dp
-                    )
-                } else {
-                    Text("Change Email")
+                Spacer(modifier = Modifier.width(16.dp))
+
+                Button(
+                    onClick = {
+                        resetErrors()
+                        if (!isValidEmail(newEmail)) {
+                            errorText = "Please enter a valid email address"
+                            return@Button
+                        }
+                        if (newEmail == currentEmail) {
+                            errorText = "New email must be different from current email"
+                            return@Button
+                        }
+
+                        isLoading = true
+                        // TODO: Call update email API here
+                        // For now, just show success
+                        isLoading = false
+                        success = true
+                    },
+                    enabled = newEmail.isNotBlank() && !isLoading,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = myFitColors.current.gold,
+                        contentColor = Color.Black
+                    ),
+                    modifier = Modifier.weight(1f)
+                ) {
+                    if (isLoading) {
+                        CircularProgressIndicator(
+                            color = Color.Black,
+                            modifier = Modifier.size(20.dp),
+                            strokeWidth = 2.dp
+                        )
+                    } else {
+                        Text("Change Email")
+                    }
                 }
             }
         }
