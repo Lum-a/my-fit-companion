@@ -1,5 +1,7 @@
 package com.example.myfitcompanion.admin.viewmodel
 
+import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myfitcompanion.admin.repository.AdminRepository
@@ -16,17 +18,23 @@ import com.example.myfitcompanion.api.model.SplitRequest
 import com.example.myfitcompanion.api.model.SplitResponse
 import com.example.myfitcompanion.api.model.TrainerResponse
 import com.example.myfitcompanion.api.model.UpdateTrainerRequest
+import com.example.myfitcompanion.utils.AppWriteInteractor
 import com.example.myfitcompanion.utils.ResultWrapper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
 class AdminViewModel @Inject constructor(
     private val adminRepository: AdminRepository,
+    private val appWriteInteractor: AppWriteInteractor
 ): ViewModel() {
+
+    private val TAG = "AdminViewModel"
     // Users
     private val _users = MutableStateFlow<ResultWrapper<List<UserResponse>>>(ResultWrapper.Initial)
     val users = _users.asStateFlow()
@@ -74,9 +82,10 @@ class AdminViewModel @Inject constructor(
         }
     }
 
-    fun addWorkout(workout: WorkoutRequest) {
+    fun addWorkout(workout: WorkoutRequest, uri: Uri?) {
         viewModelScope.launch {
-            adminRepository.addWorkout(workout)
+            val updatedWorkout = workout.copy(imageUrl = getImageUrlFromBlob(uri))
+            adminRepository.addWorkout(updatedWorkout)
             loadWorkouts()
         }
     }
@@ -221,6 +230,21 @@ class AdminViewModel @Inject constructor(
         viewModelScope.launch {
             adminRepository.deleteTrainer(trainerId)
             loadTrainers()
+        }
+    }
+
+    private suspend fun getImageUrlFromBlob(imageUri: Uri?): String? = withContext(Dispatchers.IO) {
+        if (imageUri == null) return@withContext null
+        return@withContext try {
+            val result = appWriteInteractor.uploadProfileImage(imageUri)
+            Log.d(TAG, "Image upload result: $result")
+            if (result.isSuccess) {
+                result.getOrNull()
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            null
         }
     }
 }
