@@ -10,5 +10,5 @@ data class WorkoutRequest(
     @Json(name = "description")
     val description: String?,
     @Json(name = "imageUrl")
-    val imageUrl: String?
+    val imageUrl: String? = null
 )
