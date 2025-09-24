@@ -1,11 +1,13 @@
 package com.example.myfitcompanion.screen.chat
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myfitcompanion.db.room.entities.ChatMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.delay
 import javax.inject.Inject
 
 @HiltViewModel
@@ -23,8 +25,8 @@ class ChatViewModel @Inject constructor(
     private var currentUserId: Int? = null
     private var currentPeerId: Int? = null
 
-    // Track pending messages to avoid duplicates
-    private val pendingMessages = mutableMapOf<String, String>() // tempId -> content
+    // Track pending messages with more detailed info to avoid duplicates
+    private val pendingMessages = mutableMapOf<String, PendingMessage>()
 
     init {
         observeSocketEvents()
@@ -50,8 +52,9 @@ class ChatViewModel @Inject constructor(
         // Load local messages first
         currentRoom?.let { room ->
             viewModelScope.launch {
-                chatRepository.getMessagesForRoom(room).distinctUntilChanged().collect { messages ->
-                    _uiState.update { it.copy(messages = messages) }
+                chatRepository.getMessagesForRoom(room).collect { messages ->
+                    _uiState.update {
+                        it.copy(messages = messages) }
                 }
             }
         }
@@ -79,7 +82,7 @@ class ChatViewModel @Inject constructor(
         val tempId = "temp_${System.currentTimeMillis()}_${userId}"
 
         // Track this pending message
-        pendingMessages[tempId] = content
+        pendingMessages[tempId] = PendingMessage(content, System.currentTimeMillis(), userId, peerId)
 
         // Send via socket
         chatRepository.sendMessage(userId, peerId, content)
@@ -185,20 +188,40 @@ class ChatViewModel @Inject constructor(
                         val message = chatRepository.parseServerMessage(event.data)
                         message?.let { serverMessage ->
                             viewModelScope.launch {
-                                // Check if this is a confirmation of our own sent message
-                                val matchingTempId = pendingMessages.entries.find { (_, content) ->
-                                    content == serverMessage.content &&
-                                    serverMessage.senderId == currentUserId
-                                }?.key
+                                // Check if this message belongs to the current chat
+                                val isRelevantMessage = isMessageForCurrentChat(serverMessage)
 
-                                if (matchingTempId != null) {
-                                    // Remove the temporary message and clear from pending
-                                    chatRepository.deleteMessage(matchingTempId)
-                                    pendingMessages.remove(matchingTempId)
+                                if (isRelevantMessage && serverMessage.senderId == currentUserId) {
+                                    // This is our own message - try to match with pending messages
+                                    val matchingEntry = pendingMessages.entries.find { (tempId, pendingMessage) ->
+                                        pendingMessage.content == serverMessage.content &&
+                                        pendingMessage.senderId == serverMessage.senderId &&
+                                        pendingMessage.receiverId == serverMessage.receiverId &&
+                                        // Only match messages sent within the last 30 seconds to avoid stale matches
+                                        (System.currentTimeMillis() - pendingMessage.timestamp) < 30000
+                                    }
+
+                                    matchingEntry?.let { (tempId, _) ->
+                                        // Remove the temporary message and clear from pending
+                                        chatRepository.deleteMessage(tempId)
+                                        pendingMessages.remove(tempId)
+
+                                        // Insert server message with normalized room ID
+                                        val normalizedMessage = serverMessage.copy(
+                                            room = currentRoom ?: ""
+                                        )
+                                        chatRepository.insertMessage(normalizedMessage)
+                                        return@launch
+                                    }
                                 }
-
-                                // Insert the server message
-                                chatRepository.insertMessage(serverMessage)
+                                // If it's a relevant message (either not our own or no match found)
+                                if (isRelevantMessage) {
+                                    // Insert server message with normalized room ID
+                                    val normalizedMessage = serverMessage.copy(
+                                        room = currentRoom ?: ""
+                                    )
+                                    chatRepository.insertMessage(normalizedMessage)
+                                }
                             }
                         }
                     }
@@ -245,6 +268,45 @@ class ChatViewModel @Inject constructor(
                 }
             }
         }
+
+        // Clean up old pending messages periodically to prevent memory leaks
+        viewModelScope.launch {
+            while (true) {
+                delay(60000) // Check every minute
+                val currentTime = System.currentTimeMillis()
+                val expiredMessages = pendingMessages.filter { (_, pendingMessage) ->
+                    (currentTime - pendingMessage.timestamp) > 120000 // 2 minutes timeout
+                }
+                expiredMessages.keys.forEach { tempId ->
+                    pendingMessages.remove(tempId)
+                    // Convert expired temp messages to permanent ones by updating their ID
+                    // This ensures messages don't disappear even if server confirmation is lost
+                    viewModelScope.launch {
+                        val tempMessage = chatRepository.getMessagesForRoom(currentRoom ?: "")
+                            .first()
+                            .find { it.id == tempId }
+                        tempMessage?.let { message ->
+                            // Create a new message with a permanent ID
+                            val permanentMessage = message.copy(
+                                id = "local_${System.currentTimeMillis()}_${message.senderId}"
+                            )
+                            chatRepository.deleteMessage(tempId)
+                            chatRepository.insertMessage(permanentMessage)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // Helper function to check if a message belongs to the current chat
+    private fun isMessageForCurrentChat(message: ChatMessage): Boolean {
+        val userId = currentUserId ?: return false
+        val peerId = currentPeerId ?: return false
+
+        // Check if the message involves the current user and peer
+        return (message.senderId == userId && message.receiverId == peerId) ||
+               (message.senderId == peerId && message.receiverId == userId)
     }
 
     fun retryConnection() {
@@ -276,4 +338,11 @@ data class ChatUiState(
     val peerTyping: String = "",
     val isTyping: Boolean = false,
     val errorMessage: String? = null
+)
+
+data class PendingMessage(
+    val content: String,
+    val timestamp: Long,
+    val senderId: Int,
+    val receiverId: Int
 )

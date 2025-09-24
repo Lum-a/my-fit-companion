@@ -114,11 +114,14 @@ class ChatRepository @Inject constructor(
     // Helper function to parse server messages into ChatMessage entities
     fun parseServerMessage(messageData: JSONObject): ChatMessage? {
         return try {
+            val senderId = messageData.getInt("senderId")
+            val receiverId = messageData.getInt("receiverId")
+
             ChatMessage(
                 id = messageData.getString("_id"),
-                room = messageData.getString("room"),
-                senderId = messageData.getInt("senderId"),
-                receiverId = messageData.getInt("receiverId"),
+                room = generateRoomId(senderId, receiverId), // Normalize room ID
+                senderId = senderId,
+                receiverId = receiverId,
                 content = messageData.getString("content"),
                 messageType = messageData.optString("messageType", "text"),
                 isRead = messageData.optBoolean("isRead", false),
