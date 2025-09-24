@@ -45,7 +45,7 @@ fun ChatScreen(
 
     // Initialize chat when the screen loads
     LaunchedEffect(userId, peerId) {
-        val serverUrl = "wss://my-fit-companion-production.up.railway.app"
+        val serverUrl = "https://my-fit-companion-production.up.railway.app"
         viewModel.initializeChat(userId, peerId, peerName, serverUrl)
     }
 

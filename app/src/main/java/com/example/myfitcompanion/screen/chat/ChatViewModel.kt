@@ -313,7 +313,7 @@ class ChatViewModel @Inject constructor(
         val userId = currentUserId ?: return
         val peerId = currentPeerId ?: return
         val peerName = _uiState.value.peerName
-        val serverUrl = "wss://my-fit-companion-production.up.railway.app" // Use your server URL
+        val serverUrl = "https://my-fit-companion-production.up.railway.app" // Use your server URL
 
         initializeChat(userId, peerId, peerName, serverUrl)
     }

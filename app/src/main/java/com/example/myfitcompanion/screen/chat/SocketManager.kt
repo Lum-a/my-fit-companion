@@ -1,5 +1,6 @@
 package com.example.myfitcompanion.screen.chat
 
+import android.util.Log
 import io.socket.client.IO
 import io.socket.client.Socket
 import kotlinx.coroutines.channels.Channel
@@ -16,6 +17,7 @@ class SocketManager @Inject constructor() {
     private var socket: Socket? = null
     private val _messageEvents = Channel<ChatEvent>(Channel.UNLIMITED)
     val messageEvents: Flow<ChatEvent> = _messageEvents.receiveAsFlow()
+    private val TAG = "SocketManager"
 
     fun connect(serverUrl: String) {
         try {
@@ -31,20 +33,24 @@ class SocketManager @Inject constructor() {
 
             socket?.apply {
                 on(Socket.EVENT_CONNECT) {
+                    Log.d(TAG, "socket connected")
                     _messageEvents.trySend(ChatEvent.Connected)
                 }
 
                 on(Socket.EVENT_DISCONNECT) { args ->
                     val reason = args.getOrNull(0)?.toString() ?: "Unknown"
+                    Log.d(TAG, "socket disconnected $reason")
                     _messageEvents.trySend(ChatEvent.Disconnected(reason))
                 }
 
                 on(Socket.EVENT_CONNECT_ERROR) { args ->
                     val error = args.getOrNull(0)?.toString() ?: "Connection error"
+                    Log.d(TAG, "socket connect error : $error")
                     _messageEvents.trySend(ChatEvent.Error(error))
                 }
 
                 on("chat:authenticated") { args ->
+                    Log.d(TAG, "chat authenticated")
                     val data = args.getOrNull(0) as? JSONObject
                     _messageEvents.trySend(ChatEvent.Authenticated(data))
                 }
