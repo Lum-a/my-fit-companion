@@ -2,6 +2,7 @@ package com.example.myfitcompanion.screen.trainer
 
 import com.example.myfitcompanion.api.model.TrainerResponse
 import com.example.myfitcompanion.db.room.entities.Trainer
+import com.example.myfitcompanion.db.room.entities.User
 import com.example.myfitcompanion.utils.ResultWrapper
 import kotlinx.coroutines.flow.Flow
 
@@ -11,4 +12,6 @@ interface TrainerRepository {
     fun getAllTrainers(): Flow<List<Trainer>>
     suspend fun getTrainerById(trainerId: Long): Trainer?
     suspend fun syncTrainersFromApi(): ResultWrapper<Unit>
+
+    fun getUserId(): Flow<User?>
 }

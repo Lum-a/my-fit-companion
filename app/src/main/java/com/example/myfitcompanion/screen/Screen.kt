@@ -37,6 +37,8 @@ sealed class Screen {
     @Serializable
     data object Meal: Screen()
 
+    @Serializable
+    data class Chat(val userId: Int, val peerId: Int, val peerName: String): Screen()
 }
 
 @Serializable
