@@ -61,9 +61,10 @@ object AppModule {
     @Singleton
     fun provideTrainerRepository(
         apiService: ApiService,
-        trainerDao: TrainerDao
+        trainerDao: TrainerDao,
+        userDao: UserDao
     ): TrainerRepository {
-        return TrainerRepositoryImpl(apiService, trainerDao)
+        return TrainerRepositoryImpl(apiService, trainerDao, userDao)
     }
 
     @Provides

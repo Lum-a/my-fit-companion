@@ -96,4 +96,7 @@ dependencies {
 
     //AppWrite
     implementation("io.appwrite:sdk-for-android:8.1.0")
+
+    //Socket.IO
+    implementation(libs.socketio)
 }

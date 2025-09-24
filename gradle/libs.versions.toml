@@ -25,6 +25,7 @@ roomKtx = "2.7.2"
 roomCompiler = "2.7.2"
 roomRuntime = "2.7.2"
 serialization = "1.6.3"
+socketio = "2.1.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -60,6 +61,7 @@ okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
 retrofit2-converter-moshi = { module = "com.squareup.retrofit2:converter-moshi", version.ref = "converterMoshiVersion" }
 retrofit2-retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofitVersion" }
 squareup-moshi-kotlin-codegen = { module = "com.squareup.moshi:moshi-kotlin-codegen", version.ref = "moshiKotlinCodegenVersion" }
+socketio = { module = "io.socket:socket.io-client", version.ref = "socketio" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -4,12 +4,14 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.example.myfitcompanion.db.room.dao.ChatMessageDao
 import com.example.myfitcompanion.db.room.dao.ExerciseDao
 import com.example.myfitcompanion.db.room.dao.MealDao
 import com.example.myfitcompanion.db.room.dao.SplitDao
 import com.example.myfitcompanion.db.room.dao.TrainerDao
 import com.example.myfitcompanion.db.room.dao.UserDao
 import com.example.myfitcompanion.db.room.dao.WorkoutsDao
+import com.example.myfitcompanion.db.room.entities.ChatMessage
 import com.example.myfitcompanion.db.room.entities.Exercise
 import com.example.myfitcompanion.db.room.entities.Meal
 import com.example.myfitcompanion.db.room.entities.Split
@@ -24,7 +26,8 @@ import com.example.myfitcompanion.db.room.entities.User
         Workout::class,
         Split::class,
         Exercise::class,
-        Meal::class
+        Meal::class,
+        ChatMessage::class
     ],
     version = 12,
     exportSchema = false
@@ -36,6 +39,7 @@ abstract class MyFitDatabase: RoomDatabase() {
     abstract fun workoutDao(): WorkoutsDao
     abstract fun splitDao(): SplitDao
     abstract fun exerciseDao(): ExerciseDao
+    abstract fun chatMessageDao(): ChatMessageDao
 
     companion object {
         @Volatile
