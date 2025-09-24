@@ -9,6 +9,7 @@ import com.example.myfitcompanion.api.token.TokenManager
 import com.example.myfitcompanion.db.room.dao.UserDao
 import com.example.myfitcompanion.api.model.LoginRequest
 import com.example.myfitcompanion.api.model.LoginResponse
+import com.example.myfitcompanion.api.model.PasswordUpdatedModel
 import com.example.myfitcompanion.api.model.RegisterRequest
 import com.example.myfitcompanion.db.room.entities.User
 import com.example.myfitcompanion.api.model.RegisterResponse
@@ -72,6 +73,28 @@ class UserRepositoryImpl @Inject constructor(
         )
 
         userDao.updateUserDetails(updatedUser)
+        ResultWrapper.Success(response)
+    } catch (e: Exception) {
+        ResultWrapper.Error(e.message)
+    }
+
+    override suspend fun updatePassword(
+        oldPassword: String,
+        newPassword: String
+    ): ResultWrapper<UpdateProfileResponse> = try {
+        val updatePasswordModel = PasswordUpdatedModel(
+            oldPassword,
+            newPassword
+        )
+        val response = apiService.updatePassword(updatePasswordModel)
+        ResultWrapper.Success(response)
+
+    } catch (e: Exception) {
+        ResultWrapper.Error(e.message)
+    }
+
+    override suspend fun updateEmail(newEmail: String): ResultWrapper<UpdateProfileResponse> = try {
+        val response = apiService.updateEmail(newEmail)
         ResultWrapper.Success(response)
     } catch (e: Exception) {
         ResultWrapper.Error(e.message)

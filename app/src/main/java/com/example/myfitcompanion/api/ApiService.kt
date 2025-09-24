@@ -6,6 +6,7 @@ import com.example.myfitcompanion.api.model.ExerciseResponse
 import com.example.myfitcompanion.api.model.LoginRequest
 import com.example.myfitcompanion.api.model.LoginResponse
 import com.example.myfitcompanion.api.model.MealsResponse
+import com.example.myfitcompanion.api.model.PasswordUpdatedModel
 import com.example.myfitcompanion.api.model.RegisterRequest
 import com.example.myfitcompanion.api.model.RegisterResponse
 import com.example.myfitcompanion.api.model.SplitResponse
@@ -48,5 +49,15 @@ interface ApiService {
 
     @POST("/exercises/recent")
     suspend fun addRecentExercise(@Body workoutId: Int, @Body userId: Int?)
+
+
+    @PUT("profile/change-email")
+    suspend fun updateEmail(@Body newEmail: String): UpdateProfileResponse
+
+
+    @PUT("profile/change-password")
+    suspend fun updatePassword(
+        @Body passwordModel: PasswordUpdatedModel
+    ): UpdateProfileResponse
 
 }

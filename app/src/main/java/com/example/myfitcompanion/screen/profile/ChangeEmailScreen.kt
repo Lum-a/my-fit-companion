@@ -13,6 +13,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.myfitcompanion.R
 import com.example.myfitcompanion.ui.theme.myFitColors
+import com.example.myfitcompanion.utils.ResultWrapper
 import com.example.myfitcompanion.utils.isValidEmail
 
 @Composable
@@ -22,28 +23,24 @@ fun ChangeEmailScreen(
     viewModel: ProfileViewModel = hiltViewModel()
 ) {
     val user by viewModel.user.collectAsStateWithLifecycle()
-    var currentEmail by remember { mutableStateOf("") }
+    val changeEmailState by viewModel.changeEmailState.collectAsStateWithLifecycle()
+
     var newEmail by remember { mutableStateOf("") }
-    var errorText by remember { mutableStateOf("") }
-    var isLoading by remember { mutableStateOf(false) }
-    var success by remember { mutableStateOf(false) }
 
     // Initialize current email when user loads
-    LaunchedEffect(user) {
-        currentEmail = user?.email ?: ""
-    }
+    val currentEmail = user?.email ?: ""
 
     // Handle navigation after successful email change
-    LaunchedEffect(success) {
-        if (success) {
+    LaunchedEffect(changeEmailState) {
+        if (changeEmailState is ResultWrapper.Success) {
             kotlinx.coroutines.delay(1000)
             onEmailChanged()
         }
     }
 
-    fun resetErrors() {
-        errorText = ""
-        success = false
+    // Reset state when screen is first opened
+    LaunchedEffect(Unit) {
+        viewModel.resetChangeEmailState()
     }
 
     Column(
@@ -95,7 +92,10 @@ fun ChangeEmailScreen(
 
             OutlinedTextField(
                 value = newEmail,
-                onValueChange = { newEmail = it; resetErrors() },
+                onValueChange = {
+                    newEmail = it
+                    viewModel.resetChangeEmailState()
+                },
                 label = { Text("New Email", color = Color.Gray) },
                 singleLine = true,
                 colors = OutlinedTextFieldDefaults.colors(
@@ -108,21 +108,24 @@ fun ChangeEmailScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            if (errorText.isNotBlank()) {
-                Text(
-                    errorText,
-                    color = Color.Red,
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier.align(Alignment.Start).padding(top = 4.dp)
-                )
-            }
-            if (success) {
-                Text(
-                    "Email changed successfully!",
-                    color = myFitColors.current.gold,
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier.align(Alignment.Start).padding(top = 4.dp)
-                )
+            when (val state = changeEmailState) {
+                is ResultWrapper.Error -> {
+                    Text(
+                        state.message ?: "Unknown error occurred",
+                        color = Color.Red,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.align(Alignment.Start).padding(top = 4.dp)
+                    )
+                }
+                is ResultWrapper.Success -> {
+                    Text(
+                        state.data,
+                        color = myFitColors.current.gold,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.align(Alignment.Start).padding(top = 4.dp)
+                    )
+                }
+                else -> {}
             }
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -143,30 +146,22 @@ fun ChangeEmailScreen(
 
                 Button(
                     onClick = {
-                        resetErrors()
                         if (!isValidEmail(newEmail)) {
-                            errorText = "Please enter a valid email address"
                             return@Button
                         }
                         if (newEmail == currentEmail) {
-                            errorText = "New email must be different from current email"
                             return@Button
                         }
-
-                        isLoading = true
-                        // TODO: Call update email API here
-                        // For now, just show success
-                        isLoading = false
-                        success = true
+                        viewModel.changeEmail(newEmail)
                     },
-                    enabled = newEmail.isNotBlank() && !isLoading,
+                    enabled = newEmail.isNotBlank() && changeEmailState !is ResultWrapper.Loading,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = myFitColors.current.gold,
                         contentColor = Color.Black
                     ),
                     modifier = Modifier.weight(1f)
                 ) {
-                    if (isLoading) {
+                    if (changeEmailState is ResultWrapper.Loading) {
                         CircularProgressIndicator(
                             color = Color.Black,
                             modifier = Modifier.size(20.dp),

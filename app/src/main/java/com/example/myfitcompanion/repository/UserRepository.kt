@@ -18,6 +18,8 @@ interface UserRepository {
     suspend fun register(request: RegisterRequest): ResultWrapper<RegisterResponse>
     suspend fun insertUser(user: User)
     suspend fun updateUser(request: UpdateProfileRequest): ResultWrapper<UpdateProfileResponse>
+    suspend fun updatePassword(oldPassword: String, newPassword: String) : ResultWrapper<UpdateProfileResponse>
+    suspend fun updateEmail(newEmail: String) : ResultWrapper<UpdateProfileResponse>
     fun getUser(): Flow<User?>
     suspend fun getUserId(): Int?
     suspend fun deleteUser()

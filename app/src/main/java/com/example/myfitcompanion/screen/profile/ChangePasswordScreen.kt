@@ -13,8 +13,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.myfitcompanion.R
-import com.example.myfitcompanion.api.model.UpdateProfileRequest
 import com.example.myfitcompanion.ui.theme.myFitColors
+import com.example.myfitcompanion.utils.ResultWrapper
 import com.example.myfitcompanion.utils.isValidPassword
 
 @Composable
@@ -23,15 +23,22 @@ fun ChangePasswordScreen(
     onBack: () -> Unit,
     viewModel: ProfileViewModel = hiltViewModel()
 ) {
-    val user by viewModel.user.collectAsStateWithLifecycle()
+    val changePasswordState by viewModel.changePasswordState.collectAsStateWithLifecycle()
+
     var oldPassword by remember { mutableStateOf("") }
     var newPassword by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
-    var errorText by remember { mutableStateOf("") }
-    var isLoading by remember { mutableStateOf(false) }
-    var success by remember { mutableStateOf(false) }
 
-    fun resetErrors() { errorText = ""; success = false }
+    LaunchedEffect(changePasswordState) {
+        if (changePasswordState is ResultWrapper.Success) {
+            kotlinx.coroutines.delay(1000)
+            onPasswordChanged()
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.resetChangePasswordState()
+    }
 
     Column(
         modifier = Modifier
@@ -56,7 +63,7 @@ fun ChangePasswordScreen(
                 "Change Password",
                 style = MaterialTheme.typography.headlineMedium.copy(color = myFitColors.current.gold)
             )
-            Spacer(modifier = Modifier.width(48.dp)) // Balance the back button
+            Spacer(modifier = Modifier.width(48.dp))
         }
 
         // Center the form vertically in remaining space
@@ -67,7 +74,10 @@ fun ChangePasswordScreen(
         ) {
             OutlinedTextField(
                 value = oldPassword,
-                onValueChange = { oldPassword = it; resetErrors() },
+                onValueChange = {
+                    oldPassword = it
+                    viewModel.resetChangePasswordState()
+                },
                 label = { Text("Old Password", color = Color.Gray) },
                 singleLine = true,
                 visualTransformation = PasswordVisualTransformation(),
@@ -83,7 +93,10 @@ fun ChangePasswordScreen(
             Spacer(modifier = Modifier.height(12.dp))
             OutlinedTextField(
                 value = newPassword,
-                onValueChange = { newPassword = it; resetErrors() },
+                onValueChange = {
+                    newPassword = it
+                    viewModel.resetChangePasswordState()
+                },
                 label = { Text("New Password", color = Color.Gray) },
                 singleLine = true,
                 visualTransformation = PasswordVisualTransformation(),
@@ -99,7 +112,10 @@ fun ChangePasswordScreen(
             Spacer(modifier = Modifier.height(12.dp))
             OutlinedTextField(
                 value = confirmPassword,
-                onValueChange = { confirmPassword = it; resetErrors() },
+                onValueChange = {
+                    confirmPassword = it
+                    viewModel.resetChangePasswordState()
+                },
                 label = { Text("Confirm Password", color = Color.Gray) },
                 singleLine = true,
                 visualTransformation = PasswordVisualTransformation(),
@@ -112,12 +128,27 @@ fun ChangePasswordScreen(
                 ),
                 modifier = Modifier.fillMaxWidth()
             )
-            if (errorText.isNotBlank()) {
-                Text(errorText, color = Color.Red, style = MaterialTheme.typography.bodySmall, modifier = Modifier.align(Alignment.Start).padding(top = 4.dp))
+
+            when (val state = changePasswordState) {
+                is ResultWrapper.Error -> {
+                    Text(
+                        state.message ?: "Unknown error occurred",
+                        color = Color.Red,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.align(Alignment.Start).padding(top = 4.dp)
+                    )
+                }
+                is ResultWrapper.Success -> {
+                    Text(
+                        state.data,
+                        color = myFitColors.current.gold,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.align(Alignment.Start).padding(top = 4.dp)
+                    )
+                }
+                else -> {}
             }
-            if (success) {
-                Text("Password changed successfully!", color = myFitColors.current.gold, style = MaterialTheme.typography.bodySmall, modifier = Modifier.align(Alignment.Start).padding(top = 4.dp))
-            }
+
             Spacer(modifier = Modifier.height(24.dp))
             Row(Modifier.fillMaxWidth()) {
                 Button(
@@ -128,24 +159,28 @@ fun ChangePasswordScreen(
                 Spacer(modifier = Modifier.width(16.dp))
                 Button(
                     onClick = {
-                        resetErrors()
                         if (!isValidPassword(newPassword)) {
-                            errorText = "Password must be at least 8 characters, include uppercase, lowercase, and a number"
                             return@Button
                         }
                         if (newPassword != confirmPassword) {
-                            errorText = "Passwords do not match"
                             return@Button
                         }
-                        isLoading = true
-                        isLoading = false
-                        success = true
-                        onPasswordChanged()
+                        viewModel.changePassword(oldPassword, newPassword)
                     },
-                    enabled = oldPassword.isNotBlank() && newPassword.isNotBlank() && confirmPassword.isNotBlank(),
+                    enabled = oldPassword.isNotBlank() && newPassword.isNotBlank() && confirmPassword.isNotBlank() && changePasswordState !is ResultWrapper.Loading,
                     colors = ButtonDefaults.buttonColors(containerColor = myFitColors.current.gold, contentColor = Color.Black),
                     modifier = Modifier.weight(1f)
-                ) { Text("Change Password") }
+                ) {
+                    if (changePasswordState is ResultWrapper.Loading) {
+                        CircularProgressIndicator(
+                            color = Color.Black,
+                            modifier = Modifier.size(20.dp),
+                            strokeWidth = 2.dp
+                        )
+                    } else {
+                        Text("Change Password")
+                    }
+                }
             }
         }
     }
