@@ -99,4 +99,7 @@ dependencies {
 
     //AppWrite
     implementation(libs.sdk.for1.android)
+
+    //yt player
+    implementation("com.pierfrancescosoffritti.androidyoutubeplayer:core:12.1.0")
 }

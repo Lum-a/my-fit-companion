@@ -18,6 +18,7 @@ import com.example.myfitcompanion.admin.screen.AdminUserScreen
 import com.example.myfitcompanion.admin.screen.workout.AdminSplitScreen
 import com.example.myfitcompanion.screen.AdminScreen
 import com.example.myfitcompanion.screen.Screen
+import com.example.myfitcompanion.screen.YouTubePlayerScreen
 import com.example.myfitcompanion.screen.workout.split.exercise.ExerciseScreen
 import com.example.myfitcompanion.screen.workout.WorkoutScreen
 import com.example.myfitcompanion.screen.splash.SplashScreen
@@ -55,14 +56,17 @@ fun MyFitNavigation(navController: NavHostController, padding: PaddingValues, is
         modifier = Modifier.padding(padding)
     ) {
         composable<Screen.Splash> {
-            SplashScreen(
-                onNavigateToHome = {
-                    val screen = if (isAdmin) AdminScreen.Admin else Screen.Home
-                    navigate(screen)
-                },
-                onNavigateToLogin = { navigate(Screen.Login) },
-                onNavigateToRegister = { navigate(Screen.Register) }
-            )
+//            SplashScreen(
+//                onNavigateToHome = {
+//                    val screen = if (isAdmin) AdminScreen.Admin else Screen.Home
+//                    navigate(screen)
+//                },
+//                onNavigateToLogin = { navigate(Screen.Login) },
+//                onNavigateToRegister = { navigate(Screen.Register) }
+//            )
+            YouTubePlayerScreen("pwztKZ9KQlc", onBack = {
+                navController.navigate(Screen.Splash)
+            })
         }
         composable<Screen.Login> {
             LoginScreen(
