@@ -127,8 +127,8 @@ fun MyFitNavigation(navController: NavHostController, padding: PaddingValues, is
         }
         composable<Screen.Meal> { MealScreen() }
         composable<Screen.Trainer> { TrainerScreen(
-            onTrainerClick = { userId, peerId, peerName ->
-                navigate(Screen.Chat(userId, peerId, peerName))
+            onTrainerClick = { userId, userName, peerId, peerName ->
+                navigate(Screen.Chat(userId, userName, peerId, peerName))
             }
         ) }
         composable<Screen.Chat> {
@@ -137,6 +137,7 @@ fun MyFitNavigation(navController: NavHostController, padding: PaddingValues, is
             ChatScreen(
                 userId = chat.userId,
                 peerId = chat.peerId,
+                userName = chat.userName,
                 peerName = chat.peerName,
                 onNavigateBack = { navController.popBackStack() }
             )

@@ -32,9 +32,11 @@ class ChatViewModel @Inject constructor(
         observeSocketEvents()
     }
 
-    fun initializeChat(userId: Int, peerId: Int, peerName: String, serverUrl: String) {
+    fun initializeChat(userId: Int, userName: String, peerId: Int, peerName: String, serverUrl: String) {
         currentUserId = userId
         currentPeerId = peerId
+        Log.d("SocketManager", "peerName $peerName peerId $peerId userId: $userId")
+        val firstAndLastName = userName.split(" ")
         currentRoom = chatRepository.generateRoomId(userId, peerId)
 
         _uiState.update {
@@ -47,7 +49,7 @@ class ChatViewModel @Inject constructor(
 
         // Connect to socket and authenticate
         chatRepository.connectSocket(serverUrl)
-        chatRepository.authenticateUser(userId, "User$userId") // You can get username from user session
+        chatRepository.authenticateUser(userId, firstAndLastName[0], firstAndLastName[1]) // You can get username from user session
 
         // Load local messages first
         currentRoom?.let { room ->
@@ -313,9 +315,10 @@ class ChatViewModel @Inject constructor(
         val userId = currentUserId ?: return
         val peerId = currentPeerId ?: return
         val peerName = _uiState.value.peerName
+        val userName = _uiState.value.myName
         val serverUrl = "https://my-fit-companion-production.up.railway.app" // Use your server URL
 
-        initializeChat(userId, peerId, peerName, serverUrl)
+        initializeChat(userId, userName, peerId, peerName, serverUrl)
     }
 
     fun clearError() {
@@ -330,6 +333,7 @@ class ChatViewModel @Inject constructor(
 
 data class ChatUiState(
     val messages: List<ChatMessage> = emptyList(),
+    val myName: String = "",
     val isConnected: Boolean = false,
     val isConnecting: Boolean = false,
     val connectionStatus: String = "Not connected",

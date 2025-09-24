@@ -68,7 +68,7 @@ class TrainerRepositoryImpl @Inject constructor(
         ResultWrapper.Error(e.message)
     }
 
-    override fun getUserId(): Flow<User?> {
+    override fun getUser(): Flow<User?> {
         return userDao.getUser()
     }
 }

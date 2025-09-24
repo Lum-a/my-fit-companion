@@ -34,6 +34,7 @@ import java.util.*
 fun ChatScreen(
     userId: Int=0,
     peerId: Int=0,
+    userName: String = "",
     peerName: String,
     onNavigateBack: () -> Unit,
     viewModel: ChatViewModel = hiltViewModel()
@@ -46,7 +47,7 @@ fun ChatScreen(
     // Initialize chat when the screen loads
     LaunchedEffect(userId, peerId) {
         val serverUrl = "https://my-fit-companion-production.up.railway.app"
-        viewModel.initializeChat(userId, peerId, peerName, serverUrl)
+        viewModel.initializeChat(userId, userName, peerId, peerName, serverUrl)
     }
 
     // Auto-scroll to bottom when new messages arrive

@@ -68,8 +68,8 @@ class ChatRepository @Inject constructor(
         socketManager.connect(serverUrl)
     }
 
-    fun authenticateUser(userId: Int, username: String) {
-        socketManager.authenticate(userId, username)
+    fun authenticateUser(userId: Int, firstName: String, lastName: String) {
+        socketManager.authenticate(userId, firstName, lastName)
     }
 
     fun joinChatRoom(userId: Int, peerId: Int, peerName: String) {

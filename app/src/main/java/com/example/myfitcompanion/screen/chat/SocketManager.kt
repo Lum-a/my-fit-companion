@@ -57,6 +57,7 @@ class SocketManager @Inject constructor() {
 
                 on("chat:joined") { args ->
                     val data = args.getOrNull(0) as? JSONObject
+                    Log.d(TAG, "chat joined $data")
                     _messageEvents.trySend(ChatEvent.JoinedRoom(data))
                 }
 
@@ -105,14 +106,17 @@ class SocketManager @Inject constructor() {
         }
     }
 
-    fun authenticate(userId: Int, username: String) {
+    fun authenticate(userId: Int, firstName: String, lastName: String) {
+        Log.d(TAG, "authenticate with $userId $firstName $lastName")
         socket?.emit("chat:authenticate", JSONObject().apply {
             put("userId", userId)
-            put("username", username)
+            put("firstName", firstName)
+            put("lastName", lastName)
         })
     }
 
     fun joinRoom(userId: Int, peerId: Int, peerName: String) {
+        Log.d(TAG, "join room $userId $peerId $peerName")
         socket?.emit("chat:join", JSONObject().apply {
             put("userId", userId)
             put("peerId", peerId)
@@ -121,9 +125,10 @@ class SocketManager @Inject constructor() {
     }
 
     fun sendMessage(senderId: Int, receiverId: Int, content: String, messageType: String = "text") {
+        Log.d(TAG, "send message $senderId $receiverId $content")
         socket?.emit("chat:send", JSONObject().apply {
-            put("senderId", senderId)
-            put("receiverId", receiverId)
+            put("senderId", senderId.toString())
+            put("receiverId", receiverId.toString())
             put("content", content)
             put("messageType", messageType)
         })

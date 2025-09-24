@@ -24,12 +24,20 @@ class TrainerViewModel @Inject constructor(
             initialValue = emptyList()
         )
 
-    val userID: StateFlow<Int> = trainerRepository.getUserId()
+    val userID: StateFlow<Int> = trainerRepository.getUser()
         .map { it?.id ?: 0}
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.Lazily,
             initialValue = 0
+        )
+
+    val userName: StateFlow<String> = trainerRepository.getUser()
+        .map { it?.name ?: "" }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Lazily,
+            initialValue = ""
         )
 
     init {

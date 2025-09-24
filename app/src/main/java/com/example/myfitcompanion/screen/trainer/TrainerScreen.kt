@@ -50,13 +50,14 @@ import com.example.myfitcompanion.ui.theme.myFitColors
 fun TrainerScreen(
     modifier: Modifier = Modifier,
     viewModel: TrainerViewModel = hiltViewModel(),
-    onTrainerClick: (userId: Int, peerId: Int, peerName: String) -> Unit = {_,_,_ ->}
+    onTrainerClick: (userId: Int, userName: String, peerId: Int, peerName: String) -> Unit = {_,_,_,_ ->}
 ) {
     // Sample data for preview - in real app this would come from ViewModel
     val trainers = getSampleTrainers()
     val realTrainers by viewModel.trainers.collectAsStateWithLifecycle()
     val trainerList = realTrainers.ifEmpty { trainers }
     val currentUserId by viewModel.userID.collectAsStateWithLifecycle()
+    val currentUserName by viewModel.userName.collectAsStateWithLifecycle()
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -82,7 +83,7 @@ fun TrainerScreen(
             items(trainerList) { trainer ->
                 TrainerCard(
                     trainer = trainer,
-                    onClick = { onTrainerClick(currentUserId, trainer.trainerId, trainer.firstName) }
+                    onClick = { onTrainerClick(currentUserId, currentUserName, trainer.trainerId, "${trainer.firstName} ${trainer.lastName}")}
                 )
             }
         }

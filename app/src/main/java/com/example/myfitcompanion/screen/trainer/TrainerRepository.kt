@@ -13,5 +13,5 @@ interface TrainerRepository {
     suspend fun getTrainerById(trainerId: Long): Trainer?
     suspend fun syncTrainersFromApi(): ResultWrapper<Unit>
 
-    fun getUserId(): Flow<User?>
+    fun getUser(): Flow<User?>
 }
