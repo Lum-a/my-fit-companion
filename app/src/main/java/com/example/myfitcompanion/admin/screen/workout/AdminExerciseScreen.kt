@@ -37,6 +37,7 @@ fun AdminExerciseScreen(
 ) {
     val exercisesState by viewModel.exercises.collectAsState()
     var showDialog by remember { mutableStateOf(false) }
+    var editingExercise by remember { mutableStateOf<ExerciseResponse?>(null) }
     var name by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
     var videoId by remember { mutableStateOf("") }
@@ -58,7 +59,13 @@ fun AdminExerciseScreen(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { showDialog = true },
+                onClick = {
+                    editingExercise = null
+                    name = ""
+                    description = ""
+                    videoId = ""
+                    showDialog = true
+                },
                 containerColor = myFitColors.current.gold
             ) {
                 Icon(Icons.Default.Add, contentDescription = "Add Exercise")
@@ -94,8 +101,16 @@ fun AdminExerciseScreen(
                         items(state.data) { exercise ->
                             ExerciseCard(
                                 exercise = exercise,
-                                onEdit = { /* TODO: open edit dialog */ },
-                                onDelete = { viewModel.deleteExercise(exercise.id) }
+                                onEdit = {
+                                    editingExercise = exercise
+                                    name = exercise.name
+                                    description = exercise.description ?: ""
+                                    videoId = exercise.videoId
+                                    showDialog = true
+                                },
+                                onDelete = {
+                                    viewModel.deleteExercise(exercise.id)
+                                }
                             )
                         }
                     }
@@ -108,20 +123,24 @@ fun AdminExerciseScreen(
                 confirmButton = {
                     TextButton(onClick = {
                         if (name.isNotBlank() && videoId.isNotBlank()) {
-                            viewModel.addExercise(
-                                ExerciseRequest(
-                                    name = name,
-                                    description = description,
-                                    videoId = videoId,
-                                )
+                            val req = ExerciseRequest(
+                                name = name,
+                                description = description,
+                                videoId = videoId,
                             )
+
+                            editingExercise?.let {
+                                viewModel.updateExercise(it.id, req)
+                            } ?: viewModel.addExercise(splitId = splitId, req)
+
                             showDialog = false
+                            editingExercise = null
                             name = ""
                             description = ""
                             videoId = ""
                         }
                     }) {
-                        Text("Create")
+                        Text(if (editingExercise != null) "Update" else "Create")
                     }
                 },
                 dismissButton = {
@@ -129,7 +148,7 @@ fun AdminExerciseScreen(
                         Text("Cancel")
                     }
                 },
-                title = { Text("Create Exercise") },
+                title = { Text(if (editingExercise != null) "Edit Exercise" else "Create Exercise") },
                 text = {
                     Column {
                         OutlinedTextField(
@@ -147,7 +166,7 @@ fun AdminExerciseScreen(
                         OutlinedTextField(
                             value = videoId,
                             onValueChange = { videoId = it },
-                            label = { Text("Calories Burned") },
+                            label = { Text("Video ID") },
                             modifier = Modifier.fillMaxWidth()
                         )
                     }

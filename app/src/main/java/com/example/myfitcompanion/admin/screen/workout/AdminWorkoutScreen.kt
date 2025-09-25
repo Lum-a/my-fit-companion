@@ -49,6 +49,7 @@ fun AdminWorkoutScreen(
 ) {
     val workoutState by viewModel.workouts.collectAsState()
     var showDialog by remember { mutableStateOf(false) }
+    var editingWorkout by remember { mutableStateOf<WorkoutResponse?>(null) }
     var name by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
     var uri by remember { mutableStateOf<Uri?>(null) }
@@ -71,7 +72,13 @@ fun AdminWorkoutScreen(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { showDialog = true },
+                onClick = {
+                    editingWorkout = null
+                    name = ""
+                    description = ""
+                    uri = null
+                    showDialog = true
+                },
                 containerColor = myFitColors.current.gold
             ) {
                 Icon(Icons.Default.Add, contentDescription = "Add Workout")
@@ -119,7 +126,13 @@ fun AdminWorkoutScreen(
                             WorkoutCard(
                                 workout = workout,
                                 onClick = { onWorkoutClick(workout.id) },
-                                onEdit = { /* TODO: open edit dialog */ },
+                                onEdit = {
+                                    editingWorkout = workout
+                                    name = workout.name
+                                    description = workout.description ?: ""
+                                    uri = null // Don't pre-load existing image for editing
+                                    showDialog = true
+                                },
                                 onDelete = { viewModel.deleteWorkout(workout.id) }
                             )
                         }
@@ -129,37 +142,49 @@ fun AdminWorkoutScreen(
         }
         if (showDialog) {
             AlertDialog(
-                onDismissRequest = { showDialog = false },
-                confirmButton = {
-                    TextButton(onClick = {
-                        scope.launch {
-                            val userId = viewModel.getUserId()
-                            if (name.isNotBlank() && userId != null) {
-                                viewModel.addWorkout(
-                                    WorkoutRequest(
-                                        name = name,
-                                        description = description,
-                                    ),
-                                    uri = uri
-                                )
-                            }
-                            showDialog = false
-                            name = ""
-                            description = ""
-                        }
-                    }) {
-                        Text("Create")
-                    }
-                },
-                dismissButton = {
-                    TextButton(onClick = { showDialog = false }) {
-                        Text("Cancel")
-                    }
+                onDismissRequest = {
+                    showDialog = false
+                    editingWorkout = null
                     name = ""
                     description = ""
                     uri = null
                 },
-                title = { Text("Create Workout") },
+                confirmButton = {
+                    TextButton(onClick = {
+                        scope.launch {
+                            if (name.isNotBlank()) {
+                                val workoutRequest = WorkoutRequest(
+                                    name = name,
+                                    description = description,
+                                )
+
+                                editingWorkout?.let {
+                                    viewModel.updateWorkout(it.id, workoutRequest, uri)
+                                } ?: viewModel.addWorkout(workoutRequest, uri)
+
+                                showDialog = false
+                                editingWorkout = null
+                                name = ""
+                                description = ""
+                                uri = null
+                            }
+                        }
+                    }) {
+                        Text(if (editingWorkout != null) "Update" else "Create")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = {
+                        showDialog = false
+                        editingWorkout = null
+                        name = ""
+                        description = ""
+                        uri = null
+                    }) {
+                        Text("Cancel")
+                    }
+                },
+                title = { Text(if (editingWorkout != null) "Edit Workout" else "Create Workout") },
                 text = {
                     Column {
                         OutlinedTextField(
@@ -199,7 +224,6 @@ fun AdminWorkoutScreen(
                                         contentScale = ContentScale.Crop
                                     )
                                 }
-
                             }
                         }
                     }

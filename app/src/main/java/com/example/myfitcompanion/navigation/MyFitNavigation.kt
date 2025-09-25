@@ -168,7 +168,8 @@ fun MyFitNavigation(navController: NavHostController, padding: PaddingValues, is
             AdminWorkoutScreen(
                 onBack = { navController.popBackStack() },
                 onWorkoutClick = { workoutId ->
-                    navController.navigate(AdminScreen.Split(workoutId)) }
+                    navController.navigate(AdminScreen.Split(workoutId))
+                }
             )
         }
         composable<AdminScreen.Split> {

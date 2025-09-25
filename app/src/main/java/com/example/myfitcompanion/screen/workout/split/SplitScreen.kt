@@ -40,6 +40,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.example.myfitcompanion.api.model.SplitResponse
+import com.example.myfitcompanion.model.WorkoutType
 import com.example.myfitcompanion.screen.workout.WorkoutViewModel
 import com.example.myfitcompanion.ui.theme.myFitColors
 import com.example.myfitcompanion.utils.ResultWrapper
@@ -54,6 +55,9 @@ fun SplitScreen(
 ) {
     val splitsState by viewModel.splitState.collectAsStateWithLifecycle()
 
+    val workoutName = WorkoutType.entries
+        .find { it.id == workoutId }?.displayName ?: "Workout"
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -61,7 +65,7 @@ fun SplitScreen(
     ) {
         // Header with back button
         TopAppBar(
-            title = { Text("Workout Splits", color = Color.White) },
+            title = { Text("$workoutName Splits", color = Color.White) },
             navigationIcon = {
                 IconButton(onClick = onBack) {
                     Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = Color.White)
