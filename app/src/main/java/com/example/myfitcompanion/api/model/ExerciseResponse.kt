@@ -9,12 +9,8 @@ data class ExerciseResponse(
     val id: Int,
     @Json(name = "name")
     val name: String,
-    @Json(name = "type")
-    val type: String? = null,
-    @Json(name = "duration")
-    val duration: Int? = null, // in minutes
     @Json(name = "description")
-    val description: String? = null,
+    val description: String?,
     @Json(name = "videoId")
     val videoId: String,
 )

@@ -48,7 +48,8 @@ fun HomeScreen(
     onCheckInClick: () -> Unit = {},
     onWorkoutClick: () -> Unit = {},
     onTrainersClick: () -> Unit = {},
-    onMealsClick: () -> Unit = {}
+    onMealsClick: () -> Unit = {},
+    onRecentExerciseClick: (videoId: String) -> Unit  = {}
 ) {
     val userData by viewModel.user.collectAsStateWithLifecycle()
     val recentExerciseState by viewModel.recentExercise.collectAsStateWithLifecycle()
@@ -116,7 +117,11 @@ fun HomeScreen(
                     is ResultWrapper.Success -> {
                         val exercise = state.data
                         Text(
-                            text = "${exercise.name} - ${exercise.type}",
+                            modifier = modifier.clickable(
+                                enabled = exercise.videoId.isNotEmpty(),
+                                onClick = { onRecentExerciseClick(exercise.videoId) }
+                            ),
+                            text = "${exercise.name} - ${exercise.description}",
                             style = MaterialTheme.typography.bodyMedium.copy(
                                 color = myFitColors.current.orange
                             )

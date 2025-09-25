@@ -7,10 +7,8 @@ import com.squareup.moshi.JsonClass
 data class ExerciseRequest(
     @Json(name = "name")
     val name: String,
-    @Json(name = "type")
-    val type: String,
-    @Json(name = "duration")
-    val duration: Int, // in minutes
-    @Json(name = "caloriesBurned")
-    val caloriesBurned: Int
+    @Json(name = "description")
+    val description: String?,
+    @Json(name = "videoId")
+    val videoId: String,
 )

@@ -38,9 +38,8 @@ fun AdminExerciseScreen(
     val exercisesState by viewModel.exercises.collectAsState()
     var showDialog by remember { mutableStateOf(false) }
     var name by remember { mutableStateOf("") }
-    var type by remember { mutableStateOf("") }
-    var duration by remember { mutableStateOf("") }
-    var caloriesBurned by remember { mutableStateOf("") }
+    var description by remember { mutableStateOf("") }
+    var videoId by remember { mutableStateOf("") }
 
     Scaffold(
         topBar = {
@@ -108,22 +107,18 @@ fun AdminExerciseScreen(
                 onDismissRequest = { showDialog = false },
                 confirmButton = {
                     TextButton(onClick = {
-                        val durationInt = duration.toIntOrNull()
-                        val caloriesInt = caloriesBurned.toIntOrNull()
-                        if (name.isNotBlank() && type.isNotBlank() && durationInt != null && caloriesInt != null) {
+                        if (name.isNotBlank() && videoId.isNotBlank()) {
                             viewModel.addExercise(
                                 ExerciseRequest(
                                     name = name,
-                                    type = type,
-                                    duration = durationInt,
-                                    caloriesBurned = caloriesInt
+                                    description = description,
+                                    videoId = videoId,
                                 )
                             )
                             showDialog = false
                             name = ""
-                            type = ""
-                            duration = ""
-                            caloriesBurned = ""
+                            description = ""
+                            videoId = ""
                         }
                     }) {
                         Text("Create")
@@ -144,20 +139,14 @@ fun AdminExerciseScreen(
                             modifier = Modifier.fillMaxWidth()
                         )
                         OutlinedTextField(
-                            value = type,
-                            onValueChange = { type = it },
-                            label = { Text("Type") },
+                            value = description,
+                            onValueChange = { description = it },
+                            label = { Text("Description") },
                             modifier = Modifier.fillMaxWidth()
                         )
                         OutlinedTextField(
-                            value = duration,
-                            onValueChange = { duration = it },
-                            label = { Text("Duration (min)") },
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                        OutlinedTextField(
-                            value = caloriesBurned,
-                            onValueChange = { caloriesBurned = it },
+                            value = videoId,
+                            onValueChange = { videoId = it },
                             label = { Text("Calories Burned") },
                             modifier = Modifier.fillMaxWidth()
                         )
@@ -188,8 +177,7 @@ fun ExerciseCard(
         ) {
             Column {
                 Text(exercise.name, color = Color.White, style = MaterialTheme.typography.titleMedium)
-                Text(exercise.type ?: "", color = Color.Gray, style = MaterialTheme.typography.bodySmall)
-                Text("Duration: ${exercise.duration} min", color = myFitColors.current.gold, style = MaterialTheme.typography.bodySmall)
+                Text(exercise.description ?: "", color = Color.Gray, style = MaterialTheme.typography.bodySmall)
             }
             Row {
                 IconButton(onClick = onEdit) {
