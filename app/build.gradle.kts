@@ -99,4 +99,7 @@ dependencies {
 
     //yt player
     implementation(libs.android.youtube.player)
+
+    //Socket.IO
+    implementation(libs.socketio)
 }

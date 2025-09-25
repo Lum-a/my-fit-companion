@@ -4,16 +4,20 @@ import android.util.Log
 import com.example.myfitcompanion.api.ApiService
 import com.example.myfitcompanion.api.model.TrainerResponse
 import com.example.myfitcompanion.db.room.dao.TrainerDao
+import com.example.myfitcompanion.db.room.dao.UserDao
 import com.example.myfitcompanion.db.room.entities.Trainer
+import com.example.myfitcompanion.db.room.entities.User
 import com.example.myfitcompanion.utils.ResultWrapper
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.firstOrNull
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class TrainerRepositoryImpl @Inject constructor(
     private val apiService: ApiService,
-    private val trainerDao: TrainerDao
+    private val trainerDao: TrainerDao,
+    private val userDao: UserDao
 ): TrainerRepository {
 
     override suspend fun getTrainersFromApi(): ResultWrapper<List<TrainerResponse>> = try {
@@ -62,5 +66,9 @@ class TrainerRepositoryImpl @Inject constructor(
     } catch (e: Exception) {
         Log.e("TrainerRepositoryImpl", "Error syncing trainers: ${e.message}")
         ResultWrapper.Error(e.message)
+    }
+
+    override fun getUser(): Flow<User?> {
+        return userDao.getUser()
     }
 }

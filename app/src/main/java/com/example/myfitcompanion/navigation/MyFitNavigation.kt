@@ -1,5 +1,6 @@
 package com.example.myfitcompanion.navigation
 
+import android.util.Log
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -18,6 +19,7 @@ import com.example.myfitcompanion.admin.screen.AdminUserScreen
 import com.example.myfitcompanion.admin.screen.workout.AdminSplitScreen
 import com.example.myfitcompanion.screen.AdminScreen
 import com.example.myfitcompanion.screen.Screen
+import com.example.myfitcompanion.screen.chat.ChatScreen
 import com.example.myfitcompanion.screen.workout.split.exercise.YouTubePlayerScreen
 import com.example.myfitcompanion.screen.workout.split.exercise.ExerciseScreen
 import com.example.myfitcompanion.screen.workout.WorkoutScreen
@@ -132,7 +134,23 @@ fun MyFitNavigation(navController: NavHostController, padding: PaddingValues, is
             )
         }
         composable<Screen.Meal> { MealScreen() }
-        composable<Screen.Trainer> { TrainerScreen(onTrainerClick = { navigate(Screen.Profile) }) }
+        composable<Screen.Trainer> { TrainerScreen(
+            onTrainerClick = { userId, userName, peerId, peerName ->
+                navigate(Screen.Chat(userId, userName, peerId, peerName))
+            }
+        ) }
+        composable<Screen.Chat> {
+            val chat = it.toRoute<Screen.Chat>()
+            Log.d("MyFitNavigation", "Navigating to Chat with data: $chat")
+            ChatScreen(
+                userId = chat.userId,
+                peerId = chat.peerId,
+                userName = chat.userName,
+                peerName = chat.peerName,
+                onNavigateBack = { navController.popBackStack() }
+            )
+        }
+
 
         //Admin screens
         composable<AdminScreen.Admin> {
@@ -144,8 +162,6 @@ fun MyFitNavigation(navController: NavHostController, padding: PaddingValues, is
                 onLogout = { logout() }
             )
         }
-
-        //admin screens
         composable<AdminScreen.User> { AdminUserScreen(onBack = { navController.popBackStack() }) }
         composable<AdminScreen.Meals> { AdminMealScreen(onBack = { navController.popBackStack() }) }
         composable<AdminScreen.Workout> {
