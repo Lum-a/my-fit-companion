@@ -41,9 +41,6 @@ interface AdminApiService {
     @POST("admin/meals")
     suspend fun addMeal(@Body meal: MealRequest): MealsResponse
 
-    @GET("admin/meals")
-    suspend fun getMeals(): List<MealsResponse>
-
     @PUT("admin/meals/{id}")
     suspend fun updateMeal(@Path("id") mealId: Int, @Body meal: MealRequest): MealsResponse
 

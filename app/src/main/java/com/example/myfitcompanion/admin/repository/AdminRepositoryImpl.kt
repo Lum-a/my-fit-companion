@@ -69,7 +69,7 @@ class AdminRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getMeals(): ResultWrapper<List<MealsResponse>> = try {
-        val response = adminApiService.getMeals()
+        val response = apiService.getMeals()
         ResultWrapper.Success(response)
     } catch (e: Exception) {
         ResultWrapper.Error(e.message)
