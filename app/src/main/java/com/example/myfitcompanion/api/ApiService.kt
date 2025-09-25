@@ -34,7 +34,7 @@ interface ApiService {
     @GET("workouts/{workoutId}/splits")
     suspend fun getWorkoutSplits(@Path("workoutId") workoutId: Int): List<SplitResponse>
 
-    @GET("workouts/splits/{splitId}/exercises")
+    @GET("splits/{splitId}/exercises")
     suspend fun getExercises(@Path("splitId") splitId: Int): List<ExerciseResponse>
 
     @GET("meals")

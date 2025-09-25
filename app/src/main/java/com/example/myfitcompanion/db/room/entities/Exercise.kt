@@ -8,6 +8,6 @@ data class Exercise(
     @PrimaryKey(autoGenerate = true) val exerciseId: Int,
     val name: String,
     val type: String,
-    val duration: Int,
-    val caloriesBurned: Int
+    val description: String,
+    val videoId: String
 )

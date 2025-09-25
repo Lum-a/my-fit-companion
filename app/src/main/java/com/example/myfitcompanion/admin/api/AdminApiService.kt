@@ -54,30 +54,30 @@ interface AdminApiService {
     @POST("admin/workouts")
     suspend fun addWorkout(@Body workout: WorkoutRequest): WorkoutResponse
 
-    @PUT("admin/workouts/{id}")
+    @PUT("admin/workouts/{workoutId}")
     suspend fun updateWorkout(@Path("id") workoutId: Int, @Body workout: WorkoutRequest): WorkoutResponse
 
-    @DELETE("admin/workouts/{id}")
+    @DELETE("admin/workouts/{workoutId}")
     suspend fun deleteWorkout(@Path("id") workoutId: Int)
 
     // workout splits
-    @POST("admin/workouts/splits")
-    suspend fun addWorkoutSplit(@Body split: SplitRequest): SplitResponse
+    @POST("admin/workouts/{workoutId}/splits")
+    suspend fun addWorkoutSplit(@Path("workoutId") workoutId: Int, @Body split: SplitRequest): SplitResponse
 
-    @PUT("admin/workouts/splits/{id}")
+    @PUT("admin/splits/{splitId}")
     suspend fun updateWorkoutSplit(@Path("id") splitId: Int, @Body split: SplitRequest): SplitResponse
 
-    @DELETE("admin/workouts/splits/{id}")
+    @DELETE("admin/splits/{splitId}")
     suspend fun deleteWorkoutSplit(@Path("id") splitId: Int)
 
     // Exercises
-    @POST("admin/workouts/splits/exercises")
-    suspend fun addExercise(@Body exercise: ExerciseRequest): ExerciseResponse
+    @POST("admin/splits/{splitId}/exercises")
+    suspend fun addExercise(@Path("splitId") splitId: Int, @Body exercise: ExerciseRequest): ExerciseResponse
 
-    @PUT("admin/workouts/splits/exercises/{id}")
+    @PUT("admin/exercises/{exerciseId}")
     suspend fun updateExercise(@Path("id") exerciseId: Int, @Body exercise: ExerciseRequest): ExerciseResponse
 
-    @DELETE("admin/workouts/splits/exercises/{id}")
+    @DELETE("admin/exercises/{exerciseId}")
     suspend fun deleteExercise(@Path("id") exerciseId: Int)
 
     @PUT("admin/trainers/{id}")

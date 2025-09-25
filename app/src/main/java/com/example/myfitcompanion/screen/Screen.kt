@@ -29,6 +29,9 @@ sealed class Screen {
     data class Exercise(val splitId: Int): Screen()
 
     @Serializable
+    data class YoutubePlayer(val videoUrl: String): Screen()
+
+    @Serializable
     data object Trainer: Screen()
 
     @Serializable

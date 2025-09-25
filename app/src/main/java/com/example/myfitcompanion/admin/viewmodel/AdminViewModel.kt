@@ -90,9 +90,10 @@ class AdminViewModel @Inject constructor(
         }
     }
 
-    fun updateWorkout(workoutId: Int, workout: WorkoutRequest) {
+    fun updateWorkout(workoutId: Int, workout: WorkoutRequest, uri: Uri? = null) {
         viewModelScope.launch {
-            adminRepository.updateWorkout(workoutId, workout)
+            val updatedWorkout = workout.copy(imageUrl = getImageUrlFromBlob(uri))
+            adminRepository.updateWorkout(workoutId, updatedWorkout)
             loadWorkouts()
         }
     }
@@ -116,9 +117,10 @@ class AdminViewModel @Inject constructor(
         }
     }
 
-    fun addSplit(split: SplitRequest) {
+    fun addSplit(workoutId: Int, split: SplitRequest, imageUri: Uri?) {
         viewModelScope.launch {
-            adminRepository.addWorkoutSplit(split)
+            val updatedRequest = split.copy(imageUrl = getImageUrlFromBlob(imageUri))
+            adminRepository.addWorkoutSplit(workoutId, updatedRequest)
             loadSplits(workoutId)
         }
     }
@@ -149,9 +151,9 @@ class AdminViewModel @Inject constructor(
         }
     }
 
-    fun addExercise(exercise: ExerciseRequest) {
+    fun addExercise(splitId: Int, exercise: ExerciseRequest) {
         viewModelScope.launch {
-            adminRepository.addExercise(exercise)
+            adminRepository.addExercise(splitId, exercise)
             loadExercises(splitId)
         }
     }

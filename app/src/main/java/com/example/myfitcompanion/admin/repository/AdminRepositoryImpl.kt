@@ -125,8 +125,8 @@ class AdminRepositoryImpl @Inject constructor(
         ResultWrapper.Error(e.message)
     }
 
-    override suspend fun addWorkoutSplit(split: SplitRequest): ResultWrapper<SplitResponse> = try {
-        val response = adminApiService.addWorkoutSplit(split)
+    override suspend fun addWorkoutSplit( workoutId: Int, split: SplitRequest): ResultWrapper<SplitResponse> = try {
+        val response = adminApiService.addWorkoutSplit(workoutId, split)
         ResultWrapper.Success(response)
     } catch (e: Exception) {
         ResultWrapper.Error(e.message)
@@ -154,8 +154,8 @@ class AdminRepositoryImpl @Inject constructor(
         ResultWrapper.Error(e.message)
     }
 
-    override suspend fun addExercise(exercise: ExerciseRequest): ResultWrapper<ExerciseResponse> = try {
-        val response = adminApiService.addExercise(exercise)
+    override suspend fun addExercise(splitId: Int, exercise: ExerciseRequest): ResultWrapper<ExerciseResponse> = try {
+        val response = adminApiService.addExercise(splitId, exercise)
         ResultWrapper.Success(response)
     } catch (e: Exception) {
         ResultWrapper.Error(e.message)

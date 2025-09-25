@@ -20,6 +20,7 @@ import com.example.myfitcompanion.admin.screen.workout.AdminSplitScreen
 import com.example.myfitcompanion.screen.AdminScreen
 import com.example.myfitcompanion.screen.Screen
 import com.example.myfitcompanion.screen.chat.ChatScreen
+import com.example.myfitcompanion.screen.workout.split.exercise.YouTubePlayerScreen
 import com.example.myfitcompanion.screen.workout.split.exercise.ExerciseScreen
 import com.example.myfitcompanion.screen.workout.WorkoutScreen
 import com.example.myfitcompanion.screen.splash.SplashScreen
@@ -65,6 +66,13 @@ fun MyFitNavigation(navController: NavHostController, padding: PaddingValues, is
                 onNavigateToLogin = { navigate(Screen.Login) },
                 onNavigateToRegister = { navigate(Screen.Register) }
             )
+        }
+
+        composable<Screen.YoutubePlayer> {
+            val video = it.toRoute<Screen.YoutubePlayer>()
+            YouTubePlayerScreen(
+                videoId = video.videoUrl,
+                onBack = { navController.popBackStack() })
         }
         composable<Screen.Login> {
             LoginScreen(
@@ -160,7 +168,8 @@ fun MyFitNavigation(navController: NavHostController, padding: PaddingValues, is
             AdminWorkoutScreen(
                 onBack = { navController.popBackStack() },
                 onWorkoutClick = { workoutId ->
-                    navController.navigate(AdminScreen.Split(workoutId)) }
+                    navController.navigate(AdminScreen.Split(workoutId))
+                }
             )
         }
         composable<AdminScreen.Split> {
