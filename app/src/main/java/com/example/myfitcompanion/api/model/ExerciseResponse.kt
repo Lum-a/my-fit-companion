@@ -15,8 +15,6 @@ data class ExerciseResponse(
     val duration: Int? = null, // in minutes
     @Json(name = "description")
     val description: String? = null,
-    @Json(name = "videoUrl")
-    val videoUrl: String?,
-    @Json(name = "thumbnailUrl")
-    val thumbnailUrl: String? // Add this field for the thumbnail image
+    @Json(name = "videoId")
+    val videoId: String,
 )

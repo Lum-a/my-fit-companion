@@ -1,4 +1,4 @@
-package com.example.myfitcompanion.screen
+package com.example.myfitcompanion.screen.workout.split.exercise
 
 import android.content.res.Configuration
 import androidx.activity.ComponentActivity
@@ -44,6 +44,7 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.Abs
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import androidx.compose.ui.platform.LocalResources
 
 /**
  * Created by Edon Idrizi on 24/Sep/2025 :)
@@ -52,9 +53,10 @@ import kotlinx.coroutines.launch
 @Composable
 fun YouTubePlayerScreen(videoId: String, onBack: () -> Unit) {
     val lifecycleOwner = LocalLifecycleOwner.current
-    var playbackPosition by rememberSaveable { mutableFloatStateOf(0f) }
     val context = LocalContext.current
-    val orientation = remember { mutableIntStateOf(context.resources.configuration.orientation) }
+    val resources = LocalResources.current
+    val orientation = remember { mutableIntStateOf(resources.configuration.orientation) }
+    var playbackPosition by rememberSaveable { mutableFloatStateOf(0f) }
 
     val configuration = LocalConfiguration.current
     LaunchedEffect(configuration) {

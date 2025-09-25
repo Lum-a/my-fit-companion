@@ -50,7 +50,7 @@ fun SplitScreen(
     workoutId: Int,
     viewModel: WorkoutViewModel = hiltViewModel(),
     onSplitClick: (Int) -> Unit = {},
-    onBackClick: () -> Unit = {}
+    onBack: () -> Unit = {}
 ) {
     val splitsState by viewModel.splitState.collectAsStateWithLifecycle()
 
@@ -63,7 +63,7 @@ fun SplitScreen(
         TopAppBar(
             title = { Text("Workout Splits", color = Color.White) },
             navigationIcon = {
-                IconButton(onClick = onBackClick) {
+                IconButton(onClick = onBack) {
                     Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = Color.White)
                 }
             },
