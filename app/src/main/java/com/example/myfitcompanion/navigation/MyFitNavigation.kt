@@ -27,12 +27,14 @@ import com.example.myfitcompanion.screen.splash.SplashScreen
 import com.example.myfitcompanion.screen.home.HomeScreen
 import com.example.myfitcompanion.screen.login.LoginScreen
 import com.example.myfitcompanion.screen.meal.MealScreen
+import com.example.myfitcompanion.screen.meal.MealViewModel
 import com.example.myfitcompanion.screen.profile.ChangePasswordScreen
 import com.example.myfitcompanion.screen.profile.ProfileScreen
 import com.example.myfitcompanion.screen.signup.RegisterScreen
 import com.example.myfitcompanion.screen.trainer.TrainerScreen
 import com.example.myfitcompanion.screen.workout.split.SplitScreen
 import com.example.myfitcompanion.utils.AuthViewModel
+import androidx.compose.runtime.collectAsState
 
 @Composable
 fun MyFitNavigation(navController: NavHostController, padding: PaddingValues, isAdmin: Boolean) {
@@ -133,7 +135,11 @@ fun MyFitNavigation(navController: NavHostController, padding: PaddingValues, is
                 onBack = { navController.popBackStack() }
             )
         }
-        composable<Screen.Meal> { MealScreen() }
+        composable<Screen.Meal> {
+            val viewModel: MealViewModel = hiltViewModel()
+            val meals = viewModel.meals.collectAsState()
+            MealScreen(meals = meals.value)
+        }
         composable<Screen.Trainer> { TrainerScreen(
             onTrainerClick = { userId, userName, peerId, peerName ->
                 navigate(Screen.Chat(userId, userName, peerId, peerName))

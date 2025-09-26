@@ -63,7 +63,7 @@ class UserRepositoryImpl @Inject constructor(
         val response = apiService.updateProfile(request).apply {
             //save changed user data to local db
             val updatedUser = currentUser.copy(
-                name = name ?: currentUser.name,
+                username = name ?: currentUser.username,
                 firstName = firstName ?: currentUser.firstName,
                 lastName = lastName ?: currentUser.lastName,
                 height = height ?: currentUser.height,
@@ -103,16 +103,16 @@ class UserRepositoryImpl @Inject constructor(
         user != null && !token.isNullOrEmpty()
     }
 
-    override suspend fun getRecentExercise(): ResultWrapper<ExerciseResponse> = try {
-            val response = apiService.getRecentExercise(getUserId())
+    override suspend fun getRecentExercise(): ResultWrapper<List<ExerciseResponse>> = try {
+            val response = apiService.getRecentExercises()
             ResultWrapper.Success(response)
         } catch (e: Exception) {
             ResultWrapper.Error(e.message)
         }
 
-    override suspend fun addRecentExercise(splitId: Int) {
+    override suspend fun saveRecentExercise(exerciseId: Int) {
         try {
-            apiService.addRecentExercise(splitId, getUserId())
+            apiService.saveRecentExercise(exerciseId)
         } catch (e: Exception) {
             Log.d("UserRepositoryImpl", "addRecentExercise: ${e.message}")
         }

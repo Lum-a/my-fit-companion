@@ -29,7 +29,7 @@ import com.example.myfitcompanion.db.room.entities.User
         Meal::class,
         ChatMessage::class
     ],
-    version = 13,
+    version = 15,
     exportSchema = false
 )
 abstract class MyFitDatabase: RoomDatabase() {

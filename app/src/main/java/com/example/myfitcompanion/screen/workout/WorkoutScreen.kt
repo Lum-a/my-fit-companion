@@ -86,7 +86,7 @@ fun WorkoutScreen(
                                 workout = workout,
                                 onClick = {
                                     onWorkoutClick(workout.id)
-                                    viewModel.addRecentExercise(workout.id)
+                                    viewModel.saveRecentExercise(workout.id)
                                 }
                             )
                         }
