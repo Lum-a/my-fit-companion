@@ -57,7 +57,6 @@ fun TrainerScreen(
     val realTrainers by viewModel.trainers.collectAsStateWithLifecycle()
     val trainerList = realTrainers.ifEmpty { trainers }
     val currentUserId by viewModel.userID.collectAsStateWithLifecycle()
-    val currentUserName by viewModel.userName.collectAsStateWithLifecycle()
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -83,7 +82,7 @@ fun TrainerScreen(
             items(trainerList) { trainer ->
                 TrainerCard(
                     trainer = trainer,
-                    onClick = { onTrainerClick(currentUserId, currentUserName, trainer.trainerId, "${trainer.firstName} ${trainer.lastName}")}
+                    onClick = { onTrainerClick(currentUserId, trainer.firstName, trainer.trainerId, "${trainer.firstName} ${trainer.lastName}")}
                 )
             }
         }

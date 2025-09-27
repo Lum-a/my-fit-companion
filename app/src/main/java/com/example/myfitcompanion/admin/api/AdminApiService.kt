@@ -72,10 +72,10 @@ interface AdminApiService {
     suspend fun addExercise(@Path("splitId") splitId: Int, @Body exercise: ExerciseRequest): ExerciseResponse
 
     @PUT("admin/exercises/{exerciseId}")
-    suspend fun updateExercise(@Path("id") exerciseId: Int, @Body exercise: ExerciseRequest): ExerciseResponse
+    suspend fun updateExercise(@Path("exerciseId") exerciseId: Int, @Body exercise: ExerciseRequest): ExerciseResponse
 
     @DELETE("admin/exercises/{exerciseId}")
-    suspend fun deleteExercise(@Path("id") exerciseId: Int)
+    suspend fun deleteExercise(@Path("exerciseId") exerciseId: Int)
 
     @PUT("admin/trainers/{id}")
     suspend fun updateTrainer(@Path("id") trainerId: Int, @Body trainer: UpdateTrainerRequest): TrainerResponse

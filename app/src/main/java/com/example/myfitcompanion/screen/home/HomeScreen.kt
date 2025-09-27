@@ -16,30 +16,39 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.compose.AsyncImage
+import com.example.myfitcompanion.R
 import com.example.myfitcompanion.ui.theme.myFitColors
 import com.example.myfitcompanion.utils.ResultWrapper
+import androidx.compose.ui.layout.ContentScale
 
 @Composable
 fun HomeScreen(
@@ -50,10 +59,13 @@ fun HomeScreen(
     onWorkoutClick: () -> Unit = {},
     onTrainersClick: () -> Unit = {},
     onMealsClick: () -> Unit = {},
-    onRecentExerciseClick: (videoId: String) -> Unit  = {}
+    onRecentExerciseClick: (videoId: String) -> Unit  = {},
+    onProfileClick: () -> Unit = {},
+    onSettingsClick: () -> Unit = {}
 ) {
     val userData by viewModel.user.collectAsStateWithLifecycle()
     val recentExerciseState by viewModel.recentExercise.collectAsStateWithLifecycle()
+    var menuExpanded by remember { mutableStateOf(false) }
 
     Column(
         modifier = modifier
@@ -61,19 +73,50 @@ fun HomeScreen(
             .background(myFitColors.current.background)
             .padding(16.dp)
     ) {
-        // Logout button positioned at top right
         Box(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp, end = 8.dp),
             contentAlignment = Alignment.TopEnd
         ) {
-            Icon(
-                modifier = Modifier.clickable {
-                    viewModel.logout { onLogout() }
-                },
-                imageVector = Icons.AutoMirrored.Filled.ExitToApp,
-                contentDescription = "logout",
-                tint = Color.White
+            AsyncImage(
+                model = userData?.imageUrl,
+                contentDescription = "Profile",
+                modifier = Modifier
+                    .size(50.dp)
+                    .clip(CircleShape)
+                    .clickable { menuExpanded = true },
+                placeholder = painterResource(id = R.drawable.ic_launcher_foreground),
+                error = painterResource(id = R.drawable.ic_launcher_foreground),
+                contentScale = ContentScale.Crop
             )
+            DropdownMenu(
+                expanded = menuExpanded,
+                onDismissRequest = { menuExpanded = false },
+                modifier = Modifier.background(myFitColors.current.cardsGrey)
+            ) {
+                DropdownMenuItem(
+                    text = { Text("Profile", color = Color.White) },
+                    onClick = {
+                        menuExpanded = false
+                        onProfileClick()
+                    }
+                )
+                DropdownMenuItem(
+                    text = { Text("Settings", color = Color.White) },
+                    onClick = {
+                        menuExpanded = false
+                        onSettingsClick()
+                    }
+                )
+                DropdownMenuItem(
+                    text = { Text("Logout", color = Color.White) },
+                    onClick = {
+                        menuExpanded = false
+                        onLogout()
+                    }
+                )
+            }
         }
 
         // Welcome message
@@ -97,7 +140,7 @@ fun HomeScreen(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
-                    text = "Recent Exercise",
+                    text = "Recent Exercises",
                     style = MaterialTheme.typography.titleMedium.copy(color = Color.White)
                 )
 

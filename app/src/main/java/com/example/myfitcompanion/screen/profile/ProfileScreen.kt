@@ -2,6 +2,7 @@ package com.example.myfitcompanion.screen.profile
 
 import android.net.Uri
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -15,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -29,14 +31,19 @@ import com.example.myfitcompanion.utils.ResultWrapper
 fun ProfileScreen(
     modifier: Modifier = Modifier,
     viewModel: ProfileViewModel = hiltViewModel(),
+    onProfileUpdated: () -> Unit = {},
     onChangePassword: () -> Unit = {}
 ) {
     val user by viewModel.user.collectAsStateWithLifecycle()
     val updateState by viewModel.updateState.collectAsStateWithLifecycle()
 
     Log.d("ProfileScreen", "User data: $user")
+    if(updateState is ResultWrapper.Success) {
+        Toast.makeText(LocalContext.current, "Profile updated successfully", Toast.LENGTH_SHORT).show()
+        onProfileUpdated()
+       Log.d("ProfileScreen", "Profile updated successfully: ${(updateState as ResultWrapper.Success).data}")
+    }
     var uri by remember { mutableStateOf<Uri?>(null) }
-    var userName by remember { mutableStateOf("") }
     var firstName by remember { mutableStateOf("") }
     var lastName by remember { mutableStateOf("") }
     var height by remember { mutableStateOf("") }
@@ -46,7 +53,6 @@ fun ProfileScreen(
     var goalWeight by remember { mutableStateOf("") }
 
     val hasChanges = user?.let { safeUser ->
-        userName != safeUser.username ||
         firstName != (safeUser.firstName ?: "") ||
                 lastName != (safeUser.lastName ?: "") ||
                 height != (safeUser.height?.toString() ?: "") ||
@@ -61,7 +67,6 @@ fun ProfileScreen(
     // Initialize fields when user data loads
     LaunchedEffect(user) {
         user?.let {
-            userName = it.username ?: ""
             firstName = it.firstName ?: ""
             lastName = it.lastName ?: ""
             height = it.height?.toString() ?: ""
@@ -113,22 +118,6 @@ fun ProfileScreen(
             }
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
-
-        OutlinedTextField(
-            value = userName,
-            onValueChange = { userName = it },
-            label = { Text("User Name", color = Color.Gray) },
-            singleLine = true,
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = myFitColors.current.gold,
-                unfocusedBorderColor = Color.Gray,
-                cursorColor = myFitColors.current.gold,
-                focusedTextColor = Color.White,
-                unfocusedTextColor = Color.White
-            ),
-            modifier = Modifier.fillMaxWidth()
-        )
         Spacer(modifier = Modifier.height(8.dp))
 
         OutlinedTextField(

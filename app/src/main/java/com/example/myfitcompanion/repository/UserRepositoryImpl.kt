@@ -55,30 +55,32 @@ class UserRepositoryImpl @Inject constructor(
         userDao.insertUser(user)
     }
 
-    override suspend fun updateUser(request: UpdateProfileRequest): ResultWrapper<UpdateProfileResponse> = try {
-        // 1. Get current user
-        val currentUser = userDao.getAllUsers().first().firstOrNull() ?: return ResultWrapper.Error("No user found")
+    override suspend fun updateUser(request: UpdateProfileRequest): ResultWrapper<UpdateProfileResponse> {
+        return try {
+            // 1. Get current user
+            val currentUser = userDao.getAllUsers().first().firstOrNull() ?: return ResultWrapper.Error("No user found")
 
-        // 2. Call API
-        val response = apiService.updateProfile(request).apply {
-            //save changed user data to local db
-            val updatedUser = currentUser.copy(
-                username = name ?: currentUser.username,
-                firstName = firstName ?: currentUser.firstName,
-                lastName = lastName ?: currentUser.lastName,
-                height = height ?: currentUser.height,
-                weight = weight ?: currentUser.weight,
-                bodyFat = bodyFat ?: currentUser.bodyFat,
-                goalBodyFat = goalWeight ?: currentUser.goalBodyFat,
-                imageUrl = imageUrl ?: currentUser.imageUrl
-            )
-            Log.d("UserRepositoryImpl", "updateUser: $updatedUser")
-            userDao.updateUserDetails(updatedUser)
+            // 2. Call API
+            val response = apiService.updateProfile(request).apply {
+                //save changed user data to local db
+                val updatedUser = currentUser.copy(
+                    firstName = firstName ?: currentUser.firstName,
+                    lastName = lastName ?: currentUser.lastName,
+                    height = height ?: currentUser.height,
+                    weight = weight ?: currentUser.weight,
+                    bodyFat = bodyFat ?: currentUser.bodyFat,
+                    goalBodyFat = goalBodyFat ?: currentUser.goalBodyFat,
+                    goalWeight = goalWeight ?: currentUser.goalWeight,
+                    imageUrl = imageUrl ?: currentUser.imageUrl
+                )
+                Log.d("UserRepositoryImpl", "updateUser: $updatedUser")
+                userDao.updateUserDetails(updatedUser)
+            }
+
+            ResultWrapper.Success(response)
+        } catch (e: Exception) {
+            ResultWrapper.Error(e.message)
         }
-
-        ResultWrapper.Success(response)
-    } catch (e: Exception) {
-        ResultWrapper.Error(e.message)
     }
 
     override suspend fun deleteUser() {

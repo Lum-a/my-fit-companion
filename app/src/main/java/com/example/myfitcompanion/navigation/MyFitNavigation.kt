@@ -66,7 +66,6 @@ fun MyFitNavigation(navController: NavHostController, padding: PaddingValues, is
                     navigate(screen)
                 },
                 onNavigateToLogin = { navigate(Screen.Login) },
-                onNavigateToRegister = { navigate(Screen.Register) }
             )
         }
 
@@ -81,7 +80,8 @@ fun MyFitNavigation(navController: NavHostController, padding: PaddingValues, is
                 onLoginSucceed = { isAdmin ->
                     val screen = if (isAdmin) AdminScreen.Admin else Screen.Home
                     navigate(screen)
-                }
+                },
+                onSignUp = { navController.navigate(Screen.Register) }
             )
         }
         composable<Screen.Register> {
@@ -89,11 +89,13 @@ fun MyFitNavigation(navController: NavHostController, padding: PaddingValues, is
                 onRegisterSucceed = {
                     val screen = if (isAdmin) AdminScreen.Admin else Screen.Home
                     navigate(screen)
-                }
+                },
+                onLogin = {navController.navigate(Screen.Login)}
             )
         }
         composable<Screen.Profile> {
             ProfileScreen(
+                onProfileUpdated = { navController.navigate(Screen.Home) },
                 onChangePassword = { navigate(Screen.ChangePassword) }
             )
         }
@@ -109,6 +111,7 @@ fun MyFitNavigation(navController: NavHostController, padding: PaddingValues, is
                 onTrainersClick = { navigate(Screen.Trainer) },
                 onWorkoutClick = { navigate(Screen.Workout) },
                 onMealsClick = { navigate(Screen.Meal) },
+                onProfileClick = { navigate(Screen.Profile) }
             )
         }
         composable<Screen.Workout> {

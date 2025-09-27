@@ -28,9 +28,10 @@ class RegisterViewModel @Inject constructor(
     fun register(registerRequest: RegisterRequest) {
         if (!isValidEmail(registerRequest.email) ||
             !isValidPassword(registerRequest.password) ||
-            registerRequest.name.isEmpty()
+            registerRequest.firstName.isEmpty() ||
+            registerRequest.lastName.isEmpty()
         ) {
-            val message = "Name, email or password is invalid!"
+            val message = "First name, last name, email or password is invalid!"
             _registerState.value = ResultWrapper.Error(message)
             Log.d(TAG, "Register aborted: $message")
             return

@@ -128,7 +128,7 @@ fun AdminWorkoutScreen(
                                 onClick = { onWorkoutClick(workout.id) },
                                 onEdit = {
                                     editingWorkout = workout
-                                    name = workout.name
+                                    name = workout.title
                                     description = workout.description ?: ""
                                     uri = null // Don't pre-load existing image for editing
                                     showDialog = true
@@ -154,7 +154,7 @@ fun AdminWorkoutScreen(
                         scope.launch {
                             if (name.isNotBlank()) {
                                 val workoutRequest = WorkoutRequest(
-                                    name = name,
+                                    title = name,
                                     description = description,
                                 )
 
@@ -255,7 +255,7 @@ fun WorkoutCard(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column {
-                Text(workout.name, color = Color.White, style = MaterialTheme.typography.titleMedium)
+                Text(workout.title, color = Color.White, style = MaterialTheme.typography.titleMedium)
                 Text(workout.description ?: "", color = Color.Gray, style = MaterialTheme.typography.bodySmall)
             }
             Row {
