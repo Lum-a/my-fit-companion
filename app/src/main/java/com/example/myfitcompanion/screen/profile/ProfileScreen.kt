@@ -46,7 +46,7 @@ fun ProfileScreen(
     var goalWeight by remember { mutableStateOf("") }
 
     val hasChanges = user?.let { safeUser ->
-        userName != safeUser.name ||
+        userName != safeUser.username ||
         firstName != (safeUser.firstName ?: "") ||
                 lastName != (safeUser.lastName ?: "") ||
                 height != (safeUser.height?.toString() ?: "") ||
@@ -61,7 +61,7 @@ fun ProfileScreen(
     // Initialize fields when user data loads
     LaunchedEffect(user) {
         user?.let {
-            userName = it.name
+            userName = it.username ?: ""
             firstName = it.firstName ?: ""
             lastName = it.lastName ?: ""
             height = it.height?.toString() ?: ""

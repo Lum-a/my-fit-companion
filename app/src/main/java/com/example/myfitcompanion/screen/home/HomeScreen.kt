@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
@@ -116,16 +117,24 @@ fun HomeScreen(
                     }
                     is ResultWrapper.Success -> {
                         val exercise = state.data
-                        Text(
-                            modifier = modifier.clickable(
-                                enabled = exercise.videoId.isNotEmpty(),
-                                onClick = { onRecentExerciseClick(exercise.videoId) }
-                            ),
-                            text = "${exercise.name} - ${exercise.description}",
-                            style = MaterialTheme.typography.bodyMedium.copy(
-                                color = myFitColors.current.orange
-                            )
-                        )
+
+                        LazyRow {
+                            items(exercise.size) { index ->
+                                val item = exercise[index]
+                                Text(
+                                    modifier = modifier
+                                        .clickable(
+                                            enabled = true,
+                                            onClick = { onRecentExerciseClick(item.videoId) }
+                                        )
+                                        .padding(end = 8.dp),
+                                    text = "${item.name} - ${item.description}",
+                                    style = MaterialTheme.typography.bodyMedium.copy(
+                                        color = myFitColors.current.orange
+                                    )
+                                )
+                            }
+                        }
                     }
                     is ResultWrapper.Error -> {
                         Text(

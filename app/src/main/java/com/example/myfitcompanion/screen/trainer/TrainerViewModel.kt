@@ -33,7 +33,7 @@ class TrainerViewModel @Inject constructor(
         )
 
     val userName: StateFlow<String> = trainerRepository.getUser()
-        .map { it?.name ?: "" }
+        .map { it?.username ?: "" }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.Lazily,

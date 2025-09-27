@@ -87,9 +87,9 @@ class WorkoutViewModel @Inject constructor(
         }
     }
 
-    fun addRecentExercise(workoutId: Int) {
+    fun saveRecentExercise(exerciseId: Int) {
         viewModelScope.launch {
-            userRepository.addRecentExercise(workoutId)
+            userRepository.saveRecentExercise(exerciseId)
         }
     }
 }

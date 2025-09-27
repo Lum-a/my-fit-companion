@@ -21,15 +21,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.myfitcompanion.db.room.entities.Meal
 import com.example.myfitcompanion.ui.theme.myFitColors
 
@@ -39,10 +37,9 @@ import com.example.myfitcompanion.ui.theme.myFitColors
 @Composable
 fun MealScreen(
     modifier: Modifier = Modifier,
-    viewModel: MealViewModel = hiltViewModel(),
+    meals: List<Meal> = listOf(),
     onMealClick: (Meal) -> Unit = {}
 ) {
-    val meals by viewModel.meals.collectAsStateWithLifecycle()
 
     Box(
         modifier = modifier
@@ -140,5 +137,21 @@ fun MealCard(
                 }
             }
         }
+    }
+}
+
+@Preview
+@Composable
+fun TestMealScreen() {
+    val meal = listOf(
+        Meal(1, "Chicken Salad", 350, "A healthy chicken salad with mixed greens and vinaigrette."),
+        Meal(2, "Grilled Salmon", 450, "Grilled salmon with lemon butter sauce and steamed vegetables."),
+        Meal(3, "Veggie Stir-fry", 300, "A colorful veggie stir-fry with tofu and brown rice."),
+        Meal(4, "Beef Tacos", 500, "Spicy beef tacos with fresh salsa and guacamole."),
+        Meal(5, "Pasta Primavera", 400, "Pasta with fresh vegetables in a light garlic sauce."),
+        Meal(6, "Fruit Smoothie", 250, "A refreshing fruit smoothie with yogurt and honey."))
+
+    MealScreen(meals = meal) {
+
     }
 }
