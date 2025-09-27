@@ -49,7 +49,6 @@ import com.example.myfitcompanion.R
 import com.example.myfitcompanion.ui.theme.myFitColors
 import com.example.myfitcompanion.utils.ResultWrapper
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.window.PopupProperties
 
 @Composable
 fun HomeScreen(
