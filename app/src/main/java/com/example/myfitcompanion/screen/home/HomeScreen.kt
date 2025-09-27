@@ -49,6 +49,7 @@ import com.example.myfitcompanion.R
 import com.example.myfitcompanion.ui.theme.myFitColors
 import com.example.myfitcompanion.utils.ResultWrapper
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.window.PopupProperties
 
 @Composable
 fun HomeScreen(
@@ -79,43 +80,46 @@ fun HomeScreen(
                 .padding(top = 8.dp, end = 8.dp),
             contentAlignment = Alignment.TopEnd
         ) {
-            AsyncImage(
-                model = userData?.imageUrl,
-                contentDescription = "Profile",
-                modifier = Modifier
-                    .size(50.dp)
-                    .clip(CircleShape)
-                    .clickable { menuExpanded = true },
-                placeholder = painterResource(id = R.drawable.ic_launcher_foreground),
-                error = painterResource(id = R.drawable.ic_launcher_foreground),
-                contentScale = ContentScale.Crop
-            )
-            DropdownMenu(
-                expanded = menuExpanded,
-                onDismissRequest = { menuExpanded = false },
-                modifier = Modifier.background(myFitColors.current.cardsGrey)
-            ) {
-                DropdownMenuItem(
-                    text = { Text("Profile", color = Color.White) },
-                    onClick = {
-                        menuExpanded = false
-                        onProfileClick()
-                    }
+
+            Box {
+                AsyncImage(
+                    model = userData?.imageUrl,
+                    contentDescription = "Profile",
+                    modifier = Modifier
+                        .size(50.dp)
+                        .clip(CircleShape)
+                        .clickable { menuExpanded = true },
+                    placeholder = painterResource(id = R.drawable.ic_launcher_foreground),
+                    error = painterResource(id = R.drawable.ic_launcher_foreground),
+                    contentScale = ContentScale.Crop
                 )
-                DropdownMenuItem(
-                    text = { Text("Settings", color = Color.White) },
-                    onClick = {
-                        menuExpanded = false
-                        onSettingsClick()
-                    }
-                )
-                DropdownMenuItem(
-                    text = { Text("Logout", color = Color.White) },
-                    onClick = {
-                        menuExpanded = false
-                        onLogout()
-                    }
-                )
+                DropdownMenu(
+                    expanded = menuExpanded,
+                    onDismissRequest = { menuExpanded = false },
+                    modifier = Modifier.background(myFitColors.current.cardsGrey)
+                ) {
+                    DropdownMenuItem(
+                        text = { Text("Profile", color = Color.White) },
+                        onClick = {
+                            menuExpanded = false
+                            onProfileClick()
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = { Text("Settings", color = Color.White) },
+                        onClick = {
+                            menuExpanded = false
+                            onSettingsClick()
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = { Text("Logout", color = Color.White) },
+                        onClick = {
+                            menuExpanded = false
+                            onLogout()
+                        }
+                    )
+                }
             }
         }
 
