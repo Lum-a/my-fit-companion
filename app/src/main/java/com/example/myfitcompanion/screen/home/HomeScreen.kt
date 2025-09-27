@@ -1,6 +1,5 @@
 package com.example.myfitcompanion.screen.home
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -36,16 +35,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil.compose.rememberAsyncImagePainter
+import coil.compose.AsyncImage
+import com.example.myfitcompanion.R
 import com.example.myfitcompanion.ui.theme.myFitColors
 import com.example.myfitcompanion.utils.ResultWrapper
+import androidx.compose.ui.layout.ContentScale
 
 @Composable
 fun HomeScreen(
@@ -71,56 +74,48 @@ fun HomeScreen(
             .padding(16.dp)
     ) {
         Box(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp, end = 8.dp),
             contentAlignment = Alignment.TopEnd
         ) {
-            Box {
-                val painter = rememberAsyncImagePainter(userData?.imageUrl)
-                if (userData?.imageUrl.isNullOrEmpty() || painter.state is coil.compose.AsyncImagePainter.State.Error) {
-                    Icon(
-                        imageVector = Icons.Default.AccountCircle,
-                        contentDescription = "Profile",
-                        modifier = Modifier
-                            .size(40.dp)
-                            .clickable { menuExpanded = true },
-                        tint = Color.White
-                    )
-                } else {
-                    Image(
-                        painter = painter,
-                        contentDescription = "Profile",
-                        modifier = Modifier
-                            .size(40.dp)
-                            .clickable { menuExpanded = true }
-                    )
-                }
-                DropdownMenu(
-                    expanded = menuExpanded,
-                    onDismissRequest = { menuExpanded = false },
-                    modifier = Modifier.background(myFitColors.current.cardsGrey)
-                ) {
-                    DropdownMenuItem(
-                        text = { Text("Profile", color = Color.White) },
-                        onClick = {
-                            menuExpanded = false
-                            onProfileClick()
-                        }
-                    )
-                    DropdownMenuItem(
-                        text = { Text("Settings", color = Color.White) },
-                        onClick = {
-                            menuExpanded = false
-                            onSettingsClick()
-                        }
-                    )
-                    DropdownMenuItem(
-                        text = { Text("Logout", color = Color.White) },
-                        onClick = {
-                            menuExpanded = false
-                            onLogout()
-                        }
-                    )
-                }
+            AsyncImage(
+                model = userData?.imageUrl,
+                contentDescription = "Profile",
+                modifier = Modifier
+                    .size(50.dp)
+                    .clip(CircleShape)
+                    .clickable { menuExpanded = true },
+                placeholder = painterResource(id = R.drawable.ic_launcher_foreground),
+                error = painterResource(id = R.drawable.ic_launcher_foreground),
+                contentScale = ContentScale.Crop
+            )
+            DropdownMenu(
+                expanded = menuExpanded,
+                onDismissRequest = { menuExpanded = false },
+                modifier = Modifier.background(myFitColors.current.cardsGrey)
+            ) {
+                DropdownMenuItem(
+                    text = { Text("Profile", color = Color.White) },
+                    onClick = {
+                        menuExpanded = false
+                        onProfileClick()
+                    }
+                )
+                DropdownMenuItem(
+                    text = { Text("Settings", color = Color.White) },
+                    onClick = {
+                        menuExpanded = false
+                        onSettingsClick()
+                    }
+                )
+                DropdownMenuItem(
+                    text = { Text("Logout", color = Color.White) },
+                    onClick = {
+                        menuExpanded = false
+                        onLogout()
+                    }
+                )
             }
         }
 
@@ -145,7 +140,7 @@ fun HomeScreen(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
-                    text = "Recent Exercise",
+                    text = "Recent Exercises",
                     style = MaterialTheme.typography.titleMedium.copy(color = Color.White)
                 )
 
