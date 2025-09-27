@@ -169,7 +169,7 @@ fun UserCard(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column {
-                Text(user.username ?: "", color = Color.White, style = MaterialTheme.typography.titleMedium)
+                Text(user.firstName ?: "", color = Color.White, style = MaterialTheme.typography.titleMedium)
                 Text(user.email, color = Color.Gray, style = MaterialTheme.typography.bodySmall)
                 Text(user.role, color = myFitColors.current.gold, style = MaterialTheme.typography.bodySmall)
             }

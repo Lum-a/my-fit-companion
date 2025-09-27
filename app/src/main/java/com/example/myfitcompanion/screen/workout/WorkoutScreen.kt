@@ -132,7 +132,7 @@ fun WorkoutCard(
             workout.imageUrl?.let { imageUrl ->
                 SubcomposeAsyncImage(
                     model = imageUrl,
-                    contentDescription = workout.name,
+                    contentDescription = workout.title,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize()
                 ) {
@@ -199,7 +199,7 @@ fun WorkoutCard(
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = workout.name,
+                    text = workout.title,
                     style = MaterialTheme.typography.titleMedium.copy(
                         color = Color.White,
                         fontWeight = FontWeight.Bold
@@ -228,13 +228,13 @@ fun WorkoutScreenTest() {
     val sampleWorkouts = listOf(
         WorkoutResponse(
             id = 1,
-            name = "Morning Cardio",
+            title = "Morning Cardio",
             description = "A quick cardio session to start your day.",
             imageUrl = "https://images.pexels.com/photos/1552249/pexels-photo-1552249.jpeg",
         ),
         WorkoutResponse(
             id = 2,
-            name = "Strength Training",
+            title = "Strength Training",
             description = "Build muscle and strength with this workout.",
             imageUrl = "https://images.pexels.com/photos/2261485/pexels-photo-2261485.jpeg",
         )

@@ -7,8 +7,6 @@ import com.squareup.moshi.JsonClass
 data class UpdateProfileRequest(
     @Json(name = "id")
     val userId: Int,
-    @Json(name = "name")
-    val name: String? = null,
     @Json(name = "firstName")
     val firstName: String? = null,
     @Json(name = "lastName")
@@ -33,8 +31,6 @@ data class UpdateProfileRequest(
 data class UpdateProfileResponse(
     @Json(name = "id")
     val userId: Int,
-    @Json(name = "name")
-    val name: String?,
     @Json(name = "firstName")
     val firstName: String?,
     @Json(name = "lastName")

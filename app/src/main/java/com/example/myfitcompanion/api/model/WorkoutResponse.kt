@@ -7,8 +7,8 @@ import com.squareup.moshi.JsonClass
 data class WorkoutResponse(
     @Json(name = "id")
     val id: Int,
-    @Json(name = "name")
-    val name: String,
+    @Json(name = "title")
+    val title: String,
     @Json(name = "description")
     val description: String?,
     @Json(name = "imageUrl")

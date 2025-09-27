@@ -11,8 +11,6 @@ import kotlinx.serialization.Serializable
 data class UserResponse(
     @Json(name = "id")
     val id: Int,
-    @Json(name = "username")
-    val username: String?,
     @Json(name = "firstName")
     val firstName: String?,
     @Json(name = "lastName")
@@ -27,9 +25,9 @@ data class UserResponse(
     val weight: Float? = null,
     @Json(name = "bodyFat")
     val bodyFat: Float? = null,
-    @Json(name = "goalBodyFatPct")
+    @Json(name = "goalBodyFat")
     val goalBodyFat: Float? = null,
-    @Json(name = "goalWeightKg")
+    @Json(name = "goalWeight")
     val goalWeight: Float? = null,
     @Json(name = "createdAt")
     val createdAt: String,
@@ -39,7 +37,6 @@ data class UserResponse(
     fun asUser(): User {
         return User(
             id = id,
-            username = username,
             firstName = firstName,
             lastName = lastName,
             email = email,
