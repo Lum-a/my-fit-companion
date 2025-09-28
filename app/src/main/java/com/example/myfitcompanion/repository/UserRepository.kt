@@ -10,6 +10,7 @@ import com.example.myfitcompanion.db.room.entities.User
 import com.example.myfitcompanion.api.model.RegisterResponse
 import com.example.myfitcompanion.api.model.SplitResponse
 import com.example.myfitcompanion.api.model.WorkoutResponse
+import com.example.myfitcompanion.model.UserRole
 import com.example.myfitcompanion.utils.ResultWrapper
 import kotlinx.coroutines.flow.Flow
 
@@ -22,7 +23,7 @@ interface UserRepository {
     suspend fun getUserId(): Int?
     suspend fun deleteUser()
     suspend fun logout()
-    fun isAdmin(): Flow<Boolean>
+    fun userRole(): Flow<UserRole>
     fun isLoggedIn(): Flow<Boolean>
 
     suspend fun getRecentExercise(): ResultWrapper<List<ExerciseResponse>>

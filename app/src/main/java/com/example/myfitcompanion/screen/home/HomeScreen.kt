@@ -64,6 +64,7 @@ fun HomeScreen(
     onSettingsClick: () -> Unit = {}
 ) {
     val userData by viewModel.user.collectAsStateWithLifecycle()
+    val isTrainer by viewModel.isTrainer.collectAsStateWithLifecycle()
     val recentExerciseState by viewModel.recentExercise.collectAsStateWithLifecycle()
     var menuExpanded by remember { mutableStateOf(false) }
 
@@ -223,7 +224,7 @@ fun HomeScreen(
             }
             item {
                 QuickActionCard(
-                    label = "Trainers",
+                    label = if (isTrainer == true) "Chats" else "Trainers",
                     icon = Icons.Default.AccountCircle,
                     onClick = onTrainersClick
                 )

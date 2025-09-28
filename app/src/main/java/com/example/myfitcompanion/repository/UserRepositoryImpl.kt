@@ -13,6 +13,7 @@ import com.example.myfitcompanion.api.model.RegisterRequest
 import com.example.myfitcompanion.db.room.entities.User
 import com.example.myfitcompanion.api.model.RegisterResponse
 import com.example.myfitcompanion.api.model.WorkoutResponse
+import com.example.myfitcompanion.model.UserRole
 import com.example.myfitcompanion.utils.ResultWrapper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -92,10 +93,10 @@ class UserRepositoryImpl @Inject constructor(
         userDao.deleteUser()
     }
 
-    override fun isAdmin(): Flow<Boolean> =
+    override fun userRole(): Flow<UserRole> =
         userDao.getUser()
             .map { user ->
-                user?.role == "admin".uppercase()
+                UserRole.fromID(user?.role)
             }
 
     override fun isLoggedIn(): Flow<Boolean> = combine(
