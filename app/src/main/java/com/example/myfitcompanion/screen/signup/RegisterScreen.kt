@@ -1,8 +1,10 @@
 package com.example.myfitcompanion.screen.signup
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -14,6 +16,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
@@ -34,15 +37,18 @@ import com.example.myfitcompanion.utils.isValidPassword
 fun RegisterScreen(
     modifier: Modifier = Modifier,
     viewModel: RegisterViewModel = hiltViewModel(),
-    onRegisterSucceed: (Boolean) -> Unit = {}
+    onRegisterSucceed: (Boolean) -> Unit = {},
+    onLogin: () -> Unit = {},
 ) {
     val state by viewModel.registerState.collectAsStateWithLifecycle()
 
-    var name by remember { mutableStateOf("") }
+    var firstName by remember { mutableStateOf("") }
+    var lastName by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
-    var nameError by remember { mutableStateOf(false) }
+    var firstNameError by remember { mutableStateOf(false) }
+    var lastNameError by remember { mutableStateOf(false) }
     var emailError by remember { mutableStateOf(false) }
     var passwordError by remember { mutableStateOf(false) }
 
@@ -63,14 +69,25 @@ fun RegisterScreen(
 
         UserTextField(
             modifier = modifier,
-            label = "Name",
-            input = name,
-            onInputChange = { name = it },
-            onInputErrorChange = {nameError = it },
-            inputError = nameError,
+            label = "First Name",
+            input = firstName,
+            onInputChange = { firstName = it },
+            onInputErrorChange = { firstNameError = it },
+            inputError = firstNameError,
             errorMessage = stringResource(R.string.invalid_name),
-            isValid = { name.isNotEmpty() },
+            isValid = { firstName.isNotEmpty() },
             shouldFocus = true
+        )
+
+        UserTextField(
+            modifier = modifier,
+            label = "Last Name",
+            input = lastName,
+            onInputChange = { lastName = it },
+            onInputErrorChange = { lastNameError = it },
+            inputError = lastNameError,
+            errorMessage = stringResource(R.string.invalid_name),
+            isValid = { lastName.isNotEmpty() }
         )
 
         UserTextField(
@@ -129,11 +146,12 @@ fun RegisterScreen(
             modifier = modifier,
             text = "Register",
             isLoading = state is ResultWrapper.Loading,
-            enabled = isValidEmail(email) && isValidPassword(password) && name.isNotEmpty(),
+            enabled = isValidEmail(email) && isValidPassword(password) && firstName.isNotEmpty() && lastName.isNotEmpty(),
             onClick = {
                 viewModel.register(
                     RegisterRequest(
-                        name = name,
+                        firstName = firstName,
+                        lastName = lastName,
                         email = email,
                         password = password,
                         height = height.toFloatOrNull(),
@@ -150,5 +168,21 @@ fun RegisterScreen(
             delay = 200,
             onSucceed = { onRegisterSucceed(it) }
         )
+
+        VerticalSpace(modifier, 8.dp)
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+        ) {
+            Text("Already have an account? ", color = Color.White)
+            Text(
+                text = "Sign in",
+                color = myFitColors.current.gold,
+                modifier = Modifier
+                    .clickable { onLogin() }
+                    .padding(8.dp)
+            )
+        }
     }
 }

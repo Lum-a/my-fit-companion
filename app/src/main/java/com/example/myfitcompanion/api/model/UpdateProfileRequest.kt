@@ -5,44 +5,48 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 data class UpdateProfileRequest(
-    @Json(name = "userId")
+    @Json(name = "id")
     val userId: Int,
-    @Json(name = "name")
-    val name: String? = null,
     @Json(name = "firstName")
     val firstName: String? = null,
     @Json(name = "lastName")
     val lastName: String? = null,
     @Json(name = "email")
     val email: String? = null,
-    @Json(name = "height")
+    @Json(name = "heightCm")
     val height: Float? = null,
-    @Json(name = "weight")
+    @Json(name = "weightKg")
     val weight: Float? = null,
-    @Json(name = "bodyFat")
+    @Json(name = "bodyFatPct")
     val bodyFat: Float? = null,
-    @Json(name = "goal")
-    val goal: String? = null,
-    @Json(name = "photoUrl")
+    @Json(name = "goalWeightKg")
+    val goalWeight: Float?,
+    @Json(name = "goalBodyFatPct")
+    val goalBodyFat: Float?,
+    @Json(name = "imageUrl")
     val imageUrl: String? = null
 )
 
 @JsonClass(generateAdapter = true)
 data class UpdateProfileResponse(
-    @Json(name = "userId")
+    @Json(name = "id")
     val userId: Int,
-    @Json(name = "name")
-    val name: String,
+    @Json(name = "firstName")
+    val firstName: String?,
+    @Json(name = "lastName")
+    val lastName: String?,
     @Json(name = "email")
     val email: String,
-    @Json(name = "height")
+    @Json(name = "heightCm")
     val height: Float?,
-    @Json(name = "weight")
+    @Json(name = "weightKg")
     val weight: Float?,
-    @Json(name = "bodyFat")
+    @Json(name = "bodyFatPct")
     val bodyFat: Float?,
-    @Json(name = "goal")
-    val goal: String?,
-    @Json(name = "photoUrl")
+    @Json(name = "goalWeightKg")
+    val goalWeight: Float?,
+    @Json(name = "goalBodyFatPct")
+    val goalBodyFat: Float?,
+    @Json(name = "imageUrl")
     val imageUrl: String?
 )

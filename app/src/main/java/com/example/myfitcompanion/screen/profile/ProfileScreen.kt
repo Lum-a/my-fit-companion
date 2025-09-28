@@ -1,9 +1,12 @@
 package com.example.myfitcompanion.screen.profile
 
 import android.net.Uri
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -13,6 +16,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
@@ -26,19 +31,27 @@ import com.example.myfitcompanion.utils.ResultWrapper
 fun ProfileScreen(
     modifier: Modifier = Modifier,
     viewModel: ProfileViewModel = hiltViewModel(),
+    onProfileUpdated: () -> Unit = {},
     onChangePassword: () -> Unit = {},
     onNavigateToSettings: () -> Unit = {}
 ) {
     val user by viewModel.user.collectAsStateWithLifecycle()
     val updateState by viewModel.updateState.collectAsStateWithLifecycle()
 
+    Log.d("ProfileScreen", "User data: $user")
+    if(updateState is ResultWrapper.Success) {
+        Toast.makeText(LocalContext.current, "Profile updated successfully", Toast.LENGTH_SHORT).show()
+        onProfileUpdated()
+       Log.d("ProfileScreen", "Profile updated successfully: ${(updateState as ResultWrapper.Success).data}")
+    }
     var uri by remember { mutableStateOf<Uri?>(null) }
     var firstName by remember { mutableStateOf("") }
     var lastName by remember { mutableStateOf("") }
     var height by remember { mutableStateOf("") }
     var weight by remember { mutableStateOf("") }
     var bodyFat by remember { mutableStateOf("") }
-    var goal by remember { mutableStateOf("") }
+    var goalBodyFat by remember { mutableStateOf("") }
+    var goalWeight by remember { mutableStateOf("") }
 
     val hasChanges = user?.let { safeUser ->
         firstName != (safeUser.firstName ?: "") ||
@@ -46,7 +59,8 @@ fun ProfileScreen(
                 height != (safeUser.height?.toString() ?: "") ||
                 weight != (safeUser.weight?.toString() ?: "") ||
                 bodyFat != (safeUser.bodyFat?.toString() ?: "") ||
-                goal != (safeUser.goal ?: "") ||
+                goalBodyFat != (safeUser.goalBodyFat ?: "") ||
+                goalWeight != (safeUser.goalWeight ?: "") ||
                 uri != null
     } == true
 
@@ -59,7 +73,8 @@ fun ProfileScreen(
             height = it.height?.toString() ?: ""
             weight = it.weight?.toString() ?: ""
             bodyFat = it.bodyFat?.toString() ?: ""
-            goal = it.goal ?: ""
+            goalBodyFat = it.goalBodyFat?.toString() ?: ""
+            goalWeight = it.goalWeight?.toString() ?: ""
         }
     }
 
@@ -202,10 +217,31 @@ fun ProfileScreen(
         )
         Spacer(modifier = Modifier.height(8.dp))
         OutlinedTextField(
-            value = goal,
-            onValueChange = { goal = it },
-            label = { Text("Goal", color = Color.Gray) },
+            value = goalWeight,
+            onValueChange = { goalWeight = it },
+            label = { Text("Goal Weight(KG)", color = Color.Gray) },
             singleLine = true,
+            keyboardOptions = KeyboardOptions.Default.copy(
+                keyboardType = KeyboardType.Number
+            ),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = myFitColors.current.gold,
+                unfocusedBorderColor = Color.Gray,
+                cursorColor = myFitColors.current.gold,
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.White
+            ),
+            modifier = Modifier.fillMaxWidth()
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        OutlinedTextField(
+            value = goalBodyFat,
+            onValueChange = { goalBodyFat = it },
+            label = { Text("Goal Body Fat (%)", color = Color.Gray) },
+            singleLine = true,
+            keyboardOptions = KeyboardOptions.Default.copy(
+                keyboardType = KeyboardType.Number
+            ),
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = myFitColors.current.gold,
                 unfocusedBorderColor = Color.Gray,
@@ -228,7 +264,8 @@ fun ProfileScreen(
                             height = height.toFloatOrNull(),
                             weight = weight.toFloatOrNull(),
                             bodyFat = bodyFat.toFloatOrNull(),
-                            goal = goal.ifBlank { null }
+                            goalWeight = goalBodyFat.toFloatOrNull(),
+                            goalBodyFat = goalBodyFat.toFloatOrNull()
                         ),
                         imageUri = uri
                     )

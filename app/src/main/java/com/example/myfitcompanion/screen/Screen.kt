@@ -29,6 +29,9 @@ sealed class Screen {
     data class Exercise(val splitId: Int): Screen()
 
     @Serializable
+    data class YoutubePlayer(val videoUrl: String): Screen()
+
+    @Serializable
     data object Trainer: Screen()
 
     @Serializable
@@ -39,6 +42,9 @@ sealed class Screen {
 
     @Serializable
     data object Meal: Screen()
+
+    @Serializable
+    data class Chat(val userId: Int,val userName: String, val peerId: Int, val peerName: String): Screen()
 
     @Serializable
     data object Settings: Screen()

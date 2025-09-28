@@ -37,10 +37,10 @@ fun AdminExerciseScreen(
 ) {
     val exercisesState by viewModel.exercises.collectAsState()
     var showDialog by remember { mutableStateOf(false) }
+    var editingExercise by remember { mutableStateOf<ExerciseResponse?>(null) }
     var name by remember { mutableStateOf("") }
-    var type by remember { mutableStateOf("") }
-    var duration by remember { mutableStateOf("") }
-    var caloriesBurned by remember { mutableStateOf("") }
+    var description by remember { mutableStateOf("") }
+    var videoId by remember { mutableStateOf("") }
 
     Scaffold(
         topBar = {
@@ -59,7 +59,13 @@ fun AdminExerciseScreen(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { showDialog = true },
+                onClick = {
+                    editingExercise = null
+                    name = ""
+                    description = ""
+                    videoId = ""
+                    showDialog = true
+                },
                 containerColor = myFitColors.current.gold
             ) {
                 Icon(Icons.Default.Add, contentDescription = "Add Exercise")
@@ -95,8 +101,16 @@ fun AdminExerciseScreen(
                         items(state.data) { exercise ->
                             ExerciseCard(
                                 exercise = exercise,
-                                onEdit = { /* TODO: open edit dialog */ },
-                                onDelete = { viewModel.deleteExercise(exercise.id) }
+                                onEdit = {
+                                    editingExercise = exercise
+                                    name = exercise.name
+                                    description = exercise.description ?: ""
+                                    videoId = exercise.videoId
+                                    showDialog = true
+                                },
+                                onDelete = {
+                                    viewModel.deleteExercise(exercise.id)
+                                }
                             )
                         }
                     }
@@ -108,25 +122,25 @@ fun AdminExerciseScreen(
                 onDismissRequest = { showDialog = false },
                 confirmButton = {
                     TextButton(onClick = {
-                        val durationInt = duration.toIntOrNull()
-                        val caloriesInt = caloriesBurned.toIntOrNull()
-                        if (name.isNotBlank() && type.isNotBlank() && durationInt != null && caloriesInt != null) {
-                            viewModel.addExercise(
-                                ExerciseRequest(
-                                    name = name,
-                                    type = type,
-                                    duration = durationInt,
-                                    caloriesBurned = caloriesInt
-                                )
+                        if (name.isNotBlank() && videoId.isNotBlank()) {
+                            val req = ExerciseRequest(
+                                name = name,
+                                description = description,
+                                videoId = videoId,
                             )
+
+                            editingExercise?.let {
+                                viewModel.updateExercise(it.id, req)
+                            } ?: viewModel.addExercise(splitId = splitId, req)
+
                             showDialog = false
+                            editingExercise = null
                             name = ""
-                            type = ""
-                            duration = ""
-                            caloriesBurned = ""
+                            description = ""
+                            videoId = ""
                         }
                     }) {
-                        Text("Create")
+                        Text(if (editingExercise != null) "Update" else "Create")
                     }
                 },
                 dismissButton = {
@@ -134,7 +148,7 @@ fun AdminExerciseScreen(
                         Text("Cancel")
                     }
                 },
-                title = { Text("Create Exercise") },
+                title = { Text(if (editingExercise != null) "Edit Exercise" else "Create Exercise") },
                 text = {
                     Column {
                         OutlinedTextField(
@@ -144,21 +158,15 @@ fun AdminExerciseScreen(
                             modifier = Modifier.fillMaxWidth()
                         )
                         OutlinedTextField(
-                            value = type,
-                            onValueChange = { type = it },
-                            label = { Text("Type") },
+                            value = description,
+                            onValueChange = { description = it },
+                            label = { Text("Description") },
                             modifier = Modifier.fillMaxWidth()
                         )
                         OutlinedTextField(
-                            value = duration,
-                            onValueChange = { duration = it },
-                            label = { Text("Duration (min)") },
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                        OutlinedTextField(
-                            value = caloriesBurned,
-                            onValueChange = { caloriesBurned = it },
-                            label = { Text("Calories Burned") },
+                            value = videoId,
+                            onValueChange = { videoId = it },
+                            label = { Text("Video ID") },
                             modifier = Modifier.fillMaxWidth()
                         )
                     }
@@ -188,9 +196,7 @@ fun ExerciseCard(
         ) {
             Column {
                 Text(exercise.name, color = Color.White, style = MaterialTheme.typography.titleMedium)
-                Text(exercise.type, color = Color.Gray, style = MaterialTheme.typography.bodySmall)
-                Text("Duration: ${exercise.duration} min", color = myFitColors.current.gold, style = MaterialTheme.typography.bodySmall)
-                Text("Calories: ${exercise.caloriesBurned}", color = myFitColors.current.lightOrange, style = MaterialTheme.typography.bodySmall)
+                Text(exercise.description ?: "", color = Color.Gray, style = MaterialTheme.typography.bodySmall)
             }
             Row {
                 IconButton(onClick = onEdit) {

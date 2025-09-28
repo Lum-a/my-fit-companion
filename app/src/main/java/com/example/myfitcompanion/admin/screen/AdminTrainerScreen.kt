@@ -76,7 +76,7 @@ fun AdminTrainerScreen(
         ) {
             when (val state = trainersState) {
                 is ResultWrapper.Initial -> {
-                    LaunchedEffect(Unit) { viewModel.loadUsers() }
+                    LaunchedEffect(Unit) { viewModel.loadTrainers() }
                 }
                 is ResultWrapper.Loading -> {
                     CircularProgressIndicator(

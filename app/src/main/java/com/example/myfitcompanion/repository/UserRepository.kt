@@ -27,8 +27,8 @@ interface UserRepository {
     fun isAdmin(): Flow<Boolean>
     fun isLoggedIn(): Flow<Boolean>
 
-    suspend fun getRecentExercise(): ResultWrapper<ExerciseResponse>
-    suspend fun addRecentExercise(splitId: Int)
+    suspend fun getRecentExercise(): ResultWrapper<List<ExerciseResponse>>
+    suspend fun saveRecentExercise(exerciseId: Int)
     suspend fun getWorkouts(): ResultWrapper<List<WorkoutResponse>>
     suspend fun getSplits(workoutId: Int): ResultWrapper<List<SplitResponse>>
     suspend fun getExercises(splitId: Int): ResultWrapper<List<ExerciseResponse>>

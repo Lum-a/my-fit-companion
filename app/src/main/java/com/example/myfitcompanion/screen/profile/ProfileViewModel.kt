@@ -25,6 +25,8 @@ class ProfileViewModel @Inject constructor(
     private val appWriteInteractor: AppWriteInteractor
 ): ViewModel() {
 
+    private val TAG = "ProfileViewModel"
+
     val user = userRepository.getUser()
         .stateIn(
             scope = viewModelScope,
@@ -116,7 +118,7 @@ class ProfileViewModel @Inject constructor(
         if (imageUri == null) return@withContext null
         return@withContext try {
             val result = appWriteInteractor.uploadProfileImage(imageUri)
-            Log.d("ProfileViewModel", "Image upload result: $result")
+            Log.d(TAG, "Image upload result: $result")
             if (result.isSuccess) {
                 result.getOrNull()
             } else {

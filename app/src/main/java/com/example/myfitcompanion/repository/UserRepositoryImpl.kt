@@ -56,26 +56,32 @@ class UserRepositoryImpl @Inject constructor(
         userDao.insertUser(user)
     }
 
-    override suspend fun updateUser(request: UpdateProfileRequest): ResultWrapper<UpdateProfileResponse> = try {
-        // 1. Get current user
-        val currentUser = userDao.getAllUsers().first().firstOrNull() ?: throw Exception("User not found")
+    override suspend fun updateUser(request: UpdateProfileRequest): ResultWrapper<UpdateProfileResponse> {
+        return try {
+            // 1. Get current user
+            val currentUser = userDao.getAllUsers().first().firstOrNull() ?: return ResultWrapper.Error("No user found")
 
-        // 2. Call API
-        val response = apiService.updateProfile(request)
+            // 2. Call API
+            val response = apiService.updateProfile(request).apply {
+                //save changed user data to local db
+                val updatedUser = currentUser.copy(
+                    firstName = firstName ?: currentUser.firstName,
+                    lastName = lastName ?: currentUser.lastName,
+                    height = height ?: currentUser.height,
+                    weight = weight ?: currentUser.weight,
+                    bodyFat = bodyFat ?: currentUser.bodyFat,
+                    goalBodyFat = goalBodyFat ?: currentUser.goalBodyFat,
+                    goalWeight = goalWeight ?: currentUser.goalWeight,
+                    imageUrl = imageUrl ?: currentUser.imageUrl
+                )
+                Log.d("UserRepositoryImpl", "updateUser: $updatedUser")
+                userDao.updateUserDetails(updatedUser)
+            }
 
-        // 3. Update local user with new data
-        val updatedUser = currentUser.copy(
-            height = request.height ?: currentUser.height,
-            weight = request.weight ?: currentUser.weight,
-            bodyFat = request.bodyFat ?: currentUser.bodyFat,
-            goal = request.goal ?: currentUser.goal,
-            imageUrl = request.imageUrl ?: currentUser.imageUrl
-        )
-
-        userDao.updateUserDetails(updatedUser)
-        ResultWrapper.Success(response)
-    } catch (e: Exception) {
-        ResultWrapper.Error(e.message)
+            ResultWrapper.Success(response)
+        } catch (e: Exception) {
+            ResultWrapper.Error(e.message)
+        }
     }
 
     override suspend fun updatePassword(
@@ -122,16 +128,16 @@ class UserRepositoryImpl @Inject constructor(
         user != null && !token.isNullOrEmpty()
     }
 
-    override suspend fun getRecentExercise(): ResultWrapper<ExerciseResponse> = try {
-            val response = apiService.getRecentExercise(getUserId())
+    override suspend fun getRecentExercise(): ResultWrapper<List<ExerciseResponse>> = try {
+            val response = apiService.getRecentExercises()
             ResultWrapper.Success(response)
         } catch (e: Exception) {
             ResultWrapper.Error(e.message)
         }
 
-    override suspend fun addRecentExercise(splitId: Int) {
+    override suspend fun saveRecentExercise(exerciseId: Int) {
         try {
-            apiService.addRecentExercise(splitId, getUserId())
+            apiService.saveRecentExercise(exerciseId)
         } catch (e: Exception) {
             Log.d("UserRepositoryImpl", "addRecentExercise: ${e.message}")
         }

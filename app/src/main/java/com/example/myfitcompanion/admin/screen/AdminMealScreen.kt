@@ -36,6 +36,7 @@ fun AdminMealScreen(
 ) {
     val mealsState by viewModel.meals.collectAsState()
     var showDialog by remember { mutableStateOf(false) }
+    var editingMeal by remember { mutableStateOf<MealsResponse?>(null) }
     var name by remember { mutableStateOf("") }
     var calories by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
@@ -57,7 +58,13 @@ fun AdminMealScreen(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { showDialog = true },
+                onClick = {
+                    editingMeal = null
+                    name = ""
+                    calories = ""
+                    description = ""
+                    showDialog = true
+                },
                 containerColor = myFitColors.current.gold
             ) {
                 Icon(Icons.Default.Add, contentDescription = "Add Meal")
@@ -95,7 +102,13 @@ fun AdminMealScreen(
                         items(state.data) { meal ->
                             MealCard(
                                 meal = meal,
-                                onEdit = { /* TODO: open edit dialog */ },
+                                onEdit = {
+                                    editingMeal = meal
+                                    name = meal.name
+                                    calories = meal.calories.toString()
+                                    description = meal.description ?: ""
+                                    showDialog = true
+                                },
                                 onDelete = { viewModel.deleteMeal(meal.id) }
                             )
                         }
@@ -105,33 +118,49 @@ fun AdminMealScreen(
         }
         if (showDialog) {
             AlertDialog(
-                onDismissRequest = { showDialog = false },
+                onDismissRequest = {
+                    showDialog = false
+                    editingMeal = null
+                    name = ""
+                    calories = ""
+                    description = ""
+                },
                 confirmButton = {
                     TextButton(onClick = {
                         val caloriesInt = calories.toIntOrNull()
                         if (name.isNotBlank() && caloriesInt != null) {
-                            viewModel.addMeal(
-                                MealRequest(
-                                    name = name,
-                                    calories = caloriesInt,
-                                    description = description.ifBlank { null }
-                                )
+                            val mealRequest = MealRequest(
+                                name = name,
+                                calories = caloriesInt,
+                                description = description.ifBlank { null }
                             )
+
+                            editingMeal?.let {
+                                viewModel.updateMeal(it.id, mealRequest)
+                            } ?: viewModel.addMeal(mealRequest)
+
                             showDialog = false
+                            editingMeal = null
                             name = ""
                             calories = ""
                             description = ""
                         }
                     }) {
-                        Text("Create")
+                        Text(if (editingMeal != null) "Update" else "Create")
                     }
                 },
                 dismissButton = {
-                    TextButton(onClick = { showDialog = false }) {
+                    TextButton(onClick = {
+                        showDialog = false
+                        editingMeal = null
+                        name = ""
+                        calories = ""
+                        description = ""
+                    }) {
                         Text("Cancel")
                     }
                 },
-                title = { Text("Create Meal") },
+                title = { Text(if (editingMeal != null) "Edit Meal" else "Create Meal") },
                 text = {
                     Column {
                         OutlinedTextField(

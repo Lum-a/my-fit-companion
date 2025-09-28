@@ -27,8 +27,8 @@ class HomeViewModel @Inject constructor(
            initialValue = null
        )
 
-    private val _recentExercise = MutableStateFlow<ResultWrapper<ExerciseResponse>>(ResultWrapper.Initial)
-    val recentExercise: StateFlow<ResultWrapper<ExerciseResponse>> = _recentExercise.asStateFlow()
+    private val _recentExercise = MutableStateFlow<ResultWrapper<List<ExerciseResponse>>>(ResultWrapper.Initial)
+    val recentExercise = _recentExercise.asStateFlow()
 
     fun logout(onLoggedOut: () -> Unit) {
         viewModelScope.launch {

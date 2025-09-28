@@ -1,5 +1,6 @@
 package com.example.myfitcompanion.navigation
 
+import android.util.Log
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -18,6 +19,8 @@ import com.example.myfitcompanion.admin.screen.AdminUserScreen
 import com.example.myfitcompanion.admin.screen.workout.AdminSplitScreen
 import com.example.myfitcompanion.screen.AdminScreen
 import com.example.myfitcompanion.screen.Screen
+import com.example.myfitcompanion.screen.chat.ChatScreen
+import com.example.myfitcompanion.screen.workout.split.exercise.YouTubePlayerScreen
 import com.example.myfitcompanion.screen.workout.split.exercise.ExerciseScreen
 import com.example.myfitcompanion.screen.workout.WorkoutScreen
 import com.example.myfitcompanion.screen.splash.SplashScreen
@@ -25,13 +28,17 @@ import com.example.myfitcompanion.screen.home.HomeScreen
 import com.example.myfitcompanion.screen.login.LoginScreen
 import com.example.myfitcompanion.screen.meal.MealScreen
 import com.example.myfitcompanion.screen.profile.ChangeEmailScreen
+import com.example.myfitcompanion.screen.profile.ChangeEmailScreen
+import com.example.myfitcompanion.screen.meal.MealViewModel
 import com.example.myfitcompanion.screen.profile.ChangePasswordScreen
 import com.example.myfitcompanion.screen.profile.ProfileScreen
+import com.example.myfitcompanion.screen.profile.SettingsScreen
 import com.example.myfitcompanion.screen.profile.SettingsScreen
 import com.example.myfitcompanion.screen.signup.RegisterScreen
 import com.example.myfitcompanion.screen.trainer.TrainerScreen
 import com.example.myfitcompanion.screen.workout.split.SplitScreen
 import com.example.myfitcompanion.utils.AuthViewModel
+import androidx.compose.runtime.collectAsState
 
 @Composable
 fun MyFitNavigation(navController: NavHostController, padding: PaddingValues, isAdmin: Boolean) {
@@ -63,15 +70,23 @@ fun MyFitNavigation(navController: NavHostController, padding: PaddingValues, is
                     navigate(screen)
                 },
                 onNavigateToLogin = { navigate(Screen.Login) },
-                onNavigateToRegister = { navigate(Screen.Register) }
             )
         }
+
+        composable<Screen.YoutubePlayer> {
+            val video = it.toRoute<Screen.YoutubePlayer>()
+            YouTubePlayerScreen(
+                videoId = video.videoUrl,
+                onBack = { navController.popBackStack() })
+        }
+
         composable<Screen.Login> {
             LoginScreen(
                 onLoginSucceed = { isAdmin ->
                     val screen = if (isAdmin) AdminScreen.Admin else Screen.Home
                     navigate(screen)
-                }
+                },
+                onSignUp = { navController.navigate(Screen.Register) }
             )
         }
         composable<Screen.Register> {
@@ -79,11 +94,13 @@ fun MyFitNavigation(navController: NavHostController, padding: PaddingValues, is
                 onRegisterSucceed = {
                     val screen = if (isAdmin) AdminScreen.Admin else Screen.Home
                     navigate(screen)
-                }
+                },
+                onLogin = {navController.navigate(Screen.Login)}
             )
         }
         composable<Screen.Profile> {
             ProfileScreen(
+                onProfileUpdated = { navController.navigate(Screen.Home) },
                 onChangePassword = { navigate(Screen.ChangePassword) },
                 onNavigateToSettings = { navigate(Screen.Settings) }
             )
@@ -113,6 +130,7 @@ fun MyFitNavigation(navController: NavHostController, padding: PaddingValues, is
                 onTrainersClick = { navigate(Screen.Trainer) },
                 onWorkoutClick = { navigate(Screen.Workout) },
                 onMealsClick = { navigate(Screen.Meal) },
+                onProfileClick = { navigate(Screen.Profile) }
             )
         }
         composable<Screen.Workout> {
@@ -139,8 +157,28 @@ fun MyFitNavigation(navController: NavHostController, padding: PaddingValues, is
                 onBack = { navController.popBackStack() }
             )
         }
-        composable<Screen.Meal> { MealScreen() }
-        composable<Screen.Trainer> { TrainerScreen(onTrainerClick = { navigate(Screen.Profile) }) }
+        composable<Screen.Meal> {
+            val viewModel: MealViewModel = hiltViewModel()
+            val meals = viewModel.meals.collectAsState()
+            MealScreen(meals = meals.value)
+        }
+        composable<Screen.Trainer> { TrainerScreen(
+            onTrainerClick = { userId, userName, peerId, peerName ->
+                navigate(Screen.Chat(userId, userName, peerId, peerName))
+            }
+        ) }
+        composable<Screen.Chat> {
+            val chat = it.toRoute<Screen.Chat>()
+            Log.d("MyFitNavigation", "Navigating to Chat with data: $chat")
+            ChatScreen(
+                userId = chat.userId,
+                peerId = chat.peerId,
+                userName = chat.userName,
+                peerName = chat.peerName,
+                onNavigateBack = { navController.popBackStack() }
+            )
+        }
+
 
         //Admin screens
         composable<AdminScreen.Admin> {
@@ -152,15 +190,14 @@ fun MyFitNavigation(navController: NavHostController, padding: PaddingValues, is
                 onLogout = { logout() }
             )
         }
-
-        //admin screens
         composable<AdminScreen.User> { AdminUserScreen(onBack = { navController.popBackStack() }) }
         composable<AdminScreen.Meals> { AdminMealScreen(onBack = { navController.popBackStack() }) }
         composable<AdminScreen.Workout> {
             AdminWorkoutScreen(
                 onBack = { navController.popBackStack() },
                 onWorkoutClick = { workoutId ->
-                    navController.navigate(AdminScreen.Split(workoutId)) }
+                    navController.navigate(AdminScreen.Split(workoutId))
+                }
             )
         }
         composable<AdminScreen.Split> {

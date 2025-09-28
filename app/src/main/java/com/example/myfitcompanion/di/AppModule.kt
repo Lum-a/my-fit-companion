@@ -8,11 +8,14 @@ import com.example.myfitcompanion.admin.api.AdminApiService
 import com.example.myfitcompanion.api.token.TokenManager
 import com.example.myfitcompanion.appwrite.AppWriteConfig
 import com.example.myfitcompanion.db.room.MyFitDatabase
+import com.example.myfitcompanion.db.room.dao.MealDao
 import com.example.myfitcompanion.db.room.dao.WorkoutsDao
 import com.example.myfitcompanion.db.room.dao.TrainerDao
 import com.example.myfitcompanion.db.room.dao.UserDao
 import com.example.myfitcompanion.repository.UserRepository
 import com.example.myfitcompanion.repository.UserRepositoryImpl
+import com.example.myfitcompanion.screen.meal.MealRepository
+import com.example.myfitcompanion.screen.meal.MealRepositoryImpl
 import com.example.myfitcompanion.screen.trainer.TrainerRepository
 import com.example.myfitcompanion.screen.trainer.TrainerRepositoryImpl
 import com.example.myfitcompanion.utils.AppWriteInteractor
@@ -48,6 +51,9 @@ object AppModule {
     fun provideWorkoutDao(db: MyFitDatabase): WorkoutsDao = db.workoutDao()
 
     @Provides
+    fun provideMealDao(db: MyFitDatabase): MealDao = db.mealDao()
+
+    @Provides
     @Singleton
     fun provideUserRepository(
         apiService: ApiService,
@@ -61,9 +67,10 @@ object AppModule {
     @Singleton
     fun provideTrainerRepository(
         apiService: ApiService,
-        trainerDao: TrainerDao
+        trainerDao: TrainerDao,
+        userDao: UserDao
     ): TrainerRepository {
-        return TrainerRepositoryImpl(apiService, trainerDao)
+        return TrainerRepositoryImpl(apiService, trainerDao, userDao)
     }
 
     @Provides
@@ -74,6 +81,15 @@ object AppModule {
         userDao: UserDao
     ): AdminRepository {
         return AdminRepositoryImpl(adminApiService, apiService, userDao)
+    }
+
+    @Provides
+    @Singleton
+    fun provideMealRepository(
+        apiService: ApiService,
+        mealDao: MealDao
+    ): MealRepository {
+        return MealRepositoryImpl(apiService, mealDao)
     }
 
     @Provides

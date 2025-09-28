@@ -1,6 +1,8 @@
 package com.example.myfitcompanion.admin.screen.workout
 
+import android.net.Uri
 import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -21,12 +23,18 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.AsyncImage
+import com.example.myfitcompanion.R
 import com.example.myfitcompanion.admin.viewmodel.AdminViewModel
 import com.example.myfitcompanion.api.model.WorkoutRequest
 import com.example.myfitcompanion.api.model.WorkoutResponse
+import com.example.myfitcompanion.components.ImagePickerHandler
 import com.example.myfitcompanion.ui.theme.myFitColors
 import com.example.myfitcompanion.utils.ResultWrapper
 import kotlinx.coroutines.launch
@@ -41,9 +49,10 @@ fun AdminWorkoutScreen(
 ) {
     val workoutState by viewModel.workouts.collectAsState()
     var showDialog by remember { mutableStateOf(false) }
+    var editingWorkout by remember { mutableStateOf<WorkoutResponse?>(null) }
     var name by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
-    var imageUrl by remember { mutableStateOf("") }
+    var uri by remember { mutableStateOf<Uri?>(null) }
     val scope = rememberCoroutineScope()
 
     Scaffold(
@@ -63,7 +72,13 @@ fun AdminWorkoutScreen(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { showDialog = true },
+                onClick = {
+                    editingWorkout = null
+                    name = ""
+                    description = ""
+                    uri = null
+                    showDialog = true
+                },
                 containerColor = myFitColors.current.gold
             ) {
                 Icon(Icons.Default.Add, contentDescription = "Add Workout")
@@ -111,7 +126,13 @@ fun AdminWorkoutScreen(
                             WorkoutCard(
                                 workout = workout,
                                 onClick = { onWorkoutClick(workout.id) },
-                                onEdit = { /* TODO: open edit dialog */ },
+                                onEdit = {
+                                    editingWorkout = workout
+                                    name = workout.title
+                                    description = workout.description ?: ""
+                                    uri = null // Don't pre-load existing image for editing
+                                    showDialog = true
+                                },
                                 onDelete = { viewModel.deleteWorkout(workout.id) }
                             )
                         }
@@ -121,35 +142,49 @@ fun AdminWorkoutScreen(
         }
         if (showDialog) {
             AlertDialog(
-                onDismissRequest = { showDialog = false },
+                onDismissRequest = {
+                    showDialog = false
+                    editingWorkout = null
+                    name = ""
+                    description = ""
+                    uri = null
+                },
                 confirmButton = {
                     TextButton(onClick = {
                         scope.launch {
-                            val userId = viewModel.getUserId()
-                            if (name.isNotBlank() && userId != null) {
-                                viewModel.addWorkout(
-                                    WorkoutRequest(
-                                        name = name,
-                                        description = description,
-                                        imageUrl = imageUrl
-                                    )
+                            if (name.isNotBlank()) {
+                                val workoutRequest = WorkoutRequest(
+                                    title = name,
+                                    description = description,
                                 )
+
+                                editingWorkout?.let {
+                                    viewModel.updateWorkout(it.id, workoutRequest, uri)
+                                } ?: viewModel.addWorkout(workoutRequest, uri)
+
+                                showDialog = false
+                                editingWorkout = null
+                                name = ""
+                                description = ""
+                                uri = null
                             }
-                            showDialog = false
-                            name = ""
-                            description = ""
-                            imageUrl = ""
                         }
                     }) {
-                        Text("Create")
+                        Text(if (editingWorkout != null) "Update" else "Create")
                     }
                 },
                 dismissButton = {
-                    TextButton(onClick = { showDialog = false }) {
+                    TextButton(onClick = {
+                        showDialog = false
+                        editingWorkout = null
+                        name = ""
+                        description = ""
+                        uri = null
+                    }) {
                         Text("Cancel")
                     }
                 },
-                title = { Text("Create Workout") },
+                title = { Text(if (editingWorkout != null) "Edit Workout" else "Create Workout") },
                 text = {
                     Column {
                         OutlinedTextField(
@@ -164,12 +199,33 @@ fun AdminWorkoutScreen(
                             label = { Text("Description") },
                             modifier = Modifier.fillMaxWidth()
                         )
-                        OutlinedTextField(
-                            value = imageUrl,
-                            onValueChange = { imageUrl = it },
-                            label = { Text("Image URL") },
-                            modifier = Modifier.fillMaxWidth()
-                        )
+                        Spacer(modifier = Modifier.height(15.dp))
+                        ImagePickerHandler(onImageSelected = { uri = it }) { onClick ->
+                            Row {
+                                IconButton(
+                                    onClick = onClick,
+                                    modifier = Modifier
+                                        .size(60.dp)
+                                        .background(Color.Transparent),
+                                ) {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.ic_camera),
+                                        contentDescription = "Change Photo",
+                                        tint = myFitColors.current.gold
+                                    )
+                                }
+                                if(uri != null) {
+                                    AsyncImage(
+                                        model = uri,
+                                        contentDescription = "Profile Photo",
+                                        modifier = Modifier
+                                            .size(100.dp)
+                                            .clip(RoundedCornerShape(8.dp)),
+                                        contentScale = ContentScale.Crop
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
             )
@@ -199,7 +255,7 @@ fun WorkoutCard(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column {
-                Text(workout.name, color = Color.White, style = MaterialTheme.typography.titleMedium)
+                Text(workout.title, color = Color.White, style = MaterialTheme.typography.titleMedium)
                 Text(workout.description ?: "", color = Color.Gray, style = MaterialTheme.typography.bodySmall)
             }
             Row {

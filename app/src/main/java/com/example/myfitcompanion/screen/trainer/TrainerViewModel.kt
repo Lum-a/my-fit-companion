@@ -7,6 +7,7 @@ import com.example.myfitcompanion.db.room.entities.Trainer
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -23,12 +24,20 @@ class TrainerViewModel @Inject constructor(
             initialValue = emptyList()
         )
 
+    val userID: StateFlow<Int> = trainerRepository.getUser()
+        .map { it?.id ?: 0}
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Lazily,
+            initialValue = 0
+        )
+
     init {
         // Auto-sync trainers when ViewModel is created
         syncTrainers()
     }
 
-    fun syncTrainers() {
+    private fun syncTrainers() {
         viewModelScope.launch {
             try {
                 trainerRepository.syncTrainersFromApi()

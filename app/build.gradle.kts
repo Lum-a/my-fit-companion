@@ -95,5 +95,11 @@ dependencies {
     implementation(libs.logging.interceptor)
 
     //AppWrite
-    implementation("io.appwrite:sdk-for-android:8.1.0")
+    implementation(libs.sdk.for1.android)
+
+    //yt player
+    implementation(libs.android.youtube.player)
+
+    //Socket.IO
+    implementation(libs.socketio)
 }

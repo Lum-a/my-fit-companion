@@ -17,6 +17,7 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface ApiService {
 
@@ -29,26 +30,26 @@ interface ApiService {
     @GET("trainers")
     suspend fun getTrainers(): List<TrainerResponse>
 
-    @GET("workouts") //to be changed to "workouts" in the backend
+    @GET("workouts")
     suspend fun getWorkouts(): List<WorkoutResponse>
 
-    @GET("workouts/{workoutId}/splits")
+    @GET("splits/{workoutId}")
     suspend fun getWorkoutSplits(@Path("workoutId") workoutId: Int): List<SplitResponse>
 
-    @GET("workouts/splits/{splitId}/exercises")
+    @GET("exercises/{splitId}")
     suspend fun getExercises(@Path("splitId") splitId: Int): List<ExerciseResponse>
 
     @GET("meals")
     suspend fun getMeals(): List<MealsResponse>
 
-    @PUT("users")
+    @PUT("profile")
     suspend fun updateProfile(@Body request: UpdateProfileRequest): UpdateProfileResponse
 
-    @GET("/exercises/recent/{userId}")
-    suspend fun getRecentExercise(@Path("userId") userId: Int?): ExerciseResponse
+    @POST("exercises/{exerciseId}/recent")
+    suspend fun saveRecentExercise(@Path("exerciseId") exerciseId: Int)
 
-    @POST("/exercises/recent")
-    suspend fun addRecentExercise(@Body workoutId: Int, @Body userId: Int?)
+    @GET("exercises/recent")
+    suspend fun getRecentExercises(@Query("limit") limit: Int = 5): List<ExerciseResponse>
 
 
     @PUT("profile/change-email")
