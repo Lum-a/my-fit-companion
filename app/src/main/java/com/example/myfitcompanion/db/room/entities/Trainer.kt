@@ -12,4 +12,24 @@ data class Trainer(
     val lastName: String,
     val specialization: String? = null,
     val contactInfo: String? = null
-)
+) {
+    /**
+     * Maps this Trainer instance to a User instance for use in the unified user system
+     */
+    fun toUser(): User {
+        return User(
+            id = this.trainerId,
+            firstName = this.firstName,
+            lastName = this.lastName,
+            email = this.contactInfo ?: "trainer${this.trainerId}@fitcompanion.com",
+            role = "trainer",
+            height = null,
+            weight = null,
+            bodyFat = null,
+            goalBodyFat = null,
+            goalWeight = null,
+            createdAt = System.currentTimeMillis().toString(),
+            imageUrl = null
+        )
+    }
+}

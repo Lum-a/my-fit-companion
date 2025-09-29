@@ -44,6 +44,8 @@ interface ApiService {
     @PUT("profile")
     suspend fun updateProfile(@Body request: UpdateProfileRequest): UpdateProfileResponse
 
+    @GET("profile/{id}") suspend fun getUserById(@Path("id") userId: Int): UpdateProfileResponse
+
     @POST("exercises/{exerciseId}/recent")
     suspend fun saveRecentExercise(@Path("exerciseId") exerciseId: Int)
 

@@ -13,6 +13,7 @@ import com.example.myfitcompanion.api.model.RegisterRequest
 import com.example.myfitcompanion.db.room.entities.User
 import com.example.myfitcompanion.api.model.RegisterResponse
 import com.example.myfitcompanion.api.model.WorkoutResponse
+import com.example.myfitcompanion.model.UserRole
 import com.example.myfitcompanion.utils.ResultWrapper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -92,10 +93,10 @@ class UserRepositoryImpl @Inject constructor(
         userDao.deleteUser()
     }
 
-    override fun isAdmin(): Flow<Boolean> =
+    override fun userRole(): Flow<UserRole> =
         userDao.getUser()
             .map { user ->
-                user?.role == "admin".uppercase()
+                UserRole.fromID(user?.role)
             }
 
     override fun isLoggedIn(): Flow<Boolean> = combine(
@@ -141,4 +142,40 @@ class UserRepositoryImpl @Inject constructor(
         ResultWrapper.Error(e.message)
     }
 
+    override suspend fun fetchAndSaveUserById(userId: Int): ResultWrapper<User> {
+        return try {
+            // First check if user already exists in database
+            val existingUser = null
+            if (existingUser != null) {
+                return ResultWrapper.Success(existingUser)
+            }
+
+            // Fetch user from API
+            val response = apiService.getUserById(userId)
+
+            // Convert API response to User entity
+            val user = User(
+                id = response.userId ?: userId,
+                firstName = response.firstName,
+                lastName = response.lastName,
+                email = response.email ?: "",
+                role = "user",
+                height = response.height,
+                weight = response.weight,
+                bodyFat = response.bodyFat,
+                goalBodyFat = response.goalBodyFat,
+                goalWeight = response.goalWeight,
+                createdAt = "",
+                imageUrl = response.imageUrl
+            )
+
+            // Save to database
+            userDao.insertUser(user)
+
+            ResultWrapper.Success(user)
+        } catch (e: Exception) {
+            Log.e("UserRepositoryImpl", "Error fetching user $userId: ${e.message}")
+            ResultWrapper.Error(e.message)
+        }
+    }
 }

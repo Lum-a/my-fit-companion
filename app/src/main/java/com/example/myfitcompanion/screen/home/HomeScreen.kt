@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Create
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
@@ -209,8 +210,8 @@ fun HomeScreen(
         ) {
             item {
                 QuickActionCard(
-                    label = "Check In",
-                    icon = Icons.Default.Search,
+                    label = "Chats",
+                    icon = Icons.Filled.Email,
                     onClick = onCheckInClick
                 )
             }
