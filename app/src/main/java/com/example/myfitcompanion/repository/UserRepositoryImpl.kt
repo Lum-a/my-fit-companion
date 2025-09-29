@@ -5,6 +5,7 @@ import com.example.myfitcompanion.api.ApiService
 import com.example.myfitcompanion.api.model.ExerciseResponse
 import com.example.myfitcompanion.api.model.UpdateProfileRequest
 import com.example.myfitcompanion.api.model.UpdateProfileResponse
+import com.example.myfitcompanion.api.model.BaseResponse
 import com.example.myfitcompanion.api.token.TokenManager
 import com.example.myfitcompanion.db.room.dao.UserDao
 import com.example.myfitcompanion.api.model.LoginRequest
@@ -13,6 +14,7 @@ import com.example.myfitcompanion.api.model.PasswordUpdatedModel
 import com.example.myfitcompanion.api.model.RegisterRequest
 import com.example.myfitcompanion.db.room.entities.User
 import com.example.myfitcompanion.api.model.RegisterResponse
+import com.example.myfitcompanion.api.model.UpdateEmailRequest
 import com.example.myfitcompanion.api.model.WorkoutResponse
 import com.example.myfitcompanion.utils.ResultWrapper
 import kotlinx.coroutines.flow.Flow
@@ -87,7 +89,7 @@ class UserRepositoryImpl @Inject constructor(
     override suspend fun updatePassword(
         oldPassword: String,
         newPassword: String
-    ): ResultWrapper<UpdateProfileResponse> = try {
+    ): ResultWrapper<BaseResponse> = try {
         val updatePasswordModel = PasswordUpdatedModel(
             oldPassword,
             newPassword
@@ -100,7 +102,8 @@ class UserRepositoryImpl @Inject constructor(
     }
 
     override suspend fun updateEmail(newEmail: String): ResultWrapper<UpdateProfileResponse> = try {
-        val response = apiService.updateEmail(newEmail)
+        val updateEmailRequest = UpdateEmailRequest(newEmail)
+        val response = apiService.updateEmail(updateEmailRequest)
         ResultWrapper.Success(response)
     } catch (e: Exception) {
         ResultWrapper.Error(e.message)

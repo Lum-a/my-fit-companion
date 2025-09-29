@@ -4,6 +4,7 @@ import com.example.myfitcompanion.api.model.ExerciseResponse
 import com.example.myfitcompanion.api.model.LoginRequest
 import com.example.myfitcompanion.api.model.UpdateProfileRequest
 import com.example.myfitcompanion.api.model.UpdateProfileResponse
+import com.example.myfitcompanion.api.model.BaseResponse
 import com.example.myfitcompanion.api.model.LoginResponse
 import com.example.myfitcompanion.api.model.RegisterRequest
 import com.example.myfitcompanion.db.room.entities.User
@@ -18,7 +19,7 @@ interface UserRepository {
     suspend fun register(request: RegisterRequest): ResultWrapper<RegisterResponse>
     suspend fun insertUser(user: User)
     suspend fun updateUser(request: UpdateProfileRequest): ResultWrapper<UpdateProfileResponse>
-    suspend fun updatePassword(oldPassword: String, newPassword: String) : ResultWrapper<UpdateProfileResponse>
+    suspend fun updatePassword(oldPassword: String, newPassword: String) : ResultWrapper<BaseResponse>
     suspend fun updateEmail(newEmail: String) : ResultWrapper<UpdateProfileResponse>
     fun getUser(): Flow<User?>
     suspend fun getUserId(): Int?

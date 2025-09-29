@@ -58,21 +58,26 @@ class ProfileViewModel @Inject constructor(
             try {
                 val response = userRepository.updateEmail(newEmail)
 
-
                 when (response) {
                     is ResultWrapper.Success -> {
+                        val currentUser = user.value
+                        if (currentUser != null) {
+                            val updatedUser = currentUser.copy(email = newEmail)
+                            userRepository.insertUser(updatedUser)
+                        }
+
                         _changeEmailState.value =
-                            ResultWrapper.Success("Password changed successfully!")
+                            ResultWrapper.Success("Email changed successfully!")
                     }
 
                     is ResultWrapper.Error -> {
                         _changeEmailState.value =
-                            ResultWrapper.Error(response.message ?: "Failed to change password")
+                            ResultWrapper.Error(response.message ?: "Failed to change email")
                     }
 
                     else -> {
                         _changeEmailState.value =
-                            ResultWrapper.Error("Failed to change password")
+                            ResultWrapper.Error("Failed to change email")
                     }
                 }
             } catch (e: Exception) {
@@ -86,12 +91,11 @@ class ProfileViewModel @Inject constructor(
         viewModelScope.launch {
             _changePasswordState.value = ResultWrapper.Loading
             try {
-                // Use the dedicated updatePassword function from repository
                 val response = userRepository.updatePassword(oldPassword, newPassword)
 
                 when (response) {
                     is ResultWrapper.Success -> {
-                        _changePasswordState.value = ResultWrapper.Success("Password changed successfully!")
+                        _changePasswordState.value = ResultWrapper.Success(response.data.getDisplayMessage())
                     }
                     is ResultWrapper.Error -> {
                         _changePasswordState.value = ResultWrapper.Error(response.message ?: "Failed to change password")

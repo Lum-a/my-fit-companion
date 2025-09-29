@@ -130,7 +130,8 @@ fun MyFitNavigation(navController: NavHostController, padding: PaddingValues, is
                 onTrainersClick = { navigate(Screen.Trainer) },
                 onWorkoutClick = { navigate(Screen.Workout) },
                 onMealsClick = { navigate(Screen.Meal) },
-                onProfileClick = { navigate(Screen.Profile) }
+                onProfileClick = { navigate(Screen.Profile) },
+                onSettingsClick = { navigate(Screen.Settings) }
             )
         }
         composable<Screen.Workout> {
