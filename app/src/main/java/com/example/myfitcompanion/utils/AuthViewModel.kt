@@ -2,13 +2,16 @@ package com.example.myfitcompanion.utils
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.myfitcompanion.MyFitApplication
 import com.example.myfitcompanion.model.UserRole
 import com.example.myfitcompanion.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,6 +28,9 @@ class AuthViewModel @Inject constructor(
     fun logout() {
         viewModelScope.launch {
             userRepository.logout()
+            withContext(Dispatchers.IO){
+                MyFitApplication.clearDB()
+            }
         }
     }
 

@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Create
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
@@ -64,7 +65,6 @@ fun HomeScreen(
     onSettingsClick: () -> Unit = {}
 ) {
     val userData by viewModel.user.collectAsStateWithLifecycle()
-    val isTrainer by viewModel.isTrainer.collectAsStateWithLifecycle()
     val recentExerciseState by viewModel.recentExercise.collectAsStateWithLifecycle()
     var menuExpanded by remember { mutableStateOf(false) }
 
@@ -210,8 +210,8 @@ fun HomeScreen(
         ) {
             item {
                 QuickActionCard(
-                    label = "Check In",
-                    icon = Icons.Default.Search,
+                    label = "Chats",
+                    icon = Icons.Filled.Email,
                     onClick = onCheckInClick
                 )
             }
@@ -224,7 +224,7 @@ fun HomeScreen(
             }
             item {
                 QuickActionCard(
-                    label = if (isTrainer == true) "Chats" else "Trainers",
+                    label = "Trainers",
                     icon = Icons.Default.AccountCircle,
                     onClick = onTrainersClick
                 )

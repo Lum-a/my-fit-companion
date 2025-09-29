@@ -29,13 +29,6 @@ class HomeViewModel @Inject constructor(
            initialValue = null
        )
 
-    val isTrainer: StateFlow<Boolean?> =
-        flow { emit(true) }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.Lazily,
-            initialValue = true
-        )
-
     private val _recentExercise = MutableStateFlow<ResultWrapper<List<ExerciseResponse>>>(ResultWrapper.Initial)
     val recentExercise = _recentExercise.asStateFlow()
 

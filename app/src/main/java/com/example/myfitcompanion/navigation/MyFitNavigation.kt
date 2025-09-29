@@ -36,6 +36,11 @@ import com.example.myfitcompanion.screen.trainer.TrainerScreen
 import com.example.myfitcompanion.screen.workout.split.SplitScreen
 import com.example.myfitcompanion.utils.AuthViewModel
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.platform.LocalContext
+import com.example.myfitcompanion.MyFitApp
+import com.example.myfitcompanion.MyFitApplication
+import com.example.myfitcompanion.db.room.MyFitDatabase
+import com.example.myfitcompanion.screen.conversations.ConversationsScreen
 
 @Composable
 fun MyFitNavigation(navController: NavHostController, padding: PaddingValues, userRole: UserRole) {
@@ -64,6 +69,7 @@ fun MyFitNavigation(navController: NavHostController, padding: PaddingValues, us
             SplashScreen(
                 onNavigateToHome = {
                     val screen = if (userRole == UserRole.ADMIN) AdminScreen.Admin else Screen.Home
+                    Log.d("MyFitNavigation", "Navigating to Home or Admin based on role: $userRole")
                     navigate(screen)
                 },
                 onNavigateToLogin = { navigate(Screen.Login) },
@@ -112,9 +118,8 @@ fun MyFitNavigation(navController: NavHostController, padding: PaddingValues, us
                 onWorkoutClick = { navigate(Screen.Workout) },
                 onMealsClick = { navigate(Screen.Meal) },
                 onProfileClick = { navigate(Screen.Profile) },
-                onTrainersClick = {
-                    val screen = if (userRole == UserRole.TRAINER) Screen.Trainer else Screen.Conversations
-                    navigate(screen) },
+                onCheckInClick = {navigate(Screen.Conversations) },
+                onTrainersClick = { navigate(Screen.Trainer) },
             )
         }
         composable<Screen.Workout> {
@@ -163,7 +168,11 @@ fun MyFitNavigation(navController: NavHostController, padding: PaddingValues, us
             )
         }
         composable<Screen.Conversations> {
-
+            ConversationsScreen(
+                onChatClick = { userId, userName, peerId, peerName ->
+                    navigate(Screen.Chat(userId, userName, peerId, peerName))
+                }
+            )
         }
 
         //Admin screens

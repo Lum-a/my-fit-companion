@@ -55,7 +55,7 @@ fun MyFitApp() {
             bottomBar = {
                 BottomNavigationBar(navController, (userRole != UserRole.ADMIN) && isUserLoggedIn)
             }, content = { padding ->
-                MyFitNavigation(navController, padding, UserRole.TRAINER)
+                MyFitNavigation(navController, padding, userRole)
             }
         )
     }

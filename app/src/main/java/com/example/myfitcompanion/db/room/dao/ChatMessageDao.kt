@@ -44,3 +44,4 @@ interface ChatMessageDao {
     @Query("SELECT DISTINCT room FROM chat_messages WHERE senderId = :userId OR receiverId = :userId ORDER BY createdAt DESC")
     suspend fun getChatRooms(userId: Int): List<String>
 }
+

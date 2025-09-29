@@ -31,4 +31,5 @@ interface UserRepository {
     suspend fun getWorkouts(): ResultWrapper<List<WorkoutResponse>>
     suspend fun getSplits(workoutId: Int): ResultWrapper<List<SplitResponse>>
     suspend fun getExercises(splitId: Int): ResultWrapper<List<ExerciseResponse>>
+    suspend fun fetchAndSaveUserById(userId: Int): ResultWrapper<User>
 }
