@@ -33,8 +33,15 @@ class ProfileViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = null
         )
+
     private val _updateState = MutableStateFlow<ResultWrapper<UpdateProfileResponse>>(ResultWrapper.Initial)
     val updateState: StateFlow<ResultWrapper<UpdateProfileResponse>> = _updateState
+
+    private val _changeEmailState = MutableStateFlow<ResultWrapper<String>>(ResultWrapper.Initial)
+    val changeEmailState: StateFlow<ResultWrapper<String>> = _changeEmailState
+
+    private val _changePasswordState = MutableStateFlow<ResultWrapper<String>>(ResultWrapper.Initial)
+    val changePasswordState: StateFlow<ResultWrapper<String>> = _changePasswordState
 
     fun updateProfile(request: UpdateProfileRequest, imageUri: Uri?) {
         viewModelScope.launch {
@@ -43,6 +50,72 @@ class ProfileViewModel @Inject constructor(
             val response = userRepository.updateUser(updatedRequest)
             _updateState.value = response
         }
+    }
+
+    fun changeEmail(newEmail: String) {
+        viewModelScope.launch {
+            _changeEmailState.value = ResultWrapper.Loading
+            try {
+                val response = userRepository.updateEmail(newEmail)
+
+                when (response) {
+                    is ResultWrapper.Success -> {
+                        val currentUser = user.value
+                        if (currentUser != null) {
+                            val updatedUser = currentUser.copy(email = newEmail)
+                            userRepository.insertUser(updatedUser)
+                        }
+
+                        _changeEmailState.value =
+                            ResultWrapper.Success("Email changed successfully!")
+                    }
+
+                    is ResultWrapper.Error -> {
+                        _changeEmailState.value =
+                            ResultWrapper.Error(response.message ?: "Failed to change email")
+                    }
+
+                    else -> {
+                        _changeEmailState.value =
+                            ResultWrapper.Error("Failed to change email")
+                    }
+                }
+            } catch (e: Exception) {
+                _changeEmailState.value =
+                    ResultWrapper.Error("Failed to change email: ${e.localizedMessage}")
+            }
+        }
+    }
+
+    fun changePassword(oldPassword: String, newPassword: String) {
+        viewModelScope.launch {
+            _changePasswordState.value = ResultWrapper.Loading
+            try {
+                val response = userRepository.updatePassword(oldPassword, newPassword)
+
+                when (response) {
+                    is ResultWrapper.Success -> {
+                        _changePasswordState.value = ResultWrapper.Success(response.data.getDisplayMessage())
+                    }
+                    is ResultWrapper.Error -> {
+                        _changePasswordState.value = ResultWrapper.Error(response.message ?: "Failed to change password")
+                    }
+                    else -> {
+                        _changePasswordState.value = ResultWrapper.Error("Failed to change password")
+                    }
+                }
+            } catch (e: Exception) {
+                _changePasswordState.value = ResultWrapper.Error("Failed to change password: ${e.localizedMessage}")
+            }
+        }
+    }
+
+    fun resetChangeEmailState() {
+        _changeEmailState.value = ResultWrapper.Initial
+    }
+
+    fun resetChangePasswordState() {
+        _changePasswordState.value = ResultWrapper.Initial
     }
 
     private suspend fun getImageUrlFromBlob(imageUri: Uri?): String? = withContext(Dispatchers.IO) {

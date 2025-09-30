@@ -8,36 +8,39 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.myfitcompanion.R
 import com.example.myfitcompanion.ui.theme.myFitColors
 import com.example.myfitcompanion.utils.ResultWrapper
-import com.example.myfitcompanion.utils.isValidPassword
+import com.example.myfitcompanion.utils.isValidEmail
 
 @Composable
-fun ChangePasswordScreen(
-    onPasswordChanged: () -> Unit,
+fun ChangeEmailScreen(
+    onEmailChanged: () -> Unit,
     onBack: () -> Unit,
     viewModel: ProfileViewModel = hiltViewModel()
 ) {
-    val changePasswordState by viewModel.changePasswordState.collectAsStateWithLifecycle()
+    val user by viewModel.user.collectAsStateWithLifecycle()
+    val changeEmailState by viewModel.changeEmailState.collectAsStateWithLifecycle()
 
-    var oldPassword by remember { mutableStateOf("") }
-    var newPassword by remember { mutableStateOf("") }
-    var confirmPassword by remember { mutableStateOf("") }
+    var newEmail by remember { mutableStateOf("") }
 
-    LaunchedEffect(changePasswordState) {
-        if (changePasswordState is ResultWrapper.Success) {
+    // Initialize current email when user loads
+    val currentEmail = user?.email ?: ""
+
+    // Handle navigation after successful email change
+    LaunchedEffect(changeEmailState) {
+        if (changeEmailState is ResultWrapper.Success) {
             kotlinx.coroutines.delay(1000)
-            onPasswordChanged()
+            onEmailChanged()
         }
     }
 
+    // Reset state when screen is first opened
     LaunchedEffect(Unit) {
-        viewModel.resetChangePasswordState()
+        viewModel.resetChangeEmailState()
     }
 
     Column(
@@ -60,10 +63,10 @@ fun ChangePasswordScreen(
                 )
             }
             Text(
-                "Change Password",
+                "Change Email",
                 style = MaterialTheme.typography.headlineMedium.copy(color = myFitColors.current.gold)
             )
-            Spacer(modifier = Modifier.width(48.dp))
+            Spacer(modifier = Modifier.width(48.dp)) // Balance the back button
         }
 
         // Center the form vertically in remaining space
@@ -73,52 +76,28 @@ fun ChangePasswordScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             OutlinedTextField(
-                value = oldPassword,
-                onValueChange = {
-                    oldPassword = it
-                    viewModel.resetChangePasswordState()
-                },
-                label = { Text("Old Password", color = Color.Gray) },
+                value = currentEmail,
+                onValueChange = { /* Read-only */ },
+                label = { Text("Current Email", color = Color.Gray) },
                 singleLine = true,
-                visualTransformation = PasswordVisualTransformation(),
+                enabled = false,
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = myFitColors.current.gold,
-                    unfocusedBorderColor = Color.Gray,
-                    cursorColor = myFitColors.current.gold,
-                    focusedTextColor = Color.White,
-                    unfocusedTextColor = Color.White
+                    disabledBorderColor = Color.Gray,
+                    disabledTextColor = Color.Gray
                 ),
                 modifier = Modifier.fillMaxWidth()
             )
+
             Spacer(modifier = Modifier.height(12.dp))
+
             OutlinedTextField(
-                value = newPassword,
+                value = newEmail,
                 onValueChange = {
-                    newPassword = it
-                    viewModel.resetChangePasswordState()
+                    newEmail = it
+                    viewModel.resetChangeEmailState()
                 },
-                label = { Text("New Password", color = Color.Gray) },
+                label = { Text("New Email", color = Color.Gray) },
                 singleLine = true,
-                visualTransformation = PasswordVisualTransformation(),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = myFitColors.current.gold,
-                    unfocusedBorderColor = Color.Gray,
-                    cursorColor = myFitColors.current.gold,
-                    focusedTextColor = Color.White,
-                    unfocusedTextColor = Color.White
-                ),
-                modifier = Modifier.fillMaxWidth()
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-            OutlinedTextField(
-                value = confirmPassword,
-                onValueChange = {
-                    confirmPassword = it
-                    viewModel.resetChangePasswordState()
-                },
-                label = { Text("Confirm Password", color = Color.Gray) },
-                singleLine = true,
-                visualTransformation = PasswordVisualTransformation(),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = myFitColors.current.gold,
                     unfocusedBorderColor = Color.Gray,
@@ -129,7 +108,7 @@ fun ChangePasswordScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            when (val state = changePasswordState) {
+            when (val state = changeEmailState) {
                 is ResultWrapper.Error -> {
                     Text(
                         state.message ?: "Unknown error occurred",
@@ -150,35 +129,46 @@ fun ChangePasswordScreen(
             }
 
             Spacer(modifier = Modifier.height(24.dp))
+
             Row(Modifier.fillMaxWidth()) {
                 Button(
                     onClick = onBack,
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.Gray, contentColor = Color.White),
-                    modifier = Modifier.weight(1f)
-                ) { Text("Back") }
-                Spacer(modifier = Modifier.width(16.dp))
-                Button(
-                    onClick = {
-                        if (!isValidPassword(newPassword)) {
-                            return@Button
-                        }
-                        if (newPassword != confirmPassword) {
-                            return@Button
-                        }
-                        viewModel.changePassword(oldPassword, newPassword)
-                    },
-                    enabled = oldPassword.isNotBlank() && newPassword.isNotBlank() && confirmPassword.isNotBlank() && changePasswordState !is ResultWrapper.Loading,
-                    colors = ButtonDefaults.buttonColors(containerColor = myFitColors.current.gold, contentColor = Color.Black),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.Gray,
+                        contentColor = Color.White
+                    ),
                     modifier = Modifier.weight(1f)
                 ) {
-                    if (changePasswordState is ResultWrapper.Loading) {
+                    Text("Cancel")
+                }
+
+                Spacer(modifier = Modifier.width(16.dp))
+
+                Button(
+                    onClick = {
+                        if (!isValidEmail(newEmail)) {
+                            return@Button
+                        }
+                        if (newEmail == currentEmail) {
+                            return@Button
+                        }
+                        viewModel.changeEmail(newEmail)
+                    },
+                    enabled = newEmail.isNotBlank() && changeEmailState !is ResultWrapper.Loading,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = myFitColors.current.gold,
+                        contentColor = Color.Black
+                    ),
+                    modifier = Modifier.weight(1f)
+                ) {
+                    if (changeEmailState is ResultWrapper.Loading) {
                         CircularProgressIndicator(
                             color = Color.Black,
                             modifier = Modifier.size(20.dp),
                             strokeWidth = 2.dp
                         )
                     } else {
-                        Text("Change Password")
+                        Text("Change Email")
                     }
                 }
             }

@@ -2,15 +2,18 @@ package com.example.myfitcompanion.api
 
 import com.example.myfitcompanion.api.model.UpdateProfileRequest
 import com.example.myfitcompanion.api.model.UpdateProfileResponse
+import com.example.myfitcompanion.api.model.BaseResponse
 import com.example.myfitcompanion.api.model.ExerciseResponse
 import com.example.myfitcompanion.api.model.LoginRequest
 import com.example.myfitcompanion.api.model.LoginResponse
 import com.example.myfitcompanion.api.model.MealsResponse
+import com.example.myfitcompanion.api.model.PasswordUpdatedModel
 import com.example.myfitcompanion.api.model.RegisterRequest
 import com.example.myfitcompanion.api.model.RegisterResponse
 import com.example.myfitcompanion.api.model.SplitResponse
 import com.example.myfitcompanion.api.model.WorkoutResponse
 import com.example.myfitcompanion.api.model.TrainerResponse
+import com.example.myfitcompanion.api.model.UpdateEmailRequest
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -51,5 +54,13 @@ interface ApiService {
 
     @GET("exercises/recent")
     suspend fun getRecentExercises(@Query("limit") limit: Int = 5): List<ExerciseResponse>
+
+
+    @PUT("profile/change-email")
+    suspend fun updateEmail(@Body newEmail: UpdateEmailRequest): UpdateProfileResponse
+
+
+    @PUT("profile/change-password")
+    suspend fun updatePassword(@Body passwordModel: PasswordUpdatedModel): BaseResponse
 
 }

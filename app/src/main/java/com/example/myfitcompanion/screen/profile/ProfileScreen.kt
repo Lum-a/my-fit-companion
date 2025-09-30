@@ -5,6 +5,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
@@ -32,16 +33,21 @@ fun ProfileScreen(
     modifier: Modifier = Modifier,
     viewModel: ProfileViewModel = hiltViewModel(),
     onProfileUpdated: () -> Unit = {},
-    onChangePassword: () -> Unit = {}
+    onChangePassword: () -> Unit = {},
+    onNavigateToSettings: () -> Unit = {}
 ) {
     val user by viewModel.user.collectAsStateWithLifecycle()
     val updateState by viewModel.updateState.collectAsStateWithLifecycle()
 
     Log.d("ProfileScreen", "User data: $user")
-    if(updateState is ResultWrapper.Success) {
-        Toast.makeText(LocalContext.current, "Profile updated successfully", Toast.LENGTH_SHORT).show()
+    if (updateState is ResultWrapper.Success) {
+        Toast.makeText(LocalContext.current, "Profile updated successfully", Toast.LENGTH_SHORT)
+            .show()
         onProfileUpdated()
-       Log.d("ProfileScreen", "Profile updated successfully: ${(updateState as ResultWrapper.Success).data}")
+        Log.d(
+            "ProfileScreen",
+            "Profile updated successfully: ${(updateState as ResultWrapper.Success).data}"
+        )
     }
     var uri by remember { mutableStateOf<Uri?>(null) }
     var firstName by remember { mutableStateOf("") }
@@ -77,7 +83,7 @@ fun ProfileScreen(
         }
     }
 
-    Column(
+    LazyColumn(
         modifier = modifier
             .fillMaxSize()
             .background(myFitColors.current.background)
@@ -85,192 +91,197 @@ fun ProfileScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Profile", style = MaterialTheme.typography.headlineMedium.copy(color = myFitColors.current.gold))
-        Spacer(modifier = Modifier.height(16.dp))
+        item {
+            Text(
+                "Profile",
+                style = MaterialTheme.typography.headlineMedium.copy(color = myFitColors.current.gold)
+            )
+            Spacer(modifier = Modifier.height(16.dp))
 
-        ImagePickerHandler(onImageSelected = { uri = it }) { onClick ->
-            Box(modifier = Modifier.size(120.dp)) {
-                AsyncImage(
-                    model = uri ?: user?.imageUrl,
-                    contentDescription = "Profile Photo",
-                    modifier = Modifier
-                        .size(120.dp)
-                        .clip(CircleShape)
-                        .background(Color.Gray),
-                    contentScale = ContentScale.Crop
-                )
-
-
-                IconButton(
-                    onClick = onClick,
-                    modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .size(36.dp)
-                        .background(Color.Black.copy(alpha = 0.6f), shape = CircleShape),
-                    enabled = updateState !is ResultWrapper.Loading
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_camera),
-                        contentDescription = "Change Photo",
-                        tint = myFitColors.current.gold
+            ImagePickerHandler(onImageSelected = { uri = it }) { onClick ->
+                Box(modifier = Modifier.size(120.dp)) {
+                    AsyncImage(
+                        model = uri ?: user?.imageUrl,
+                        contentDescription = "Profile Photo",
+                        modifier = Modifier
+                            .size(120.dp)
+                            .clip(CircleShape)
+                            .background(Color.Gray),
+                        contentScale = ContentScale.Crop
                     )
+
+
+                    IconButton(
+                        onClick = onClick,
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .size(36.dp)
+                            .background(Color.Black.copy(alpha = 0.6f), shape = CircleShape),
+                        enabled = updateState !is ResultWrapper.Loading
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_camera),
+                            contentDescription = "Change Photo",
+                            tint = myFitColors.current.gold
+                        )
+                    }
                 }
             }
-        }
 
-        Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
-        OutlinedTextField(
-            value = firstName,
-            onValueChange = { firstName = it },
-            label = { Text("First Name", color = Color.Gray) },
-            singleLine = true,
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = myFitColors.current.gold,
-                unfocusedBorderColor = Color.Gray,
-                cursorColor = myFitColors.current.gold,
-                focusedTextColor = Color.White,
-                unfocusedTextColor = Color.White
-            ),
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(modifier = Modifier.height(8.dp))
+            OutlinedTextField(
+                value = firstName,
+                onValueChange = { firstName = it },
+                label = { Text("First Name", color = Color.Gray) },
+                singleLine = true,
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = myFitColors.current.gold,
+                    unfocusedBorderColor = Color.Gray,
+                    cursorColor = myFitColors.current.gold,
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White
+                ),
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(8.dp))
 
-        OutlinedTextField(
-            value = lastName,
-            onValueChange = { lastName = it },
-            label = { Text("Last Name", color = Color.Gray) },
-            singleLine = true,
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = myFitColors.current.gold,
-                unfocusedBorderColor = Color.Gray,
-                cursorColor = myFitColors.current.gold,
-                focusedTextColor = Color.White,
-                unfocusedTextColor = Color.White
-            ),
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        OutlinedTextField(
-            value = height,
-            onValueChange = { height = it },
-            label = { Text("Height (cm)", color = Color.Gray) },
-            singleLine = true,
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = myFitColors.current.gold,
-                unfocusedBorderColor = Color.Gray,
-                cursorColor = myFitColors.current.gold,
-                focusedTextColor = Color.White,
-                unfocusedTextColor = Color.White
-            ),
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        OutlinedTextField(
-            value = weight,
-            onValueChange = { weight = it },
-            label = { Text("Weight (kg)", color = Color.Gray) },
-            singleLine = true,
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = myFitColors.current.gold,
-                unfocusedBorderColor = Color.Gray,
-                cursorColor = myFitColors.current.gold,
-                focusedTextColor = Color.White,
-                unfocusedTextColor = Color.White
-            ),
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        OutlinedTextField(
-            value = bodyFat,
-            onValueChange = { bodyFat = it },
-            label = { Text("Body Fat (%)", color = Color.Gray) },
-            singleLine = true,
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = myFitColors.current.gold,
-                unfocusedBorderColor = Color.Gray,
-                cursorColor = myFitColors.current.gold,
-                focusedTextColor = Color.White,
-                unfocusedTextColor = Color.White
-            ),
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        OutlinedTextField(
-            value = goalWeight,
-            onValueChange = { goalWeight = it },
-            label = { Text("Goal Weight(KG)", color = Color.Gray) },
-            singleLine = true,
-            keyboardOptions = KeyboardOptions.Default.copy(
-                keyboardType = KeyboardType.Number
-            ),
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = myFitColors.current.gold,
-                unfocusedBorderColor = Color.Gray,
-                cursorColor = myFitColors.current.gold,
-                focusedTextColor = Color.White,
-                unfocusedTextColor = Color.White
-            ),
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        OutlinedTextField(
-            value = goalBodyFat,
-            onValueChange = { goalBodyFat = it },
-            label = { Text("Goal Body Fat (%)", color = Color.Gray) },
-            singleLine = true,
-            keyboardOptions = KeyboardOptions.Default.copy(
-                keyboardType = KeyboardType.Number
-            ),
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = myFitColors.current.gold,
-                unfocusedBorderColor = Color.Gray,
-                cursorColor = myFitColors.current.gold,
-                focusedTextColor = Color.White,
-                unfocusedTextColor = Color.White
-            ),
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(modifier = Modifier.height(8.dp))
+            OutlinedTextField(
+                value = lastName,
+                onValueChange = { lastName = it },
+                label = { Text("Last Name", color = Color.Gray) },
+                singleLine = true,
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = myFitColors.current.gold,
+                    unfocusedBorderColor = Color.Gray,
+                    cursorColor = myFitColors.current.gold,
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White
+                ),
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            OutlinedTextField(
+                value = height,
+                onValueChange = { height = it },
+                label = { Text("Height (cm)", color = Color.Gray) },
+                singleLine = true,
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = myFitColors.current.gold,
+                    unfocusedBorderColor = Color.Gray,
+                    cursorColor = myFitColors.current.gold,
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White
+                ),
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            OutlinedTextField(
+                value = weight,
+                onValueChange = { weight = it },
+                label = { Text("Weight (kg)", color = Color.Gray) },
+                singleLine = true,
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = myFitColors.current.gold,
+                    unfocusedBorderColor = Color.Gray,
+                    cursorColor = myFitColors.current.gold,
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White
+                ),
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            OutlinedTextField(
+                value = bodyFat,
+                onValueChange = { bodyFat = it },
+                label = { Text("Body Fat (%)", color = Color.Gray) },
+                singleLine = true,
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = myFitColors.current.gold,
+                    unfocusedBorderColor = Color.Gray,
+                    cursorColor = myFitColors.current.gold,
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White
+                ),
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            OutlinedTextField(
+                value = goalWeight,
+                onValueChange = { goalWeight = it },
+                label = { Text("Goal Weight(KG)", color = Color.Gray) },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Number
+                ),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = myFitColors.current.gold,
+                    unfocusedBorderColor = Color.Gray,
+                    cursorColor = myFitColors.current.gold,
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White
+                ),
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            OutlinedTextField(
+                value = goalBodyFat,
+                onValueChange = { goalBodyFat = it },
+                label = { Text("Goal Body Fat (%)", color = Color.Gray) },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Number
+                ),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = myFitColors.current.gold,
+                    unfocusedBorderColor = Color.Gray,
+                    cursorColor = myFitColors.current.gold,
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White
+                ),
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(8.dp))
 
-        Button(
-            onClick = {
-                user?.let { user ->
-                    viewModel.updateProfile(
-                        UpdateProfileRequest(
-                            userId = user.id,
-                            firstName = firstName.ifBlank { null },
-                            lastName = lastName.ifBlank { null },
-                            height = height.toFloatOrNull(),
-                            weight = weight.toFloatOrNull(),
-                            bodyFat = bodyFat.toFloatOrNull(),
-                            goalWeight = goalBodyFat.toFloatOrNull(),
-                            goalBodyFat = goalBodyFat.toFloatOrNull()
-                        ),
-                        imageUri = uri
+            Button(
+                onClick = {
+                    user?.let { user ->
+                        viewModel.updateProfile(
+                            UpdateProfileRequest(
+                                userId = user.id,
+                                firstName = firstName.ifBlank { null },
+                                lastName = lastName.ifBlank { null },
+                                height = height.toFloatOrNull(),
+                                weight = weight.toFloatOrNull(),
+                                bodyFat = bodyFat.toFloatOrNull(),
+                                goalWeight = goalBodyFat.toFloatOrNull(),
+                                goalBodyFat = goalBodyFat.toFloatOrNull()
+                            ),
+                            imageUri = uri
+                        )
+                    }
+
+                },
+                enabled = hasChanges && updateState !is ResultWrapper.Loading,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = myFitColors.current.gold,
+                    contentColor = Color.Black,
+                    disabledContainerColor = Color.Gray,
+                    disabledContentColor = Color.White
+                ),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                if (updateState is ResultWrapper.Loading) {
+                    CircularProgressIndicator(
+                        color = Color.Black,
+                        modifier = Modifier
+                            .size(24.dp)
+                            .padding(2.dp),
+                        strokeWidth = 2.dp
                     )
+                } else {
+                    Text("Save Changes")
                 }
-
-            },
-            enabled = hasChanges && updateState !is ResultWrapper.Loading,
-            colors = ButtonDefaults.buttonColors(
-                containerColor = myFitColors.current.gold,
-                contentColor = Color.Black,
-                disabledContainerColor = Color.Gray,
-                disabledContentColor = Color.White
-            ),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            if(updateState is ResultWrapper.Loading) {
-                CircularProgressIndicator(
-                    color = Color.Black,
-                    modifier = Modifier
-                        .size(24.dp)
-                        .padding(2.dp),
-                    strokeWidth = 2.dp
-                )
-            } else {
-                Text("Save Changes")
             }
         }
     }

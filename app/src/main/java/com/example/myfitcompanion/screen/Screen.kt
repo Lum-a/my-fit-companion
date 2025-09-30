@@ -38,6 +38,9 @@ sealed class Screen {
     data object ChangePassword: Screen()
 
     @Serializable
+    data object ChangeEmail: Screen()
+
+    @Serializable
     data object Meal: Screen()
 
     @Serializable
@@ -45,6 +48,10 @@ sealed class Screen {
 
     @Serializable
     data object Conversations: Screen()
+
+    @Serializable
+    data object Settings: Screen()
+
 }
 
 @Serializable
