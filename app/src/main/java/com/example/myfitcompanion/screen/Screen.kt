@@ -47,6 +47,9 @@ sealed class Screen {
     data class Chat(val userId: Int,val userName: String, val peerId: Int, val peerName: String): Screen()
 
     @Serializable
+    data object Conversations: Screen()
+
+    @Serializable
     data object Settings: Screen()
 
 }

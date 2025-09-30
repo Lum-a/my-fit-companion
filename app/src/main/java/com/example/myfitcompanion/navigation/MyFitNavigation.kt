@@ -17,6 +17,7 @@ import com.example.myfitcompanion.admin.screen.workout.AdminWorkoutScreen
 import com.example.myfitcompanion.admin.screen.AdminTrainerScreen
 import com.example.myfitcompanion.admin.screen.AdminUserScreen
 import com.example.myfitcompanion.admin.screen.workout.AdminSplitScreen
+import com.example.myfitcompanion.model.UserRole
 import com.example.myfitcompanion.screen.AdminScreen
 import com.example.myfitcompanion.screen.Screen
 import com.example.myfitcompanion.screen.chat.ChatScreen
@@ -39,9 +40,14 @@ import com.example.myfitcompanion.screen.trainer.TrainerScreen
 import com.example.myfitcompanion.screen.workout.split.SplitScreen
 import com.example.myfitcompanion.utils.AuthViewModel
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.platform.LocalContext
+import com.example.myfitcompanion.MyFitApp
+import com.example.myfitcompanion.MyFitApplication
+import com.example.myfitcompanion.db.room.MyFitDatabase
+import com.example.myfitcompanion.screen.conversations.ConversationsScreen
 
 @Composable
-fun MyFitNavigation(navController: NavHostController, padding: PaddingValues, isAdmin: Boolean) {
+fun MyFitNavigation(navController: NavHostController, padding: PaddingValues, userRole: UserRole) {
 
     fun navigate(route: Any) {
         return navController.navigate(route)
@@ -66,7 +72,8 @@ fun MyFitNavigation(navController: NavHostController, padding: PaddingValues, is
         composable<Screen.Splash> {
             SplashScreen(
                 onNavigateToHome = {
-                    val screen = if (isAdmin) AdminScreen.Admin else Screen.Home
+                    val screen = if (userRole == UserRole.ADMIN) AdminScreen.Admin else Screen.Home
+                    Log.d("MyFitNavigation", "Navigating to Home or Admin based on role: $userRole")
                     navigate(screen)
                 },
                 onNavigateToLogin = { navigate(Screen.Login) },
@@ -83,7 +90,7 @@ fun MyFitNavigation(navController: NavHostController, padding: PaddingValues, is
         composable<Screen.Login> {
             LoginScreen(
                 onLoginSucceed = { isAdmin ->
-                    val screen = if (isAdmin) AdminScreen.Admin else Screen.Home
+                    val screen = if (userRole == UserRole.ADMIN) AdminScreen.Admin else Screen.Home
                     navigate(screen)
                 },
                 onSignUp = { navController.navigate(Screen.Register) }
@@ -92,7 +99,7 @@ fun MyFitNavigation(navController: NavHostController, padding: PaddingValues, is
         composable<Screen.Register> {
             RegisterScreen(
                 onRegisterSucceed = {
-                    val screen = if (isAdmin) AdminScreen.Admin else Screen.Home
+                    val screen = if (userRole == UserRole.ADMIN) AdminScreen.Admin else Screen.Home
                     navigate(screen)
                 },
                 onLogin = {navController.navigate(Screen.Login)}
@@ -127,10 +134,11 @@ fun MyFitNavigation(navController: NavHostController, padding: PaddingValues, is
         composable<Screen.Home> {
             HomeScreen(
                 onLogout = { logout() },
-                onTrainersClick = { navigate(Screen.Trainer) },
                 onWorkoutClick = { navigate(Screen.Workout) },
                 onMealsClick = { navigate(Screen.Meal) },
                 onProfileClick = { navigate(Screen.Profile) },
+                onCheckInClick = {navigate(Screen.Conversations) },
+                onTrainersClick = { navigate(Screen.Trainer) },
                 onSettingsClick = { navigate(Screen.Settings) }
             )
         }
@@ -179,7 +187,13 @@ fun MyFitNavigation(navController: NavHostController, padding: PaddingValues, is
                 onNavigateBack = { navController.popBackStack() }
             )
         }
-
+        composable<Screen.Conversations> {
+            ConversationsScreen(
+                onChatClick = { userId, userName, peerId, peerName ->
+                    navigate(Screen.Chat(userId, userName, peerId, peerName))
+                }
+            )
+        }
 
         //Admin screens
         composable<AdminScreen.Admin> {

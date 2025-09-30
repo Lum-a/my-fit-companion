@@ -32,6 +32,14 @@ class TrainerViewModel @Inject constructor(
             initialValue = 0
         )
 
+    val userName: StateFlow<Pair<String?, String?>> = trainerRepository.getUser()
+        .map { Pair(it?.firstName, it?.lastName) }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Lazily,
+            initialValue = Pair(null, null)
+        )
+
     init {
         // Auto-sync trainers when ViewModel is created
         syncTrainers()

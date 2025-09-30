@@ -21,6 +21,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.myfitcompanion.model.UserRole
 import com.example.myfitcompanion.navigation.MyFitNavigation
 import com.example.myfitcompanion.ui.theme.MyFitCompanionTheme
 import com.example.myfitcompanion.ui.theme.darkBackground
@@ -45,16 +46,16 @@ fun MyFitApp() {
     val navController = rememberNavController()
     val viewModel = hiltViewModel<AuthViewModel>()
     val isUserLoggedIn by viewModel.isLoggedIn.collectAsStateWithLifecycle()
-    val isAdmin by viewModel.isAdmin.collectAsStateWithLifecycle()
+    val userRole by viewModel.userRole.collectAsStateWithLifecycle()
 
-    Log.d("MainActivity", "isUserLoggedIn: $isUserLoggedIn, isAdmin: $isAdmin")
+    Log.d("MainActivity", "isUserLoggedIn: $isUserLoggedIn, role: $userRole")
 
     Surface {
         Scaffold(containerColor = darkBackground,
             bottomBar = {
-                BottomNavigationBar(navController, !isAdmin && isUserLoggedIn)
+                BottomNavigationBar(navController, (userRole != UserRole.ADMIN) && isUserLoggedIn)
             }, content = { padding ->
-                MyFitNavigation(navController, padding, isAdmin)
+                MyFitNavigation(navController, padding, userRole)
             }
         )
     }
